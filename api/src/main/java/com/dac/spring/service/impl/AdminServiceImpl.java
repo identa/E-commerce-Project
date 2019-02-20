@@ -1,4 +1,8 @@
 package com.dac.spring.service.impl;
 
-public class AdminServiceImpl {
+import com.dac.spring.service.AdminService;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AdminServiceImpl implements AdminService {
 }

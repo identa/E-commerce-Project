@@ -1,4 +1,4 @@
 package com.dac.spring.service;
 
-public class AdminService {
+public interface AdminService {
 }
