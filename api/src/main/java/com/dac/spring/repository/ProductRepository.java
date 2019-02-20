@@ -1,7 +1,7 @@
-package com.example.boot_demo.repository;
+package com.dac.spring.repository;
 
-import com.example.boot_demo.entity.ProductEntity;
-import com.example.boot_demo.entity.ShopEntity;
+import com.dac.spring.entity.ProductEntity;
+import com.dac.spring.entity.ShopEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

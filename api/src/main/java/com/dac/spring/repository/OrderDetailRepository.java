@@ -1,6 +1,6 @@
-package com.example.boot_demo.repository;
+package com.dac.spring.repository;
 
-import com.example.boot_demo.entity.OrderDetailEntity;
+import com.dac.spring.entity.OrderDetailEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

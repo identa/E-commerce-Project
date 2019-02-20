@@ -1,6 +1,6 @@
-package com.example.boot_demo.repository;
+package com.dac.spring.repository;
 
-import com.example.boot_demo.entity.RoleEntity;
+import com.dac.spring.entity.RoleEntity;
 import org.springframework.data.repository.CrudRepository;
 
 public interface RoleRepository extends CrudRepository<RoleEntity, Integer> {

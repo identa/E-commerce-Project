@@ -135,14 +135,6 @@ public class ProductEntity {
         this.category = category;
     }
 
-    public List<ProductImageEntity> getProductImageEntityList() {
-        return productImageEntityList;
-    }
-
-    public void setProductImageEntityList(List<ProductImageEntity> productImageEntityList) {
-        this.productImageEntityList = productImageEntityList;
-    }
-
     public List<OrderDetailEntity> getOrderDetailEntityList() {
         return orderDetailEntityList;
     }
