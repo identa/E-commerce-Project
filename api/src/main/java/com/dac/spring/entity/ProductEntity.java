@@ -1,4 +1,4 @@
-package com.example.boot_demo.entity;
+package com.dac.spring.entity;
 
 import javax.persistence.*;
 import java.util.List;
@@ -26,6 +26,8 @@ public class ProductEntity {
 
     private int view;
 
+    private String productImageURL;
+
     @ManyToOne
     @JoinColumn(name = "categoryID")
     private CategoryEntity category;
@@ -33,9 +35,6 @@ public class ProductEntity {
     @ManyToOne
     @JoinColumn(name = "shopID")
     private ShopEntity shop;
-
-    @OneToMany(mappedBy = "product")
-    private List<ProductImageEntity> productImageEntityList;
 
     @OneToMany(mappedBy = "product")
     private List<OrderDetailEntity> orderDetailEntityList;
@@ -166,5 +165,13 @@ public class ProductEntity {
 
     public void setShop(ShopEntity shop) {
         this.shop = shop;
+    }
+
+    public String getProductImageURL() {
+        return productImageURL;
+    }
+
+    public void setProductImageURL(String productImageURL) {
+        this.productImageURL = productImageURL;
     }
 }
