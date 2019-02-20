@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "employee")
 public class EmployeeEntity {
 
     @Id
@@ -21,13 +22,15 @@ public class EmployeeEntity {
 
     private String password;
 
-    private String status;
-
-    private boolean deleted;
+    private boolean deleted = false;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "roleID")
     private RoleEntity role;
+
+    @ManyToOne
+    @JoinColumn(name = "statusID")
+    private StatusEntity status;
 
     @OneToMany(mappedBy = "employee")
     private List<OrderEntity> orderEntityList;
@@ -35,14 +38,21 @@ public class EmployeeEntity {
     public EmployeeEntity() {
     }
 
-    public EmployeeEntity(String firstName, String lastName, String email, String password, String status, boolean deleted, RoleEntity role) {
+    public EmployeeEntity(String firstName, String lastName, String email, String password, RoleEntity role) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.status = status;
-        this.deleted = deleted;
         this.role = role;
+    }
+
+    public EmployeeEntity(String firstName, String lastName, String email, String password, RoleEntity role, StatusEntity status) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.status = status;
     }
 
     public int getId() {
@@ -75,14 +85,6 @@ public class EmployeeEntity {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public boolean isDeleted() {
