@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 
+
 class Banner extends Component {
   render() {
     return (
@@ -48,7 +49,7 @@ class Banner extends Component {
         </div>
         <div className="slide-show">
           <div id="myCarousel" className="carousel slide" data-ride="carousel">
-            {/* Indicators */}
+            
             <ol className="carousel-indicators">
               <li
                 data-target="#myCarousel"
@@ -59,7 +60,7 @@ class Banner extends Component {
               <li data-target="#myCarousel" data-slide-to={2} />
               <li data-target="#myCarousel" data-slide-to={3} />
             </ol>
-            {/* Wrapper for slides */}
+            
             <div className="carousel-inner">
               <div className="item active">
                 <img src="./assets/images/slider/1.webp" alt="" />
@@ -74,7 +75,7 @@ class Banner extends Component {
                 <img src="./assets/images/slider/4.webp" alt="" />
               </div>
             </div>
-            {/* Left and right controls */}
+            
             <a
               className="left carousel-control"
               href="#myCarousel"

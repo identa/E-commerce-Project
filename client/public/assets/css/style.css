@@ -119,6 +119,7 @@ a:hover{
 .product-container{
     margin-bottom: 15px;
     padding: 0 5px 0 5px;
+    background-color: #f5f5f5;
 }
 .product-container h2{
     margin-left: 50px;
@@ -503,4 +504,7 @@ a:hover{
     .footer-subcribe{
         padding: 0;
     }
+}
+.message{
+    color: red;
 }
