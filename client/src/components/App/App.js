@@ -5,7 +5,6 @@ import Banner from '../Banner/Banner';
 import ProductList from '../ProductList/ProductList';
 import Footer from '../Footer/Footer';
 import BtnMessage from '../Utils/BtnMessage';
-import Modal from '../Modal/Modal';
 
 class App extends Component {
   render() {
@@ -16,7 +15,6 @@ class App extends Component {
         <ProductList/>
         <Footer/>
         <BtnMessage/>
-        <Modal/>
       </div>
     );
   }

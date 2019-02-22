@@ -5,16 +5,29 @@ class UserLink extends Component {
         super(props);
         
         this.state = {
-            email : sessionStorage.getItem("email")
+            name : localStorage.getItem("name")
         }
     }
     
     render() {
         return (
             <div className="links-bar">
-                <a href="#" type="button" data-toggle="modal" data-target="#myModal">
-                    Hello {this.state.email} 
+                <a href="#" type="button" className="menu-action-link">
+                    Hello {this.state.name} 
                 </a>
+                    <div className="menu-action">
+                        <ul>
+                            <li>
+                                <a href="#">User Information</a>
+                            </li>
+                            <li>
+                                <a href="#">Management Campaign</a>
+                            </li>
+                            <li>
+                                <a href="#">Logout</a>
+                            </li>
+                        </ul>
+                    </div>
             </div>
         );
     }
