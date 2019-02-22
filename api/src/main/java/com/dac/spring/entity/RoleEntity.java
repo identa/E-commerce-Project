@@ -10,7 +10,8 @@ public class RoleEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private RoleName name;
 
     @OneToMany(mappedBy = "role")
     private List<EmployeeEntity> employeeEntityList;
@@ -26,11 +27,11 @@ public class RoleEntity {
         this.id = id;
     }
 
-    public String getName() {
+    public RoleName getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(RoleName name) {
         this.name = name;
     }
 
