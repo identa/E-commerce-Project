@@ -1,5 +1,6 @@
 package com.dac.spring.service.impl;
 
+import com.dac.spring.constant.CustomerSignInConst;
 import com.dac.spring.constant.CustomerSignUpConst;
 import com.dac.spring.entity.EmployeeEntity;
 import com.dac.spring.entity.StatusEntity;
@@ -59,9 +60,7 @@ public class CustomerServiceImpl implements CustomerService {
             result.setMessage(CustomerSignUpConst.EMAIL_EXIST);
         } else {
             if (firstName != null && lastName != null && email != null && password != null && activeStatus != null) {
-                EmployeeEntity employeeEntity = new EmployeeEntity(firstName,
-                        lastName,
-                        email,
+                EmployeeEntity employeeEntity = new EmployeeEntity(firstName, lastName, email,
                         encoder.encode(password),
                         activeStatus);
                 employeeEntity.setRole(roleRepository.findById(1));
@@ -74,7 +73,33 @@ public class CustomerServiceImpl implements CustomerService {
                 result.setMessage(CustomerSignUpConst.SUCCESS);
                 result.setData(response);
             }
+        }
+        return result;
+    }
 
+    @Override
+    public ServiceResult signInCustomer(String email, String password) {
+        ServiceResult result = new ServiceResult();
+        boolean isEmailExisted = employeeRepository.existsByEmail(email);
+        if (!isEmailExisted) {
+            result.setMessage(CustomerSignInConst.EMAIL_NOT_FOUND);
+            result.setStatus(ServiceResult.Status.FAILED);
+        } else {
+            EmployeeEntity employee = employeeRepository.findByEmail(email);
+            boolean isPasswordChecked = encoder.matches(password, employee.getPassword());
+            if (isPasswordChecked) {
+
+                String jwt = jwtString(email, password);
+                CustomerSignInSignUpResponse response = new CustomerSignInSignUpResponse(employee.getId(),
+                        employee.getFirstName(),
+                        employee.getLastName(),
+                        jwt);
+                result.setMessage(CustomerSignInConst.SUCCESS);
+                result.setData(response);
+            } else {
+                result.setStatus(ServiceResult.Status.FAILED);
+                result.setMessage(CustomerSignInConst.EMAIL_PASSWORD_WRONG_FORMAT);
+            }
         }
 
         return result;
