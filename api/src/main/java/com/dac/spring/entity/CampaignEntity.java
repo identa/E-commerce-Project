@@ -11,11 +11,11 @@ public class CampaignEntity {
     private int id;
 
     @ManyToOne
-    @JoinColumn(name = "shop_ID")
+    @JoinColumn(name = "shopID")
     private ShopEntity shop;
 
     @ManyToOne
-    @JoinColumn(name = "product_ID")
+    @JoinColumn(name = "productID")
     private ProductEntity product;
 
     public CampaignEntity() {

@@ -1,4 +1,4 @@
-package com.dac.spring.model;
+package com.dac.spring.model.req;
 
 public class CustomerSignInRequest {
     private String email;
