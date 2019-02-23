@@ -21,28 +21,20 @@ public class EmployeeEntity {
 
     private String password;
 
-    private String status;
-
-    private boolean deleted;
+    private boolean deleted = false;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "roleID")
     private RoleEntity role;
 
+    @ManyToOne
+    @JoinColumn(name = "statusID")
+    private StatusEntity status;
+
     @OneToMany(mappedBy = "employee")
     private List<OrderEntity> orderEntityList;
 
     public EmployeeEntity() {
-    }
-
-    public EmployeeEntity(String firstName, String lastName, String email, String password, String status, boolean deleted, RoleEntity role) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = password;
-        this.status = status;
-        this.deleted = deleted;
-        this.role = role;
     }
 
     public int getId() {
@@ -77,12 +69,12 @@ public class EmployeeEntity {
         this.email = email;
     }
 
-    public String getStatus() {
-        return status;
+    public String getPassword() {
+        return password;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public boolean isDeleted() {
@@ -101,19 +93,19 @@ public class EmployeeEntity {
         this.role = role;
     }
 
+    public StatusEntity getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusEntity status) {
+        this.status = status;
+    }
+
     public List<OrderEntity> getOrderEntityList() {
         return orderEntityList;
     }
 
     public void setOrderEntityList(List<OrderEntity> orderEntityList) {
         this.orderEntityList = orderEntityList;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 }
