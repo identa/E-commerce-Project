@@ -7,6 +7,15 @@ public class CustomerSignInSignUpResponse {
 
     private String lastName;
 
+    private String token;
+
+    public CustomerSignInSignUpResponse(int id, String firstName, String lastName, String token) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.token = token;
+    }
+
     public int getId() {
         return id;
     }
@@ -29,5 +38,13 @@ public class CustomerSignInSignUpResponse {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }
