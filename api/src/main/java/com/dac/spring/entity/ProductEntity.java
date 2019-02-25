@@ -42,9 +42,6 @@ public class ProductEntity {
     @OneToMany(mappedBy = "product")
     private List<CampaignEntity> campaignEntityList;
 
-    public ProductEntity() {
-    }
-
     public ProductEntity(String name, String status, boolean deleted, String description, double originalPrice, CategoryEntity category, ShopEntity shop) {
         this.name = name;
         this.status = status;

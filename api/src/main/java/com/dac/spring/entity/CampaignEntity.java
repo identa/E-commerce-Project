@@ -18,9 +18,6 @@ public class CampaignEntity {
     @JoinColumn(name = "productID")
     private ProductEntity product;
 
-    public CampaignEntity() {
-    }
-
     public int getId() {
         return id;
     }

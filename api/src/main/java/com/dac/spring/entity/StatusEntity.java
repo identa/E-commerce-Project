@@ -18,9 +18,6 @@ public class StatusEntity {
     @OneToMany(mappedBy = "status")
     private List<EmployeeEntity> employeeEntityList;
 
-    public StatusEntity() {
-    }
-
     public int getId() {
         return id;
     }

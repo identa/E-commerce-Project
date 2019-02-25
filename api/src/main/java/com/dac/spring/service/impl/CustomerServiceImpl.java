@@ -48,8 +48,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwt = jwtProvider.generateJwtToken(authentication);
-        return jwt;
+        return jwtProvider.generateJwtToken(authentication);
     }
 
     @Override
@@ -88,7 +87,7 @@ public class CustomerServiceImpl implements CustomerService {
             result.setMessage(CustomerSignInConst.EMAIL_NOT_FOUND);
             result.setStatus(ServiceResult.Status.FAILED);
         } else {
-            EmployeeEntity employee = employeeRepository.findByEmail(email);
+            EmployeeEntity employee = employeeRepository.findByEmail(email).orElse(null);
             boolean isPasswordChecked = encoder.matches(password, employee.getPassword());
             if (isPasswordChecked) {
 

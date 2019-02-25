@@ -10,7 +10,6 @@ import java.util.Optional;
 @Repository
 public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Integer> {
     Optional<EmployeeEntity> findByEmailAndPassword(String email, String password);
-    EmployeeEntity findByEmail(String email);
-    List<EmployeeEntity> findByDeletedAndRoleId(boolean deleted, int id);
+    Optional<EmployeeEntity> findByEmail(String email);
     boolean existsByEmail(String email);
 }

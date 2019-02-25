@@ -28,9 +28,6 @@ public class OrderEntity {
     @OneToMany(mappedBy = "order")
     private List<OrderDetailEntity> orderDetailEntityList;
 
-    public OrderEntity() {
-    }
-
     public OrderEntity(String status,
                        double totalPrice,
                        EmployeeEntity employee,

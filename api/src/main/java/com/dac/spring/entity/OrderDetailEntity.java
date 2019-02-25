@@ -22,9 +22,6 @@ public class OrderDetailEntity {
     @JoinColumn(name = "orderID")
     private OrderEntity order;
 
-    public OrderDetailEntity() {
-    }
-
     public OrderDetailEntity(double price, int quantity, ProductEntity product, OrderEntity order) {
         this.price = price;
         this.quantity = quantity;

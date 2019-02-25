@@ -35,9 +35,6 @@ public class EmployeeEntity {
     @OneToMany(mappedBy = "employee")
     private List<OrderEntity> orderEntityList;
 
-    public EmployeeEntity() {
-    }
-
     public EmployeeEntity(String firstName, String lastName, String email, String password, StatusEntity status) {
         this.firstName = firstName;
         this.lastName = lastName;

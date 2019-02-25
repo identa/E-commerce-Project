@@ -30,9 +30,6 @@ public class ShopEntity {
     @OneToMany(mappedBy = "shop")
     private List<ProductEntity> productEntityList;
 
-    public ShopEntity() {
-    }
-
     public ShopEntity(String email, String password, String name, int phone, String address) {
         this.email = email;
         this.password = password;

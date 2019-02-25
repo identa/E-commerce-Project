@@ -8,5 +8,4 @@ import java.util.Optional;
 
 @Repository
 public interface ShopRepository extends JpaRepository<ShopEntity, Integer> {
-    Optional<ShopEntity> findByEmailAndPassword(String email, String password);
 }
