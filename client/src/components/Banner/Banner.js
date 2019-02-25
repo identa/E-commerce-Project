@@ -47,6 +47,7 @@ class Banner extends Component {
             </ul>
           </div>
         </div>
+        
         <div className="slide-show">
           <div id="myCarousel" className="carousel slide" data-ride="carousel">
             
