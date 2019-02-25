@@ -38,7 +38,7 @@ public class UserPrincipal implements UserDetails {
 
     public static UserPrincipal build(EmployeeEntity customer) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(customer.getRole().getName()));
+        authorities.add(new SimpleGrantedAuthority(customer.getRole().getName().name()));
         return new UserPrincipal(
                 customer.getId(),
                 customer.getFirstName(),

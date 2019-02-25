@@ -5,6 +5,7 @@ import com.dac.spring.constant.CustomerSignUpConst;
 import com.dac.spring.entity.EmployeeEntity;
 import com.dac.spring.entity.StatusEntity;
 import com.dac.spring.model.ServiceResult;
+import com.dac.spring.model.enums.RoleName;
 import com.dac.spring.model.resp.CustomerSignInSignUpResponse;
 import com.dac.spring.repository.EmployeeRepository;
 import com.dac.spring.repository.RoleRepository;
@@ -60,16 +61,16 @@ public class CustomerServiceImpl implements CustomerService {
             result.setMessage(CustomerSignUpConst.EMAIL_EXIST);
         } else {
             if (firstName != null && lastName != null && email != null && password != null && activeStatus != null) {
-                EmployeeEntity employeeEntity = new EmployeeEntity(firstName, lastName, email,
+                EmployeeEntity employee = new EmployeeEntity(firstName, lastName, email,
                         encoder.encode(password),
                         activeStatus);
-                employeeEntity.setRole(roleRepository.findById(1));
-                employeeRepository.save(employeeEntity);
+                employee.setRole(roleRepository.findByName(RoleName.ROLE_CUSTOMER));
+                employeeRepository.save(employee);
                 String jwt = authenticationWithJwt(email, password);
-                CustomerSignInSignUpResponse response = new CustomerSignInSignUpResponse(employeeEntity.getId(),
-                        employeeEntity.getFirstName(),
-                        employeeEntity.getLastName(),
-                        employeeEntity.getRole().getName(),
+                CustomerSignInSignUpResponse response = new CustomerSignInSignUpResponse(employee.getId(),
+                        employee.getFirstName(),
+                        employee.getLastName(),
+                        employee.getRole().getName().name(),
                         jwt);
                 result.setMessage(CustomerSignUpConst.SUCCESS);
                 result.setData(response);
@@ -94,7 +95,7 @@ public class CustomerServiceImpl implements CustomerService {
                 CustomerSignInSignUpResponse response = new CustomerSignInSignUpResponse(employee.getId(),
                         employee.getFirstName(),
                         employee.getLastName(),
-                        employee.getRole().getName(),
+                        employee.getRole().getName().name(),
                         jwt);
                 result.setMessage(CustomerSignInConst.SUCCESS);
                 result.setData(response);
