@@ -76,6 +76,10 @@ public class CustomerServiceImpl implements CustomerService {
                 result.setMessage(CustomerSignUpConst.SUCCESS);
                 result.setData(response);
             }
+            else {
+                result.setMessage(CustomerSignUpConst.NULL_DATA);
+                result.setStatus(ServiceResult.Status.FAILED);
+            }
         }
         return result;
     }

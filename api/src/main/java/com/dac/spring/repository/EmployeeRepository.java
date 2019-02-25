@@ -1,6 +1,7 @@
 package com.dac.spring.repository;
 
 import com.dac.spring.entity.EmployeeEntity;
+import com.dac.spring.model.enums.RoleName;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,6 +12,6 @@ import java.util.Optional;
 public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Integer> {
     Optional<EmployeeEntity> findByEmailAndPassword(String email, String password);
     EmployeeEntity findByEmail(String email);
-    List<EmployeeEntity> findByDeletedAndRoleId(boolean deleted, int id);
+    List<EmployeeEntity> findByDeletedAndRoleName(boolean deleted, RoleName roleName);
     boolean existsByEmail(String email);
 }
