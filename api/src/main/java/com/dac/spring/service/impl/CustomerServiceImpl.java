@@ -6,6 +6,7 @@ import com.dac.spring.entity.EmployeeEntity;
 import com.dac.spring.entity.StatusEntity;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
+import com.dac.spring.model.enums.StatusName;
 import com.dac.spring.model.resp.CustomerSignInSignUpResponse;
 import com.dac.spring.repository.EmployeeRepository;
 import com.dac.spring.repository.RoleRepository;
@@ -54,7 +55,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult signUpCustomer(String email, String password, String firstName, String lastName) {
         ServiceResult result = new ServiceResult();
-        StatusEntity activeStatus = statusRepository.findById(1).orElse(null);
+        StatusEntity activeStatus = statusRepository.findByName(StatusName.ACTIVE);
         boolean isEmailExisted = employeeRepository.existsByEmail(email);
         if (isEmailExisted) {
             result.setStatus(ServiceResult.Status.FAILED);

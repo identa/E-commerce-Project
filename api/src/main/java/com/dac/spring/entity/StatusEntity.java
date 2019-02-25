@@ -1,5 +1,7 @@
 package com.dac.spring.entity;
 
+import com.dac.spring.model.enums.StatusName;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -11,8 +13,8 @@ public class StatusEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String name;
-
+    @Enumerated(EnumType.STRING)
+    private StatusName name;
     @OneToMany(mappedBy = "status")
     private List<EmployeeEntity> employeeEntityList;
 
@@ -27,11 +29,11 @@ public class StatusEntity {
         this.id = id;
     }
 
-    public String getName() {
+    public StatusName getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(StatusName name) {
         this.name = name;
     }
 
