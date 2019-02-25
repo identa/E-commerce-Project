@@ -7,12 +7,15 @@ public class CustomerSignInSignUpResponse {
 
     private String lastName;
 
+    private String role;
+
     private String token;
 
-    public CustomerSignInSignUpResponse(int id, String firstName, String lastName, String token) {
+    public CustomerSignInSignUpResponse(int id, String firstName, String lastName, String role, String token) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.role = role;
         this.token = token;
     }
 
@@ -38,6 +41,14 @@ public class CustomerSignInSignUpResponse {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public String getToken() {

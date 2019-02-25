@@ -40,7 +40,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     PasswordEncoder encoder;
 
-    private String authenWithJwt(String email, String password) {
+    private String authenticationWithJwt(String email, String password) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, password));
 
@@ -65,10 +65,11 @@ public class CustomerServiceImpl implements CustomerService {
                         activeStatus);
                 employeeEntity.setRole(roleRepository.findById(1));
                 employeeRepository.save(employeeEntity);
-                String jwt = authenWithJwt(email, password);
+                String jwt = authenticationWithJwt(email, password);
                 CustomerSignInSignUpResponse response = new CustomerSignInSignUpResponse(employeeEntity.getId(),
                         employeeEntity.getFirstName(),
                         employeeEntity.getLastName(),
+                        employeeEntity.getRole().getName(),
                         jwt);
                 result.setMessage(CustomerSignUpConst.SUCCESS);
                 result.setData(response);
@@ -89,10 +90,11 @@ public class CustomerServiceImpl implements CustomerService {
             boolean isPasswordChecked = encoder.matches(password, employee.getPassword());
             if (isPasswordChecked) {
 
-                String jwt = authenWithJwt(email, password);
+                String jwt = authenticationWithJwt(email, password);
                 CustomerSignInSignUpResponse response = new CustomerSignInSignUpResponse(employee.getId(),
                         employee.getFirstName(),
                         employee.getLastName(),
+                        employee.getRole().getName(),
                         jwt);
                 result.setMessage(CustomerSignInConst.SUCCESS);
                 result.setData(response);
