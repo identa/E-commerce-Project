@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import {Button} from 'react-bootstrap';
 class UserLink extends Component {
     constructor(props) {
         super(props);
@@ -9,25 +9,30 @@ class UserLink extends Component {
         }
     }
     
+    logout = () =>{
+        if(localStorage.getItem("token")){
+            localStorage.removeItem("token");
+            localStorage.removeItem("name");
+            this.props.changeAuthenticated();
+        }
+    }
     render() {
         return (
             <div className="links-bar">
-                <a href="#" type="button" className="menu-action-link">
-                    Hello {this.state.name} 
-                </a>
-                    <div className="menu-action">
-                        <ul>
-                            <li>
-                                <a href="#">User Information</a>
-                            </li>
-                            <li>
-                                <a href="#">Management Campaign</a>
-                            </li>
-                            <li>
-                                <a href="#">Logout</a>
-                            </li>
-                        </ul>
-                    </div>
+                <Button variant="link" className="menu-action-link">Hello {this.state.name}</Button>
+                <div className="menu-action">
+                    <ul>
+                        <li>
+                            <a href="#">User Information</a>
+                        </li>
+                        <li>
+                            <a href="#">Management Campaign</a>
+                        </li>
+                        <li>
+                            <a href="#" onClick={this.logout}>Logout</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         );
     }

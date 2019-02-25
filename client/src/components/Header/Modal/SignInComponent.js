@@ -110,6 +110,7 @@ class SignInComponent extends Component {
                     localStorage.setItem("name", data.data.firstName +  " " + data.data.lastName);   
                     this.setState({isModalShow : false});      
                     this.props.onHideModal(this.state.isModalShow);
+                    this.props.changeAuthenticated();
                 }
                 else if (data.status === 'FAILED'){
                     this.setState(prevState =>({

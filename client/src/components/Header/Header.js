@@ -1,28 +1,47 @@
 import React, { Component } from "react";
-import AuthenticatedBar from "./AuthenticatedBar";
 import SearchBar from "./SearchBar";
 import ShoppingCart from "./ShoppingCart";
 import LogoBar from "./LogoBar";
 import MobileCategoryList from "./MobileCategoryList";
+import UserLink from "./UserLink";
+import ModalComponent from "./Modal/ModalComponent";
 
 class Header extends Component {
+
+    constructor(props) {
+        super(props);
+        
+        this.state = {
+            isAuthenticated : false
+        }
+    }
+    
+    changeAuthenticated = () =>{
+        this.setState({isAuthenticated : !this.state.isAuthenticated});   
+    }
       
     render() {
+
+        const authenticate = localStorage.getItem("name"); 
         return (
             <div>
                 <div className="header">                    
 
-                    <AuthenticatedBar/>
+                <>
+                    {
+                        authenticate ? <UserLink changeAuthenticated={this.changeAuthenticated}/> : <ModalComponent changeAuthenticated={this.changeAuthenticated}/>
+                    }
+                </>
                     
-                    <div className="logo-bar">
-                        <div className="logo-bar-content">
-                            <LogoBar/>
+                <div className="logo-bar">
+                    <div className="logo-bar-content">
+                        <LogoBar/>
 
-                            <SearchBar/>
+                        <SearchBar/>
 
-                            <ShoppingCart/>
-                        </div>
+                        <ShoppingCart/>
                     </div>
+                </div>
 
                   <MobileCategoryList/>
                 </div>

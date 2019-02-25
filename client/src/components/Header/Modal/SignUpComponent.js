@@ -25,11 +25,6 @@ class SignUpComponent extends Component {
         }
     }
     
-    onHideModal = ()=>{
-        this.setState({isModalShow : false});
-        this.props.onHideModal(this.state.isModalShow);
-    }
-
     onChange = (event) =>{
         this.setState({ [event.target.name]: event.target.value });
     }
@@ -172,6 +167,7 @@ class SignUpComponent extends Component {
                     localStorage.setItem("name", data.data.firstName +  " " + data.data.lastName);   
                     this.setState({isModalShow : false});      
                     this.props.onHideModal(this.state.isModalShow);
+                    this.props.changeAuthenticated();
                 }
                 else if (data.status === 'FAILED') {
                     this.setState(prevState =>({

@@ -527,13 +527,11 @@ a:hover{
     z-index: 100;
     text-align: center;
     position: fixed;
-    right: 50px;
-    top: 30px;
+    right: 100px;
+    top: 35px;
     background: #003e52;
     border-radius: 5px;
     padding: 5px;
-    width:  200px;
-    height: 100px;
 }
 .menu-action ul {
     margin: 0;
