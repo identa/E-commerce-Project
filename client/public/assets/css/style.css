@@ -565,3 +565,17 @@ a:hover{
 .btn-link:hover{
     text-decoration: underline;
 }
+/*-----------------------------------user management--------------------------*/
+.main{
+    padding: 15px 0;
+    background: #f5f5f5;
+}
+.profile-content{
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    justify-content: center;
+}
+.form-group{
+    margin-bottom: 1rem;
+}

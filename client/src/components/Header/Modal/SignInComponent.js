@@ -111,6 +111,7 @@ class SignInComponent extends Component {
                     this.setState({isModalShow : false});      
                     this.props.onHideModal(this.state.isModalShow);
                     this.props.changeAuthenticated();
+                    this.props.setRole(data.data.role);
                 }
                 else if (data.status === 'FAILED'){
                     this.setState(prevState =>({

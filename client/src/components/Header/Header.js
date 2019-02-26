@@ -12,7 +12,8 @@ class Header extends Component {
         super(props);
         
         this.state = {
-            isAuthenticated : false
+            isAuthenticated : false,
+            roleName : ''
         }
     }
     
@@ -20,6 +21,14 @@ class Header extends Component {
         this.setState({isAuthenticated : !this.state.isAuthenticated});   
     }
       
+    setRole = (roleName) =>{
+        this.setState({roleName : roleName});
+    }
+
+    getRole = () =>{
+        return this.state.roleName;
+    }
+    
     render() {
 
         const authenticate = sessionStorage.getItem("name"); 
@@ -30,7 +39,11 @@ class Header extends Component {
 
                 <>
                     {
-                        authenticate ? <UserLink changeAuthenticated={this.changeAuthenticated}/> : <ModalComponent changeAuthenticated={this.changeAuthenticated}/>
+                        authenticate ? <UserLink        changeAuthenticated={this.changeAuthenticated}
+                                                        getRole={this.getRole}/> 
+                                     : <ModalComponent 
+                                                        changeAuthenticated={this.changeAuthenticated}
+                                                        setRole={this.setRole}/>
                     }
                 </>
                     
