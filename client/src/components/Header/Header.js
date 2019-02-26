@@ -22,7 +22,8 @@ class Header extends Component {
       
     render() {
 
-        const authenticate = localStorage.getItem("name"); 
+        const authenticate = sessionStorage.getItem("name"); 
+        
         return (
             <div>
                 <div className="header">                    

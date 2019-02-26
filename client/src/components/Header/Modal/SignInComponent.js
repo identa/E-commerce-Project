@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import REGEX_EMAIL from './../../Utils/Constant';
 import passwordLength from './../../Utils/Constant';
 
+const REGEX_EMAIL = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 class SignInComponent extends Component {
 
     constructor(props) {
@@ -90,7 +90,6 @@ class SignInComponent extends Component {
 
     formSubmit = (event) =>{
         event.preventDefault();
-        
         if(this.validateEmail() && this.validatePassword()){
             const data = {
                 email : this.state.email,
@@ -98,17 +97,17 @@ class SignInComponent extends Component {
             };
 
             fetch("http://192.168.1.53:8080/api/customer/signin", {
-            method: "POST",
-            body: JSON.stringify(data),
-            headers: {
-                "Content-Type": "application/json"
-            }
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {
+                    "Content-Type": "application/json"
+                }
             })
             .then(res => res.json())
             .then(data =>{
                 if(data.status === 'SUCCESS'){  
                     localStorage.setItem("token", "Bearer "+ data.data.token);   
-                    localStorage.setItem("name", data.data.firstName +  " " + data.data.lastName);   
+                    sessionStorage.setItem("name", data.data.firstName +  " " + data.data.lastName);   
                     this.setState({isModalShow : false});      
                     this.props.onHideModal(this.state.isModalShow);
                     this.props.changeAuthenticated();

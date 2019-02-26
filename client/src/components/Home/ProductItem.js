@@ -6,7 +6,7 @@ class ProductItem extends Component {
             <div className="col-md-3 col-sm-3 col-xs-12 product-item-box">
                 <div className="product-item">
                     <div className="product-image">
-                        <a href="#">
+                        <a href="javascript:void(0)">
                         <img
                             src="./assets/images/products/product.jpg"
                             className="img-responsive"

@@ -5,14 +5,14 @@ class UserLink extends Component {
         super(props);
         
         this.state = {
-            name : localStorage.getItem("name")
+            name : sessionStorage.getItem("name")
         }
     }
     
     logout = () =>{
         if(localStorage.getItem("token")){
             localStorage.removeItem("token");
-            localStorage.removeItem("name");
+            sessionStorage.removeItem("name");
             this.props.changeAuthenticated();
         }
     }
@@ -23,13 +23,13 @@ class UserLink extends Component {
                 <div className="menu-action">
                     <ul>
                         <li>
-                            <a href="#">User Information</a>
+                            <a href="javascript:void(0)">User Information</a>
                         </li>
                         <li>
-                            <a href="#">Management Campaign</a>
+                            <a href="javascript:void(0)">Management Campaign</a>
                         </li>
                         <li>
-                            <a href="#" onClick={this.logout}>Logout</a>
+                            <a href="javascript:void(0)" onClick={this.logout}>Logout</a>
                         </li>
                     </ul>
                 </div>

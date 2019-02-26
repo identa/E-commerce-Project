@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import REGEX_EMAIL from './../../Utils/Constant';
 import passwordLength from './../../Utils/Constant';
 
+const REGEX_EMAIL = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 class SignUpComponent extends Component {
 
     constructor(props) {
@@ -163,7 +163,7 @@ class SignUpComponent extends Component {
             .then(data =>{
                 if(data.status === 'SUCCESS'){
                     localStorage.setItem("token", "Bearer "+ data.data.token);   
-                    localStorage.setItem("name", data.data.firstName +  " " + data.data.lastName);   
+                    sessionStorage.setItem("name", data.data.firstName +  " " + data.data.lastName);   
                     this.setState({isModalShow : false});      
                     this.props.onHideModal(this.state.isModalShow);
                     this.props.changeAuthenticated();
@@ -185,7 +185,7 @@ class SignUpComponent extends Component {
             })));
         }
     }
-    
+
     render() {
         return (
             <>
