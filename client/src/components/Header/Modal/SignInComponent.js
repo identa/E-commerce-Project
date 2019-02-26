@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import REGEX_EMAIL from './../../Utils/Constant';
+import passwordLength from './../../Utils/Constant';
 
-const REGEX_EMAIL = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 class SignInComponent extends Component {
 
     constructor(props) {
@@ -67,7 +68,7 @@ class SignInComponent extends Component {
             }));
             return false;
         }
-        else if(password.length < 6){
+        else if(password.length < passwordLength){
             this.setState(prevState =>({
                 error :{
                     ...prevState.error,
