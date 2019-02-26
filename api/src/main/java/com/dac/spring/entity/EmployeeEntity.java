@@ -46,6 +46,15 @@ public class EmployeeEntity {
         this.status = status;
     }
 
+    public EmployeeEntity(String firstName, String lastName, String email, String password, StatusEntity status, RoleEntity role) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.status = status;
+        this.role = role;
+    }
+
     public int getId() {
         return id;
     }

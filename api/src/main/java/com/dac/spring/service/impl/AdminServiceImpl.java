@@ -2,10 +2,12 @@ package com.dac.spring.service.impl;
 
 import com.dac.spring.constant.CustomerSignUpConst;
 import com.dac.spring.entity.EmployeeEntity;
+import com.dac.spring.entity.RoleEntity;
 import com.dac.spring.entity.StatusEntity;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
 import com.dac.spring.model.enums.StatusName;
+import com.dac.spring.model.resp.AdminCreateUserResponse;
 import com.dac.spring.model.resp.AdminGetAllCustomerResponse;
 import com.dac.spring.model.resp.AdminGetCustomerByIdResponse;
 import com.dac.spring.model.resp.CustomerSignInSignUpResponse;
@@ -121,14 +123,13 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ServiceResult updateCustomer(int id, String firstName, String lastName, String email, String password,
+    public ServiceResult updateCustomer(int id, String firstName, String lastName, String password,
                                         StatusName statusName, RoleName roleName) {
         ServiceResult result = new ServiceResult();
         EmployeeEntity employee = employeeRepository.findById(id).orElse(null);
         if (employee != null){
             employee.setFirstName(firstName);
             employee.setLastName(lastName);
-            employee.setEmail(email);
             employee.setPassword(encoder.encode(password));
             employee.setStatus(statusRepository.findByName(statusName));
             employee.setRole(roleRepository.findByName(roleName));
@@ -161,7 +162,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ServiceResult signUpAdmin(String firstName, String lastName, String email, String password) {
+    public ServiceResult createEmployee(String firstName, String lastName, String email, String password, RoleName roleName) {
         ServiceResult result = new ServiceResult();
         StatusEntity activeStatus = statusRepository.findByName(StatusName.ACTIVE);
         boolean isEmailExisted = employeeRepository.existsByEmail(email);
@@ -172,15 +173,16 @@ public class AdminServiceImpl implements AdminService {
             if (firstName != null && lastName != null && email != null && password != null && activeStatus != null) {
                 EmployeeEntity employee = new EmployeeEntity(firstName, lastName, email,
                         encoder.encode(password),
-                        activeStatus);
-                employee.setRole(roleRepository.findByName(RoleName.ROLE_ADMIN));
+                        activeStatus,
+                        roleRepository.findByName(roleName));
                 employeeRepository.save(employee);
-                String jwt = authenticationWithJwt(email, password);
-                CustomerSignInSignUpResponse response = new CustomerSignInSignUpResponse(employee.getId(),
+                AdminCreateUserResponse response = new AdminCreateUserResponse(employee.getId(),
                         employee.getFirstName(),
                         employee.getLastName(),
-                        employee.getRole().getName().name(),
-                        jwt);
+                        employee.getEmail(),
+                        employee.getStatus().getName().name(),
+                        employee.getRole().getName().name());
+
                 result.setMessage(CustomerSignUpConst.SUCCESS);
                 result.setData(response);
             }
