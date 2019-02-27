@@ -11,4 +11,6 @@ public interface AdminService {
     ServiceResult deleteUserById(int id);
     ServiceResult createEmployee(String firstName, String lastName, String email, String password, StatusName statusName, RoleName roleName);
     ServiceResult signupAdmin(String firstName, String lastName, String email, String password);
+    ServiceResult paginateUser(int page, int size);
+
 }

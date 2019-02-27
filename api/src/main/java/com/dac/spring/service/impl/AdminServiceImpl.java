@@ -12,6 +12,10 @@ import com.dac.spring.repository.*;
 import com.dac.spring.service.AdminService;
 import com.dac.spring.utils.jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -48,6 +52,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     StatusRepository statusRepository;
+
+    @Autowired
+    UserPaginationRepository userPaginationRepository;
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -231,6 +238,39 @@ public class AdminServiceImpl implements AdminService {
                 result.setMessage(CustomerSignUpConst.NULL_DATA);
                 result.setStatus(ServiceResult.Status.FAILED);
             }
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceResult paginateUser(int page, int size) {
+        ServiceResult result = new ServiceResult();
+        Pageable info = PageRequest.of(page, size, Sort.by("id").ascending());
+        Page<EmployeeEntity> employeeList = userPaginationRepository.findAll(info);
+        boolean isUserListEmpty = employeeList.isEmpty();
+        if (!isUserListEmpty) {
+            if (page <= employeeList.getTotalPages()) {
+                    int totalPages = employeeList.getTotalPages();
+                    List<UserResponse> responses = new ArrayList<>();
+                    for (EmployeeEntity entity : employeeList) {
+                        UserResponse userResponse = new UserResponse(entity.getId(),
+                                entity.getFirstName(),
+                                entity.getLastName(),
+                                entity.getEmail(),
+                                entity.getStatus().getName().name(),
+                                entity.getRole().getName().name());
+                        responses.add(userResponse);
+                    }
+                    AdminPaginateUserResponse response = new AdminPaginateUserResponse(totalPages, responses);
+                    result.setMessage("Users are returned successfully");
+                    result.setData(response);
+            } else {
+                result.setStatus(ServiceResult.Status.FAILED);
+                result.setMessage("No user in this page");
+            }
+        } else {
+            result.setMessage("User list is empty");
+            result.setStatus(ServiceResult.Status.FAILED);
         }
         return result;
     }

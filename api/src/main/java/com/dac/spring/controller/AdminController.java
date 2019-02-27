@@ -5,6 +5,7 @@ import com.dac.spring.model.enums.RoleName;
 import com.dac.spring.model.enums.StatusName;
 import com.dac.spring.model.req.AdminCreateUserRequest;
 import com.dac.spring.model.req.AdminGetCustomerByIdRequest;
+import com.dac.spring.model.req.AdminPaginateUserRequest;
 import com.dac.spring.model.req.AdminUpdateCustomerRequest;
 import com.dac.spring.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -56,5 +59,11 @@ public class AdminController {
     @PutMapping("/delete")
     public ResponseEntity<ServiceResult> deleteCustomer(@RequestBody AdminGetCustomerByIdRequest request) {
         return new ResponseEntity<>(adminService.deleteUserById(request.getId()), HttpStatus.OK);
+    }
+
+    @GetMapping("/getByPageAndSize")
+    public ResponseEntity<ServiceResult> paginateUser(@Valid @RequestBody AdminPaginateUserRequest request) {
+        return new ResponseEntity<>(adminService.paginateUser(request.getPage(),
+                request.getSize()), HttpStatus.OK);
     }
 }
