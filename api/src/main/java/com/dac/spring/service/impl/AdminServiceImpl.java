@@ -245,11 +245,10 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public ServiceResult paginateUser(int page, int size) {
         ServiceResult result = new ServiceResult();
-        Pageable info = PageRequest.of(page, size, Sort.by("id").ascending());
+        Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
         Page<EmployeeEntity> employeeList = userPaginationRepository.findAll(info);
         boolean isUserListEmpty = employeeList.isEmpty();
         if (!isUserListEmpty) {
-            if (page <= employeeList.getTotalPages()) {
                     int totalPages = employeeList.getTotalPages();
                     List<UserResponse> responses = new ArrayList<>();
                     for (EmployeeEntity entity : employeeList) {
@@ -264,10 +263,6 @@ public class AdminServiceImpl implements AdminService {
                     AdminPaginateUserResponse response = new AdminPaginateUserResponse(totalPages, responses);
                     result.setMessage("Users are returned successfully");
                     result.setData(response);
-            } else {
-                result.setStatus(ServiceResult.Status.FAILED);
-                result.setMessage("No user in this page");
-            }
         } else {
             result.setMessage("User list is empty");
             result.setStatus(ServiceResult.Status.FAILED);
