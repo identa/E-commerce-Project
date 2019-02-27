@@ -92,7 +92,7 @@ public class CustomerServiceImpl implements CustomerService {
             result.setMessage(CustomerSignInConst.EMAIL_NOT_FOUND);
             result.setStatus(ServiceResult.Status.FAILED);
         } else {
-            EmployeeEntity employee = employeeRepository.findByEmail(email);
+            EmployeeEntity employee = employeeRepository.findByEmail(email).orElse(null);
             boolean isPasswordChecked = encoder.matches(password, employee.getPassword());
             if (isPasswordChecked) {
 

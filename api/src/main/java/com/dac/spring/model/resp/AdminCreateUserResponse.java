@@ -1,18 +1,26 @@
-package com.dac.spring.model.req;
+package com.dac.spring.model.resp;
 
-public class AdminUpdateCustomerRequest {
+public class AdminCreateUserResponse {
     private int id;
 
     private String firstName;
 
     private String lastName;
 
-    private String password;
+    private String email;
 
     private String status;
 
     private String role;
 
+    public AdminCreateUserResponse(int id, String firstName, String lastName, String email, String status, String role) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.status = status;
+        this.role = role;
+    }
 
     public int getId() {
         return id;
@@ -38,12 +46,12 @@ public class AdminUpdateCustomerRequest {
         this.lastName = lastName;
     }
 
-    public String getPassword() {
-        return password;
+    public String getEmail() {
+        return email;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getStatus() {
