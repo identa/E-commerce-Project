@@ -9,6 +9,8 @@ public class AdminCreateUserRequest {
 
     private String password;
 
+    private String status;
+
     private String role;
 
     public String getFirstName() {
@@ -41,6 +43,14 @@ public class AdminCreateUserRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getRole() {

@@ -32,6 +32,7 @@ public class AdminController {
                 request.getLastName(),
                 request.getEmail(),
                 request.getPassword(),
+                StatusName.valueOf(request.getStatus()),
                 RoleName.valueOf(request.getRole())),
                 HttpStatus.OK);
     }

@@ -161,18 +161,17 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ServiceResult createEmployee(String firstName, String lastName, String email, String password, RoleName roleName) {
+    public ServiceResult createEmployee(String firstName, String lastName, String email, String password, StatusName statusName, RoleName roleName) {
         ServiceResult result = new ServiceResult();
-        StatusEntity activeStatus = statusRepository.findByName(StatusName.ACTIVE);
         boolean isEmailExisted = employeeRepository.existsByEmail(email);
         if (isEmailExisted) {
             result.setStatus(ServiceResult.Status.FAILED);
             result.setMessage(CustomerSignUpConst.EMAIL_EXIST);
         } else {
-            if (firstName != null && lastName != null && email != null && password != null && activeStatus != null) {
+            if (firstName != null && lastName != null && email != null && password != null) {
                 EmployeeEntity employee = new EmployeeEntity(firstName, lastName, email,
                         encoder.encode(password),
-                        activeStatus,
+                        statusRepository.findByName(statusName),
                         roleRepository.findByName(roleName));
                 employeeRepository.save(employee);
                 AdminCreateUserResponse response = new AdminCreateUserResponse(employee.getId(),

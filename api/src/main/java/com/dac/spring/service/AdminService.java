@@ -9,6 +9,6 @@ public interface AdminService {
     ServiceResult getCustomerById(int id);
     ServiceResult updateCustomer(int id, String firstName, String lastName, String password, StatusName statusName, RoleName roleName);
     ServiceResult deleteCustomerById(int id);
-    ServiceResult createEmployee(String firstName, String lastName, String email, String password, RoleName roleName);
+    ServiceResult createEmployee(String firstName, String lastName, String email, String password, StatusName statusName, RoleName roleName);
     ServiceResult signupAdmin(String firstName, String lastName, String email, String password);
 }
