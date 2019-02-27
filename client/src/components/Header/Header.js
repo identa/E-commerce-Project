@@ -34,7 +34,7 @@ class Header extends Component {
         const authenticate = sessionStorage.getItem("name"); 
         
         return (
-            <div>
+            <>
                 <div className="header">                    
 
                 <>
@@ -59,7 +59,7 @@ class Header extends Component {
 
                   <MobileCategoryList/>
                 </div>
-            </div>
+            </>
         );
     }
 }

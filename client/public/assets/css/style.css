@@ -126,8 +126,7 @@ a:hover{
 }
 /*---------------------------product content-----------------------------*/
 .product-container{
-    margin-bottom: 15px;
-    padding: 20px 5px 0 5px;
+    padding: 20px 5px 15px 5px;
     background-color: #f5f5f5;
 }
 .product-container h2{
@@ -209,7 +208,7 @@ a:hover{
     width: 25%;
     height: 32px;
     display: flex;
-    margin: 0 0 0 5px;
+    padding: 0 0 0 5px;
 }
 .male-gender,
 .female-gender{
@@ -255,8 +254,8 @@ a:hover{
     width: 50%;
 }
 .img-icon{
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 100%;
 }
 .download-text{
     margin-left: 5px;
@@ -266,7 +265,7 @@ a:hover{
 }
 .icon-donwload-apple,
 .icon-donwload-android{
-    width: 25%;
+    width: 20%;
 }
 .icon-donwload-apple img ,
 .icon-donwload-android img{
@@ -578,4 +577,27 @@ a:hover{
 }
 .form-group{
     margin-bottom: 1rem;
+}
+.btn-action {
+    width: 120px;
+    height: 40px;
+    border: none;
+    border-radius: 0;
+    margin-right: 5px;
+}
+.btn-create{
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+.btn i {
+    margin-right: 5px;
+}
+.table td {
+    vertical-align: middle;
+}
+.form-search input[type="text"]{
+    width: 250px;
+    padding: 5px 10px;
+    margin-left: 5px;
 }

@@ -31,7 +31,7 @@ class UserLink extends Component {
                         </li>                    
                         {                            
                             role === 'ROLE_ADMIN' || role === 'ROLE_SHOP' ? (
-                                <li><a href="javascript:void(0)">Management Campaign</a></li>
+                                <li><Link to="/customer/dashboard">Management User</Link></li>
                             ) : null
                         }
                         <li>

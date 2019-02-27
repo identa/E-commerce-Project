@@ -32,14 +32,6 @@ class Footer extends Component {
                 <i className="fa fa-angle-right" />
                 <a href="#">Press &amp; Media</a>
               </li>
-              <li>
-                <i className="fa fa-angle-right" />
-                <a href="#">Operation Regulation</a>
-              </li>
-              <li>
-                <i className="fa fa-angle-right" />
-                <a href="#">Redmart</a>
-              </li>
             </ul>
           </div>
           <div className="col-md-6 col-sm-6 col-xs-12 footer-subcribe">

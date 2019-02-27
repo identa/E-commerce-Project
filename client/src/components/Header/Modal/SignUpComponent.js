@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import passwordLength from './../../Utils/Constant';
 
 const REGEX_EMAIL = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 class SignUpComponent extends Component {
@@ -76,7 +75,7 @@ class SignUpComponent extends Component {
             }));
             return false;
         }
-        else if(password.length < passwordLength){
+        else if(password.length < 6){
             this.setState(prevState =>({
                 error :{
                     ...prevState.error,
@@ -147,7 +146,7 @@ class SignUpComponent extends Component {
 
         if(this.validateFirstName() && this.validateLastName() && this.validateEmail() && this.validatePassword()){
             const { firstName, lastName, email, password } = this.state;
-            fetch("http://192.168.1.53:8080/api/customer/signup", {
+            fetch("https://dac-java.herokuapp.com/api/customer/signup", {
             method: "POST",
             body: JSON.stringify({
                 firstName: firstName,
