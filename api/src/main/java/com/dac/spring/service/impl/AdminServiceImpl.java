@@ -1,15 +1,13 @@
 package com.dac.spring.service.impl;
 
+import com.dac.spring.constant.AdminUserCreateConst;
 import com.dac.spring.constant.CustomerSignUpConst;
 import com.dac.spring.entity.EmployeeEntity;
 import com.dac.spring.entity.StatusEntity;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
 import com.dac.spring.model.enums.StatusName;
-import com.dac.spring.model.resp.AdminCreateUserResponse;
-import com.dac.spring.model.resp.AdminGetAllCustomerResponse;
-import com.dac.spring.model.resp.AdminGetCustomerByIdResponse;
-import com.dac.spring.model.resp.CustomerSignInSignUpResponse;
+import com.dac.spring.model.resp.*;
 import com.dac.spring.repository.*;
 import com.dac.spring.service.AdminService;
 import com.dac.spring.utils.jwt.JwtProvider;
@@ -106,15 +104,14 @@ public class AdminServiceImpl implements AdminService {
     public ServiceResult getCustomerById(int id) {
         ServiceResult result = new ServiceResult();
         EmployeeEntity employee = employeeRepository.findById(id).orElse(null);
-        if (employee != null){
+        if (employee != null) {
             AdminGetCustomerByIdResponse response = new AdminGetCustomerByIdResponse(employee.getFirstName(),
                     employee.getLastName(),
                     employee.getEmail(),
                     employee.getStatus().getName().name());
             result.setData(response);
             result.setMessage("ádas");
-        }
-        else {
+        } else {
             result.setStatus(ServiceResult.Status.FAILED);
             result.setMessage("ádasád");
         }
@@ -122,11 +119,11 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ServiceResult updateCustomer(int id, String firstName, String lastName, String password,
-                                        StatusName statusName, RoleName roleName) {
+    public ServiceResult updateUser(int id, String firstName, String lastName, String password,
+                                    StatusName statusName, RoleName roleName) {
         ServiceResult result = new ServiceResult();
         EmployeeEntity employee = employeeRepository.findById(id).orElse(null);
-        if (employee != null){
+        if (employee != null) {
             employee.setFirstName(firstName);
             employee.setLastName(lastName);
             employee.setPassword(encoder.encode(password));
@@ -134,10 +131,15 @@ public class AdminServiceImpl implements AdminService {
             employee.setRole(roleRepository.findByName(roleName));
 
             employeeRepository.save(employee);
-
+            AdminUpdateUserResponse response = new AdminUpdateUserResponse(employee.getId(),
+                    employee.getFirstName(),
+                    employee.getLastName(),
+                    employee.getEmail(),
+                    employee.getStatus().getName().name(),
+                    employee.getRole().getName().name());
             result.setMessage("Update customer successfully");
-        }
-        else {
+            result.setData(response);
+        } else {
             result.setMessage("Customer not found");
             result.setStatus(ServiceResult.Status.FAILED);
         }
@@ -145,15 +147,14 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ServiceResult deleteCustomerById(int id) {
+    public ServiceResult deleteUserById(int id) {
         ServiceResult result = new ServiceResult();
         EmployeeEntity employee = employeeRepository.findById(id).orElse(null);
-        if (employee != null){
+        if (employee != null) {
             employee.setDeleted(true);
             employeeRepository.save(employee);
             result.setMessage("Delete customer successfully");
-        }
-        else {
+        } else {
             result.setMessage("Customer not found");
             result.setStatus(ServiceResult.Status.FAILED);
         }
@@ -163,32 +164,42 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public ServiceResult createEmployee(String firstName, String lastName, String email, String password, StatusName statusName, RoleName roleName) {
         ServiceResult result = new ServiceResult();
-        boolean isEmailExisted = employeeRepository.existsByEmail(email);
-        if (isEmailExisted) {
-            result.setStatus(ServiceResult.Status.FAILED);
-            result.setMessage(CustomerSignUpConst.EMAIL_EXIST);
-        } else {
-            if (firstName != null && lastName != null && email != null && password != null) {
-                EmployeeEntity employee = new EmployeeEntity(firstName, lastName, email,
-                        encoder.encode(password),
-                        statusRepository.findByName(statusName),
-                        roleRepository.findByName(roleName));
-                employeeRepository.save(employee);
-                AdminCreateUserResponse response = new AdminCreateUserResponse(employee.getId(),
-                        employee.getFirstName(),
-                        employee.getLastName(),
-                        employee.getEmail(),
-                        employee.getStatus().getName().name(),
-                        employee.getRole().getName().name());
 
-                result.setMessage(CustomerSignUpConst.SUCCESS);
-                result.setData(response);
-            }
-            else {
-                result.setMessage(CustomerSignUpConst.NULL_DATA);
+        if (firstName != null && lastName != null && email != null && password != null &&
+                statusName != null && roleName != null) {
+            boolean isStatusExist = statusRepository.existsByName(statusName);
+            boolean isRoleExist = roleRepository.existsByName(roleName);
+            if (isStatusExist && isRoleExist) {
+                boolean isEmailExisted = employeeRepository.existsByEmail(email);
+                if (!isEmailExisted) {
+                    EmployeeEntity employee = new EmployeeEntity(firstName, lastName, email,
+                            encoder.encode(password),
+                            statusRepository.findByName(statusName),
+                            roleRepository.findByName(roleName));
+                    employeeRepository.save(employee);
+                    AdminCreateUserResponse response = new AdminCreateUserResponse(employee.getId(),
+                            employee.getFirstName(),
+                            employee.getLastName(),
+                            employee.getEmail(),
+                            employee.getStatus().getName().name(),
+                            employee.getRole().getName().name());
+
+                    result.setMessage(AdminUserCreateConst.SUCCESS);
+                    result.setData(response);
+                } else {
+                    result.setStatus(ServiceResult.Status.FAILED);
+                    result.setMessage(CustomerSignUpConst.EMAIL_EXIST);
+                }
+
+            } else {
+                result.setMessage(AdminUserCreateConst.STATUS_ROLE_NOT_EXIST);
                 result.setStatus(ServiceResult.Status.FAILED);
             }
+        } else {
+            result.setMessage(AdminUserCreateConst.NULL_DATA);
+            result.setStatus(ServiceResult.Status.FAILED);
         }
+
         return result;
     }
 
@@ -216,8 +227,7 @@ public class AdminServiceImpl implements AdminService {
 
                 result.setMessage(CustomerSignUpConst.SUCCESS);
                 result.setData(response);
-            }
-            else {
+            } else {
                 result.setMessage(CustomerSignUpConst.NULL_DATA);
                 result.setStatus(ServiceResult.Status.FAILED);
             }

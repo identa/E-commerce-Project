@@ -44,7 +44,7 @@ public class AdminController {
 
     @PutMapping("/update")
     public ResponseEntity<ServiceResult> updateCustomer(@RequestBody AdminUpdateCustomerRequest request) {
-        return new ResponseEntity<>(adminService.updateCustomer(request.getId(),
+        return new ResponseEntity<>(adminService.updateUser(request.getId(),
                 request.getFirstName(),
                 request.getLastName(),
                 request.getPassword(),
@@ -55,6 +55,6 @@ public class AdminController {
 
     @PutMapping("/delete")
     public ResponseEntity<ServiceResult> deleteCustomer(@RequestBody AdminGetCustomerByIdRequest request) {
-        return new ResponseEntity<>(adminService.deleteCustomerById(request.getId()), HttpStatus.OK);
+        return new ResponseEntity<>(adminService.deleteUserById(request.getId()), HttpStatus.OK);
     }
 }
