@@ -46,14 +46,6 @@ public class AdminCreateUserResponse {
         this.lastName = lastName;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getStatus() {
         return status;
     }
@@ -68,5 +60,13 @@ public class AdminCreateUserResponse {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
