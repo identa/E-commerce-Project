@@ -261,7 +261,7 @@ public class AdminServiceImpl implements AdminService {
     public ServiceResult paginateUser(int page, int size) {
         ServiceResult result = new ServiceResult();
         Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
-        Page<EmployeeEntity> employeeList = userPaginationRepository.findAllByDeletedAndRoleNameAndRoleName(info, false, RoleName.ROLE_CUSTOMER, RoleName.ROLE_SHOP);
+        Page<EmployeeEntity> employeeList = userPaginationRepository.findAllByDeletedAndRoleNameOrRoleName(info, false, RoleName.ROLE_CUSTOMER, RoleName.ROLE_SHOP);
         boolean isUserListEmpty = employeeList.isEmpty();
         if (!isUserListEmpty) {
                     int totalPages = employeeList.getTotalPages();

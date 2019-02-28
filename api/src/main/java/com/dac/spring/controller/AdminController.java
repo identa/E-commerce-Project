@@ -59,7 +59,7 @@ public class AdminController {
         return new ResponseEntity<>(adminService.deleteUserById(request.getId()), HttpStatus.OK);
     }
 
-    @GetMapping("/getByPageAndSize")
+    @PostMapping("/getByPageAndSize")
     public ResponseEntity<ServiceResult> paginateUser(@Valid @RequestBody AdminPaginateUserRequest request) {
         return new ResponseEntity<>(adminService.paginateUser(request.getPage(),
                 request.getSize()), HttpStatus.OK);

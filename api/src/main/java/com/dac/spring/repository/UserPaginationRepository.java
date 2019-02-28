@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserPaginationRepository extends PagingAndSortingRepository<EmployeeEntity, Integer> {
-    Page<EmployeeEntity> findAllByDeletedAndRoleNameAndRoleName(Pageable pageable, boolean deleted, RoleName roleName1, RoleName roleName2);
+    Page<EmployeeEntity> findAllByDeletedAndRoleNameOrRoleName(Pageable pageable, boolean deleted, RoleName roleName1, RoleName roleName2);
 }
