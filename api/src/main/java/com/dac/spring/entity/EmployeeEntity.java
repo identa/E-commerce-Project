@@ -1,9 +1,6 @@
 package com.dac.spring.entity;
 
-import org.springframework.beans.factory.annotation.Value;
-
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,6 +18,9 @@ public class EmployeeEntity {
     private String email;
 
     private String password;
+
+    @Column(columnDefinition = "longtext")
+    private String imageURL;
 
     private boolean deleted = false;
 
@@ -93,6 +93,14 @@ public class EmployeeEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
     }
 
     public boolean isDeleted() {
