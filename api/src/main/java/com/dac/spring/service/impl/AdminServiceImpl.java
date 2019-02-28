@@ -127,25 +127,32 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public ServiceResult updateUser(int id, String firstName, String lastName, String password,
-                                    StatusName statusName, RoleName roleName) {
+                                    String statusName, String roleName) {
         ServiceResult result = new ServiceResult();
-        EmployeeEntity employee = employeeRepository.findById(id).orElse(null);
-        if (employee != null) {
-            employee.setFirstName(firstName);
-            employee.setLastName(lastName);
-            employee.setPassword(encoder.encode(password));
-            employee.setStatus(statusRepository.findByName(statusName));
-            employee.setRole(roleRepository.findByName(roleName));
+        boolean isEmployeeExist = employeeRepository.existsById(id);
+        if (isEmployeeExist) {
+            if (firstName != null && lastName != null && password != null &&
+                    statusName != null && roleName != null) {
+                EmployeeEntity employee = employeeRepository.findById(id).orElse(null);
+                employee.setFirstName(firstName);
+                employee.setLastName(lastName);
+                employee.setPassword(encoder.encode(password));
+                employee.setStatus(statusRepository.findByName(StatusName.valueOf(statusName)));
+                employee.setRole(roleRepository.findByName(RoleName.valueOf(roleName)));
 
-            employeeRepository.save(employee);
-            AdminUpdateUserResponse response = new AdminUpdateUserResponse(employee.getId(),
-                    employee.getFirstName(),
-                    employee.getLastName(),
-                    employee.getEmail(),
-                    employee.getStatus().getName().name(),
-                    employee.getRole().getName().name());
-            result.setMessage("Update customer successfully");
-            result.setData(response);
+                employeeRepository.save(employee);
+                AdminUpdateUserResponse response = new AdminUpdateUserResponse(employee.getId(),
+                        employee.getFirstName(),
+                        employee.getLastName(),
+                        employee.getEmail(),
+                        employee.getStatus().getName().name(),
+                        employee.getRole().getName().name());
+                result.setMessage("Update customer successfully");
+                result.setData(response);
+            } else {
+                result.setMessage("Fields cannot be empty");
+                result.setStatus(ServiceResult.Status.FAILED);
+            }
         } else {
             result.setMessage("Customer not found");
             result.setStatus(ServiceResult.Status.FAILED);
@@ -169,20 +176,21 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ServiceResult createEmployee(String firstName, String lastName, String email, String password, StatusName statusName, RoleName roleName) {
+    public ServiceResult createEmployee(String firstName, String lastName, String email, String password,
+                                        String statusName, String roleName) {
         ServiceResult result = new ServiceResult();
 
         if (firstName != null && lastName != null && email != null && password != null &&
                 statusName != null && roleName != null) {
-            boolean isStatusExist = statusRepository.existsByName(statusName);
-            boolean isRoleExist = roleRepository.existsByName(roleName);
+            boolean isStatusExist = statusRepository.existsByName(StatusName.valueOf(statusName));
+            boolean isRoleExist = roleRepository.existsByName(RoleName.valueOf(roleName));
             if (isStatusExist && isRoleExist) {
                 boolean isEmailExisted = employeeRepository.existsByEmail(email);
                 if (!isEmailExisted) {
                     EmployeeEntity employee = new EmployeeEntity(firstName, lastName, email,
                             encoder.encode(password),
-                            statusRepository.findByName(statusName),
-                            roleRepository.findByName(roleName));
+                            statusRepository.findByName(StatusName.valueOf(statusName)),
+                            roleRepository.findByName(RoleName.valueOf(roleName)));
                     employeeRepository.save(employee);
                     AdminCreateUserResponse response = new AdminCreateUserResponse(employee.getId(),
                             employee.getFirstName(),
@@ -195,7 +203,7 @@ public class AdminServiceImpl implements AdminService {
                     result.setData(response);
                 } else {
                     result.setStatus(ServiceResult.Status.FAILED);
-                    result.setMessage(CustomerSignUpConst.EMAIL_EXIST);
+                    result.setMessage(AdminUserCreateConst.EMAIL_EXIST);
                 }
 
             } else {
@@ -246,7 +254,7 @@ public class AdminServiceImpl implements AdminService {
     public ServiceResult paginateUser(int page, int size) {
         ServiceResult result = new ServiceResult();
         Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
-        Page<EmployeeEntity> employeeList = userPaginationRepository.findAll(info);
+        Page<EmployeeEntity> employeeList = userPaginationRepository.findAllByDeletedAndRoleNameAndRoleName(info, false, RoleName.ROLE_CUSTOMER, RoleName.ROLE_SHOP);
         boolean isUserListEmpty = employeeList.isEmpty();
         if (!isUserListEmpty) {
                     int totalPages = employeeList.getTotalPages();

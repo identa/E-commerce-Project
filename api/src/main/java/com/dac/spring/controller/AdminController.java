@@ -1,8 +1,6 @@
 package com.dac.spring.controller;
 
 import com.dac.spring.model.ServiceResult;
-import com.dac.spring.model.enums.RoleName;
-import com.dac.spring.model.enums.StatusName;
 import com.dac.spring.model.req.AdminCreateUserRequest;
 import com.dac.spring.model.req.AdminGetCustomerByIdRequest;
 import com.dac.spring.model.req.AdminPaginateUserRequest;
@@ -35,8 +33,8 @@ public class AdminController {
                 request.getLastName(),
                 request.getEmail(),
                 request.getPassword(),
-                StatusName.valueOf(request.getStatus()),
-                RoleName.valueOf(request.getRole())),
+                request.getStatus(),
+                request.getRole()),
                 HttpStatus.OK);
     }
 
@@ -51,8 +49,8 @@ public class AdminController {
                 request.getFirstName(),
                 request.getLastName(),
                 request.getPassword(),
-                StatusName.valueOf(request.getStatus()),
-                RoleName.valueOf(request.getRole())),
+                request.getStatus(),
+                request.getRole()),
                 HttpStatus.OK);
     }
 
