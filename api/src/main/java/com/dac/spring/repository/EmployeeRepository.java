@@ -13,4 +13,9 @@ public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Intege
     Optional<EmployeeEntity> findByEmail(String email);
     List<EmployeeEntity> findByDeletedAndRoleName(boolean deleted, RoleName roleName);
     boolean existsByEmail(String email);
+    EmployeeEntity findById(int id);
+    boolean existsByIdAndRoleName(int id, RoleName roleName);
+    boolean existsByIdAndRoleNameOrRoleName(int id, RoleName roleName1, RoleName roleName2);
+    boolean existsByEmailAndDeleted(String email, boolean deleted);
+
 }

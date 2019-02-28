@@ -7,7 +7,9 @@ import com.dac.spring.entity.StatusEntity;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
 import com.dac.spring.model.enums.StatusName;
+import com.dac.spring.model.resp.CustomerGetInfoResponse;
 import com.dac.spring.model.resp.CustomerSignInSignUpResponse;
+import com.dac.spring.model.resp.CustomerUpdateInfoResponse;
 import com.dac.spring.repository.EmployeeRepository;
 import com.dac.spring.repository.RoleRepository;
 import com.dac.spring.repository.StatusRepository;
@@ -86,17 +88,11 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult signInCustomer(String email, String password) {
         ServiceResult result = new ServiceResult();
-        boolean isEmailExist = employeeRepository.existsByEmail(email);
+        boolean isEmailExist = employeeRepository.existsByEmailAndDeleted(email, true);
         if (!isEmailExist) {
             result.setMessage(CustomerSignInConst.EMAIL_NOT_FOUND);
             result.setStatus(ServiceResult.Status.FAILED);
         } else {
-            boolean isEmailDeleted = employeeRepository.findByEmail(email).orElse(null).isDeleted();
-            if (isEmailDeleted){
-                result.setMessage("The account is deleted");
-                result.setStatus(ServiceResult.Status.FAILED);
-            }
-            else {
                 EmployeeEntity employee = employeeRepository.findByEmail(email).orElse(null);
                 boolean isPasswordChecked = encoder.matches(password, employee.getPassword());
                 if (isPasswordChecked) {
@@ -113,10 +109,59 @@ public class CustomerServiceImpl implements CustomerService {
                     result.setStatus(ServiceResult.Status.FAILED);
                     result.setMessage(CustomerSignInConst.EMAIL_PASSWORD_WRONG_FORMAT);
                 }
-            }
-
         }
 
+        return result;
+    }
+
+    @Override
+    public ServiceResult getCustomerById(int id) {
+        ServiceResult result = new ServiceResult();
+        boolean isCustomerExist = employeeRepository.existsByIdAndRoleName(id, RoleName.ROLE_CUSTOMER);
+        if (isCustomerExist) {
+            EmployeeEntity employee = employeeRepository.findById(id);
+            CustomerGetInfoResponse response = new CustomerGetInfoResponse(
+                    employee.getId(),
+                    employee.getFirstName(),
+                    employee.getLastName(),
+                    employee.getImageURL());
+            result.setData(response);
+            result.setMessage("ádas");
+        } else {
+            result.setStatus(ServiceResult.Status.FAILED);
+            result.setMessage("ádasád");
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceResult updateInfo(int id, String firstName, String lastName, String password, String imageURL) {
+        ServiceResult result = new ServiceResult();
+        boolean isUserExist = employeeRepository.existsByIdAndRoleNameOrRoleName(id, RoleName.ROLE_CUSTOMER, RoleName.ROLE_SHOP);
+        if (isUserExist) {
+            if (firstName != null && lastName != null && password != null) {
+                    EmployeeEntity employee = employeeRepository.findById(id);
+                    employee.setFirstName(firstName);
+                    employee.setLastName(lastName);
+                    employee.setPassword(encoder.encode(password));
+                    employee.setImageURL(imageURL);
+                    employeeRepository.save(employee);
+                    CustomerUpdateInfoResponse response = new CustomerUpdateInfoResponse(employee.getId(),
+                            employee.getFirstName(),
+                            employee.getLastName(),
+                            employee.getImageURL());
+                    result.setMessage("Update info successfully");
+                    result.setData(response);
+
+
+            } else {
+                result.setMessage("Fields cannot be empty");
+                result.setStatus(ServiceResult.Status.FAILED);
+            }
+        } else {
+            result.setMessage("Customer not found");
+            result.setStatus(ServiceResult.Status.FAILED);
+        }
         return result;
     }
 }

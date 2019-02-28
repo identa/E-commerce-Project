@@ -108,7 +108,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public ServiceResult getCustomerById(int id) {
         ServiceResult result = new ServiceResult();
-        EmployeeEntity employee = employeeRepository.findById(id).orElse(null);
+        EmployeeEntity employee = employeeRepository.findById(id);
         if (employee != null) {
             AdminGetCustomerByIdResponse response = new AdminGetCustomerByIdResponse(employee.getFirstName(),
                     employee.getLastName(),
@@ -134,7 +134,7 @@ public class AdminServiceImpl implements AdminService {
                 boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch((t) -> t.name().equals(statusName));
                 boolean isRoleExist = Arrays.stream(RoleName.values()).anyMatch((t) -> t.name().equals(roleName));
                 if (isStatusExist && isRoleExist){
-                    EmployeeEntity employee = employeeRepository.findById(id).orElse(null);
+                    EmployeeEntity employee = employeeRepository.findById(id);
                     employee.setFirstName(firstName);
                     employee.setLastName(lastName);
                     employee.setPassword(encoder.encode(password));
@@ -171,7 +171,7 @@ public class AdminServiceImpl implements AdminService {
         ServiceResult result = new ServiceResult();
         boolean isEmployeeExist = employeeRepository.existsById(id);
         if (isEmployeeExist) {
-            EmployeeEntity employee = employeeRepository.findById(id).orElse(null);
+            EmployeeEntity employee = employeeRepository.findById(id);
             employee.setDeleted(true);
             employeeRepository.save(employee);
             result.setMessage("Delete customer successfully");
