@@ -7,40 +7,40 @@ class CategoryList extends Component {
                 <div className="category-content">
                     <ul>
                         <li>
-                        <a href="#">Electronic Devices</a>
+                        <a href="javascript:void(0)">Electronic Devices</a>
                         </li>
                         <li>
-                        <a href="#">Electronic Accessories</a>
+                        <a href="javascript:void(0)">Electronic Accessories</a>
                         </li>
                         <li>
-                        <a href="#">TV &amp; Home Appliances</a>
+                        <a href="javascript:void(0)">TV &amp; Home Appliances</a>
                         </li>
                         <li>
-                        <a href="#">Health &amp; Beauty</a>
+                        <a href="javascript:void(0)">Health &amp; Beauty</a>
                         </li>
                         <li>
-                        <a href="#">Babies &amp; Toys</a>
+                        <a href="javascript:void(0)">Babies &amp; Toys</a>
                         </li>
                         <li>
-                        <a href="#">Groceries &amp; Pets</a>
+                        <a href="javascript:void(0)">Groceries &amp; Pets</a>
                         </li>
                         <li>
-                        <a href="#">Home &amp; Lifestyle</a>
+                        <a href="javascript:void(0)">Home &amp; Lifestyle</a>
                         </li>
                         <li>
-                        <a href="#">Women's Fashion</a>
+                        <a href="javascript:void(0)">Women's Fashion</a>
                         </li>
                         <li>
-                        <a href="#">Men's Fashion</a>
+                        <a href="javascript:void(0)">Men's Fashion</a>
                         </li>
                         <li>
-                        <a href="#">Fashion Accessories</a>
+                        <a href="javascript:void(0)">Fashion Accessories</a>
                         </li>
                         <li>
-                        <a href="#">Sports &amp; Travel</a>
+                        <a href="javascript:void(0)">Sports &amp; Travel</a>
                         </li>
                         <li>
-                        <a href="#">Automotive &amp; Motocycle</a>
+                        <a href="javascript:void(0)">Automotive &amp; Motocycle</a>
                         </li>
                     </ul>
                 </div>

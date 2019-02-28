@@ -11,8 +11,7 @@ class App extends Component {
     return (
         <Router>
             <>
-                <Header/>
-                <BannerComponent/>  
+                <Header/> 
                 <RouterURL></RouterURL>           
                 <Footer/>
                 <BtnMessage/>

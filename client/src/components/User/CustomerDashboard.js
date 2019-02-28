@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import RowItem from './RowItem';
-import Pagination from 'react-js-pagination';
+
+const url = 'https://dac-java.herokuapp.com/api/admin/getByPageAndSize';
 
 class CustomerDashboard extends Component {
     constructor(props) {
@@ -17,32 +18,11 @@ class CustomerDashboard extends Component {
     
 
     componentDidMount() {
-        const token = localStorage.getItem("token");
         const dataGet = {
             page : "1",
             size : this.state.itemPerPage
         };
-        fetch('https://dac-java.herokuapp.com/api/admin/getByPageAndSize',{
-            method : 'POST',
-            body: JSON.stringify(dataGet),
-            headers : {
-                "Content-Type" : "application/json",
-                "Authorization" : token
-            }    
-        })
-        .then(res => res.json())
-        .then(data =>{
-            if(data.status === 'SUCCESS'){
-                this.setState({totalPages : data.data.totalPages});               
-                this.setState({userResponseList : data.data.userResponseList}); 
-            }
-            else if(data.status === 'FAILED'){
-
-            }
-        })
-        .catch(err => {
-
-        });
+        this.fetchData(dataGet);
     }
 
     createPageIndex = () =>{
@@ -50,23 +30,27 @@ class CustomerDashboard extends Component {
         let ul = [];
         for (let i = 0; i < totalPages; i++){
             ul.push(<li className={this.state.activeClassName} key={i}>
-                <a className="page-link" id={'page-'+`${i + 1}`} href="javascript:void(0)" onClick={this.paging}>{`${i + 1}`}</a>
+                <a className="page-link" id={'page-'+`${i + 1}`} href="javascript:void(0)" onClick={this.handlePaging}>{`${i + 1}`}</a>
             </li>);
         }
         return ul;
     }
 
-    paging = (event) => {
+    handlePaging = (event) => {
         const pageId = Number(event.target.id.replace('page-',''));
-        const token = localStorage.getItem("token");
-
-        const dataGet = {
+        const dataSend = {
             page : pageId,
             size : this.state.itemPerPage
         };
-        fetch('https://dac-java.herokuapp.com/api/admin/getByPageAndSize',{
+        this.fetchData(dataSend);
+    }
+
+    fetchData = (data) => {
+        const token = localStorage.getItem("token");
+
+        fetch(url ,{
             method : 'POST',
-            body: JSON.stringify(dataGet),
+            body: JSON.stringify(data),
             headers : {
                 "Content-Type" : "application/json",
                 "Authorization" : token
