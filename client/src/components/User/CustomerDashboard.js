@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import RowItem from './RowItem';
-
+import {Link} from 'react-router-dom';
 const url = 'https://dac-java.herokuapp.com/api/admin/getByPageAndSize';
 
 class CustomerDashboard extends Component {
@@ -78,10 +78,11 @@ class CustomerDashboard extends Component {
                 <div className="container">
                     <h2>Dashboard</h2>
                     <div className="row btn-create">
-                        <button className="btn btn-success btn-action">
-                            <i className="fa fa-plus"></i>Create
-                        </button>
-
+                        <Link to="/manage/customer/create/">
+                            <button className="btn btn-success btn-action">
+                                <i className="fa fa-plus"></i>Create
+                            </button>
+                        </Link>
                         <div className="form-search">
                             <form>
                                 <label>Search : </label>

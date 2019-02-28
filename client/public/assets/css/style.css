@@ -518,6 +518,7 @@ a:hover{
 }
 .message{
     color: red;
+    margin-top : 5px;
 }
 .menu-action{
     display: none;

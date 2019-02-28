@@ -25,7 +25,7 @@ class UserLink extends Component {
             <div className="links-bar">
                 <Button variant="link" className="menu-action-link">
                     
-                        <img src="./assets/images/user.png" className="img-avatar" alt=""/> 
+                        <img src={process.env.PUBLIC_URL + '/assets/images/user.png'} className="img-avatar" alt=""/> 
   
                     Hello {this.state.name}
                 </Button>
