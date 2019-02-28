@@ -163,8 +163,9 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public ServiceResult deleteUserById(int id) {
         ServiceResult result = new ServiceResult();
-        EmployeeEntity employee = employeeRepository.findById(id).orElse(null);
-        if (employee != null) {
+        boolean isEmployeeExist = employeeRepository.existsById(id);
+        if (isEmployeeExist) {
+            EmployeeEntity employee = employeeRepository.findById(id).orElse(null);
             employee.setDeleted(true);
             employeeRepository.save(employee);
             result.setMessage("Delete customer successfully");
