@@ -11,14 +11,14 @@ class RowItem extends Component {
             <td>{this.props.role}</td>
             <td>{this.props.status}</td>
             <td>
-            <button className="btn btn-info btn-action">
-                <i className="fa fa-edit" />
-                Edit
-            </button>
-            <button className="btn btn-danger btn-action">
-                <i className="fa fa-remove" />
-                Delete
-            </button>
+                <button className="btn btn-info btn-action">
+                    <i className="fa fa-edit" />
+                    Edit
+                </button>
+                <button className="btn btn-danger btn-action">
+                    <i className="fa fa-remove" />
+                    Delete
+                </button>
             </td>
         </tr>
     );

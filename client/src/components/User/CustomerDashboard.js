@@ -104,13 +104,12 @@ class CustomerDashboard extends Component {
                                 {
                                     userResponseList.map((value,key) => {
                                         return <RowItem key={key} 
-                                        uid={value.id} 
-                                        firstName={value.firstName}
-                                        lastName={value.lastName}
-                                        email={value.email}
-                                        status={value.status}
-                                        role={value.role}>
-                                        </RowItem>
+                                                        uid={value.id} 
+                                                        firstName={value.firstName}
+                                                        lastName={value.lastName}
+                                                        email={value.email}
+                                                        status={value.status}
+                                                        role={value.role}/>
                                     })
                                 }
                             </tbody>

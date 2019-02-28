@@ -23,7 +23,12 @@ class UserLink extends Component {
         const role = this.props.getRole();
         return (
             <div className="links-bar">
-                <Button variant="link" className="menu-action-link">Hello {this.state.name}</Button>
+                <Button variant="link" className="menu-action-link">
+                    
+                        <img src="./assets/images/user.png" className="img-avatar" alt=""/> 
+  
+                    Hello {this.state.name}
+                </Button>
                 <div className="menu-action">
                     <ul>
                         <li>
@@ -31,7 +36,7 @@ class UserLink extends Component {
                         </li>                    
                         {                            
                             role === 'ROLE_ADMIN' || role === 'ROLE_SHOP' ? (
-                                <li><Link to="/customer/dashboard">Management User</Link></li>
+                                <li><Link to="/manage/customer/dashboard">Management User</Link></li>
                             ) : null
                         }
                         <li>

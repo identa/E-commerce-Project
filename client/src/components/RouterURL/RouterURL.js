@@ -10,7 +10,7 @@ class RouteURL extends Component {
                 <>
                     <Route exact path="/" component={Home}></Route>
                     <Route exact path="/customer/profile" component={Profile}></Route>
-                    <Route exact path="/customer/dashboard/" component={CustomerDashboard}></Route>
+                    <Route exact path="/manage/customer/dashboard/" component={CustomerDashboard}></Route>
                 </>
         );
     }

@@ -548,18 +548,16 @@ a:hover{
     margin: 0;
 }
 .menu-action a:hover {
-    text-decoration: underline;
+    color: #6dd5ed;
 }
 .btn-link{
     color: white;
     margin-right: 100px;
-    padding: 0
-}
-.btn-link:focus{
-    text-decoration: none;
+    padding: 0;
+    text-decoration: none !important;
 }
 .btn-link:hover{
-    text-decoration: underline;
+    color: #6dd5ed;
 }
 /*-----------------------------------user management--------------------------*/
 .main{
@@ -597,4 +595,10 @@ a:hover{
     width: 250px;
     padding: 5px 10px;
     margin-left: 5px;
+}
+.img-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 5px;
 }
