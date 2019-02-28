@@ -24,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -130,22 +131,30 @@ public class AdminServiceImpl implements AdminService {
         if (isEmployeeExist) {
             if (firstName != null && lastName != null && password != null &&
                     statusName != null && roleName != null) {
-                EmployeeEntity employee = employeeRepository.findById(id).orElse(null);
-                employee.setFirstName(firstName);
-                employee.setLastName(lastName);
-                employee.setPassword(encoder.encode(password));
-                employee.setStatus(statusRepository.findByName(StatusName.valueOf(statusName)));
-                employee.setRole(roleRepository.findByName(RoleName.valueOf(roleName)));
+                boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch((t) -> t.name().equals(statusName));
+                boolean isRoleExist = Arrays.stream(RoleName.values()).anyMatch((t) -> t.name().equals(roleName));
+                if (isStatusExist && isRoleExist){
+                    EmployeeEntity employee = employeeRepository.findById(id).orElse(null);
+                    employee.setFirstName(firstName);
+                    employee.setLastName(lastName);
+                    employee.setPassword(encoder.encode(password));
+                    employee.setStatus(statusRepository.findByName(StatusName.valueOf(statusName)));
+                    employee.setRole(roleRepository.findByName(RoleName.valueOf(roleName)));
 
-                employeeRepository.save(employee);
-                AdminUpdateUserResponse response = new AdminUpdateUserResponse(employee.getId(),
-                        employee.getFirstName(),
-                        employee.getLastName(),
-                        employee.getEmail(),
-                        employee.getStatus().getName().name(),
-                        employee.getRole().getName().name());
-                result.setMessage("Update customer successfully");
-                result.setData(response);
+                    employeeRepository.save(employee);
+                    AdminUpdateUserResponse response = new AdminUpdateUserResponse(employee.getId(),
+                            employee.getFirstName(),
+                            employee.getLastName(),
+                            employee.getEmail(),
+                            employee.getStatus().getName().name(),
+                            employee.getRole().getName().name());
+                    result.setMessage("Update customer successfully");
+                    result.setData(response);
+                }else {
+                    result.setMessage(AdminUserCreateConst.STATUS_ROLE_NOT_EXIST);
+                    result.setStatus(ServiceResult.Status.FAILED);
+                }
+
             } else {
                 result.setMessage("Fields cannot be empty");
                 result.setStatus(ServiceResult.Status.FAILED);
@@ -180,8 +189,8 @@ public class AdminServiceImpl implements AdminService {
 
         if (firstName != null && lastName != null && email != null && password != null &&
                 statusName != null && roleName != null) {
-            boolean isStatusExist = statusRepository.existsByName(StatusName.valueOf(statusName));
-            boolean isRoleExist = roleRepository.existsByName(RoleName.valueOf(roleName));
+            boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch((t) -> t.name().equals(statusName));
+            boolean isRoleExist = Arrays.stream(RoleName.values()).anyMatch((t) -> t.name().equals(roleName));
             if (isStatusExist && isRoleExist) {
                 boolean isEmailExisted = employeeRepository.existsByEmail(email);
                 if (!isEmailExisted) {

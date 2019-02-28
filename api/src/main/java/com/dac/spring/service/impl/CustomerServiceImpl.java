@@ -48,16 +48,15 @@ public class CustomerServiceImpl implements CustomerService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwt = jwtProvider.generateJwtToken(authentication);
-        return jwt;
+        return jwtProvider.generateJwtToken(authentication);
     }
 
     @Override
     public ServiceResult signUpCustomer(String email, String password, String firstName, String lastName) {
         ServiceResult result = new ServiceResult();
         StatusEntity activeStatus = statusRepository.findByName(StatusName.ACTIVE);
-        boolean isEmailExisted = employeeRepository.existsByEmail(email);
-        if (isEmailExisted) {
+        boolean isEmailExist = employeeRepository.existsByEmail(email);
+        if (isEmailExist) {
             result.setStatus(ServiceResult.Status.FAILED);
             result.setMessage(CustomerSignUpConst.EMAIL_EXIST);
         } else {
@@ -87,27 +86,35 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult signInCustomer(String email, String password) {
         ServiceResult result = new ServiceResult();
-        boolean isEmailExisted = employeeRepository.existsByEmail(email);
-        if (!isEmailExisted) {
+        boolean isEmailExist = employeeRepository.existsByEmail(email);
+        if (!isEmailExist) {
             result.setMessage(CustomerSignInConst.EMAIL_NOT_FOUND);
             result.setStatus(ServiceResult.Status.FAILED);
         } else {
-            EmployeeEntity employee = employeeRepository.findByEmail(email).orElse(null);
-            boolean isPasswordChecked = encoder.matches(password, employee.getPassword());
-            if (isPasswordChecked) {
-
-                String jwt = authenticationWithJwt(email, password);
-                CustomerSignInSignUpResponse response = new CustomerSignInSignUpResponse(employee.getId(),
-                        employee.getFirstName(),
-                        employee.getLastName(),
-                        employee.getRole().getName().name(),
-                        jwt);
-                result.setMessage(CustomerSignInConst.SUCCESS);
-                result.setData(response);
-            } else {
+            boolean isEmailDeleted = employeeRepository.findByEmail(email).orElse(null).isDeleted();
+            if (isEmailDeleted){
+                result.setMessage("The account is deleted");
                 result.setStatus(ServiceResult.Status.FAILED);
-                result.setMessage(CustomerSignInConst.EMAIL_PASSWORD_WRONG_FORMAT);
             }
+            else {
+                EmployeeEntity employee = employeeRepository.findByEmail(email).orElse(null);
+                boolean isPasswordChecked = encoder.matches(password, employee.getPassword());
+                if (isPasswordChecked) {
+
+                    String jwt = authenticationWithJwt(email, password);
+                    CustomerSignInSignUpResponse response = new CustomerSignInSignUpResponse(employee.getId(),
+                            employee.getFirstName(),
+                            employee.getLastName(),
+                            employee.getRole().getName().name(),
+                            jwt);
+                    result.setMessage(CustomerSignInConst.SUCCESS);
+                    result.setData(response);
+                } else {
+                    result.setStatus(ServiceResult.Status.FAILED);
+                    result.setMessage(CustomerSignInConst.EMAIL_PASSWORD_WRONG_FORMAT);
+                }
+            }
+
         }
 
         return result;
