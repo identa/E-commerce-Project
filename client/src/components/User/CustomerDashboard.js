@@ -46,7 +46,7 @@ class CustomerDashboard extends Component {
         const totalPages = this.state.totalPages;
         let ul = [];
         for (let i = 0; i < totalPages; i++){
-            ul.push(<li className="page-item">
+            ul.push(<li className="page-item" key={i}>
                 <a className="page-link" href="javascript:void(0)" onClick={this.paging}>{`${i + 1}`}</a>
             </li>);
         }
@@ -54,7 +54,33 @@ class CustomerDashboard extends Component {
     }
 
     paging = () => {
+        const token = localStorage.getItem("token");
+        console.log(this.props.children);
+        // const dataGet = {
+        //     page : "1",
+        //     size : this.state.itemPerPage
+        // };
+        // fetch('https://dac-java.herokuapp.com/api/admin/getByPageAndSize',{
+        //     method : 'POST',
+        //     body: JSON.stringify(dataGet),
+        //     headers : {
+        //         "Content-Type" : "application/json",
+        //         "Authorization" : token
+        //     }    
+        // })
+        // .then(res => res.json())
+        // .then(data =>{
+        //     if(data.status === 'SUCCESS'){
+        //         this.setState({totalPages : data.data.totalPages});               
+        //         this.setState({userResponseList : data.data.userResponseList}); 
+        //     }
+        //     else if(data.status === 'FAILED'){
 
+        //     }
+        // })
+        // .catch(err => {
+
+        // });
     }
 
     render() {
