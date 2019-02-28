@@ -68,11 +68,8 @@ public class AdminServiceImpl implements AdminService {
     private String authenticationWithJwt(String email, String password) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, password));
-
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String jwt = jwtProvider.generateJwtToken(authentication);
-        return jwt;
+        return jwtProvider.generateJwtToken(authentication);
     }
 
     private AdminGetAllCustomerResponse createGetAllCustomerResponse(EmployeeEntity entity) {
