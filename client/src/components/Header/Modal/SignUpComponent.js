@@ -186,6 +186,42 @@ class SignUpComponent extends Component {
         }
     }
 
+    onFocus = (event) =>{
+        let name = event.target.name;
+        if(name==='email'){
+            this.setState(prevState => ({
+                error: {
+                    ...prevState.error,
+                    email: ''
+                }
+            }));
+        }
+        if(name==='password'){
+            this.setState(prevState => ({
+                error: {
+                    ...prevState.error,
+                    password: ''
+                }
+            }));
+        }
+        if(name==='firstName'){
+            this.setState(prevState => ({
+                error: {
+                    ...prevState.error,
+                    firstName: ''
+                }
+            }));
+        }
+        if(name==='lastName'){
+            this.setState(prevState => ({
+                error: {
+                    ...prevState.error,
+                    lastName: ''
+                }
+            }));
+        }
+    }
+    
     render() {
         return (
             <>
@@ -217,7 +253,7 @@ class SignUpComponent extends Component {
                                             autoFocus
                                             onChange={this.onChange}
                                             onBlur={this.validateFirstName}
-                                        />
+                                            onFocus={this.onFocus}/>
                                         <div className="message">
                                             {this.state.error.firstName}
                                         </div>
@@ -231,7 +267,7 @@ class SignUpComponent extends Component {
                                             required
                                             onChange={this.onChange}
                                             onBlur={this.validateLastName}
-                                        />
+                                            onFocus={this.onFocus}/>
                                         <div className="message">
                                             {this.state.error.lastName}
                                         </div>
@@ -246,7 +282,7 @@ class SignUpComponent extends Component {
                                     required
                                     onChange={this.onChange}
                                     onBlur={this.validateEmail}
-                                    />
+                                    onFocus={this.onFocus}/>
                                 </div>
 
                                 <div className="form-row">
@@ -256,14 +292,13 @@ class SignUpComponent extends Component {
                                 </div>
 
                                 <div className="form-row">
-                                    <input
-                                    type="password"
-                                    placeholder="Set a Password*"
-                                    name="password"
-                                    required
-                                    onChange={this.onChange}
-                                    onBlur={this.validatePassword}
-                                    />
+                                    <input  type="password"
+                                            placeholder="Set a Password*"
+                                            name="password"
+                                            required
+                                            onChange={this.onChange}
+                                            onBlur={this.validatePassword}
+                                            onFocus={this.onFocus}/>
                                 </div>
 
                                 <div className="form-row">

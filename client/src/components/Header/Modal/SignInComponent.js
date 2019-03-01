@@ -134,6 +134,26 @@ class SignInComponent extends Component {
         this.setState({ [event.target.name]: event.target.value });
     }
 
+    onFocus = (event) =>{
+        let name = event.target.name;
+        if(name==='email'){
+            this.setState(prevState => ({
+                error: {
+                    ...prevState.error,
+                    email: ''
+                }
+            }));
+        }
+        if(name==='password'){
+            this.setState(prevState => ({
+                error: {
+                    ...prevState.error,
+                    password: ''
+                }
+            }));
+        }
+    }
+
     render() {
         return (
             <div>
@@ -154,7 +174,14 @@ class SignInComponent extends Component {
                         <form>
                             <div className="contain">
                                 <div className="form-row">
-                                    <input type="email" placeholder="Email Address*" name="email" autoFocus required onChange={this.onChange} onBlur={this.validateEmail}/>
+                                    <input type="email" 
+                                           placeholder="Email Address*" 
+                                           name="email" 
+                                           autoFocus 
+                                           required 
+                                           onChange={this.onChange} 
+                                           onBlur={this.validateEmail}                    
+                                           onFocus={this.onFocus}/>
                                 </div>
                                 
                                 <div className="form-row">
@@ -162,7 +189,13 @@ class SignInComponent extends Component {
                                 </div>
 
                                 <div className="form-row">
-                                    <input type="password" placeholder="Enter Password*" name="password" required onChange={this.onChange} onBlur={this.validatePassword}/>
+                                    <input type="password" 
+                                           placeholder="Enter Password*" 
+                                           name="password" 
+                                           required 
+                                           onChange={this.onChange} 
+                                           onBlur={this.validatePassword}
+                                           onFocus={this.onFocus}/>
                                 </div>
 
                                 <div className="form-row">

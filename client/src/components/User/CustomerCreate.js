@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import {Link} from 'react-router-dom';
 
+const clientId = '78bc0dc37ea9d00';
+const urlImgur = 'https://api.imgur.com/3/image';
 const REGEX_EMAIL = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 class CustomerCreate extends Component {
 
@@ -12,6 +14,8 @@ class CustomerCreate extends Component {
             lastName : '',
             email : '',
             password : '',
+            imageLink : '',
+            selectedFile : '',
             error : {
                 firstName : '',
                 lastName : '',
@@ -135,6 +139,26 @@ class CustomerCreate extends Component {
         }
     }
 
+    loadFile = (event) =>{
+        let reader = new FileReader();  
+        let file = event.target.files[0];
+        reader.onloadend = () =>{
+            var image = document.getElementById('preview');
+            image.src = reader.result;
+            this.setState({selectedFile : reader.result});
+        };
+        reader.readAsDataURL(file);
+        console.log(this.state.selectedFile);
+    }
+
+    formSubmit = (event) =>{
+        event.preventDefault();
+
+        fetch(urlImgur, {
+            method : 'POST',
+
+        });
+    }
     render() {
         return (
             <div className="main">
@@ -151,29 +175,31 @@ class CustomerCreate extends Component {
                                 </div>
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <form>
+                                            <form onSubmit={(event)=>this.formSubmit(event)}>
                                                 <div className="form-group row">
-                                                    <label htmlFor="username" className="col-4 col-form-label">First Name *</label> 
+                                                    <label className="col-4 col-form-label">First Name *</label> 
                                                     <div className="col-8">
-                                                        <input type="text" name="firstname" placeholder="First name" className="form-control here" required="required" onChange={this.onChange} onBlur={this.validateFirstName}/>
+                                                        <input type="text" name="firstname" placeholder="First name" className="form-control" required="required" onChange={this.onChange} onBlur={this.validateFirstName}/>
                                                         <div className="message">
                                                             {this.state.error.firstName}
                                                         </div>
                                                     </div>
                                                     
                                                 </div>
+                                                
                                                 <div className="form-group row">
-                                                    <label htmlFor="username" className="col-4 col-form-label">Last Name*</label> 
+                                                    <label className="col-4 col-form-label">Last Name*</label> 
                                                     <div className="col-8">
-                                                        <input type="text" name="lastname" placeholder="Last name" className="form-control here" required="required" onChange={this.onChange} onBlur={this.validateLastName}/>
+                                                        <input type="text" name="lastname" placeholder="Last name" className="form-control" required="required" onChange={this.onChange} onBlur={this.validateLastName}/>
                                                         <div className="message">
                                                             {this.state.error.lastName}
                                                         </div>
                                                     </div>
                                                     
                                                 </div>
+                                                
                                                 <div className="form-group row">
-                                                    <label htmlFor="select" className="col-4 col-form-label">Role</label> 
+                                                    <label htmlFor="select" className="col-4 col-form-label">Role*</label> 
                                                     <div className="col-8">
                                                         <select name="select" className="custom-select">
                                                             <option value="ROLE_ADMIN">Admin</option>
@@ -184,22 +210,38 @@ class CustomerCreate extends Component {
                                                 </div>
                                                 
                                                 <div className="form-group row">
-                                                    <label htmlFor="username" className="col-4 col-form-label">Email *</label> 
+                                                    <label className="col-4 col-form-label">Email *</label> 
                                                     <div className="col-8">
-                                                        <input type="email" name="email" placeholder="Email" className="form-control here" onChange={this.onChange} onBlur={this.validateEmail}/>
+                                                        <input type="email" name="email" placeholder="Email" className="form-control" onChange={this.onChange} onBlur={this.validateEmail}/>
                                                         <div className="message">
                                                             {this.state.error.email}
                                                         </div>
                                                     </div>
                                                 </div>
+                                                
                                                 <div className="form-group row">
-                                                    <label htmlFor="username" className="col-4 col-form-label">Password*</label> 
+                                                    <label className="col-4 col-form-label">Password*</label> 
                                                     <div className="col-8">
-                                                        <input type="password" name="password" placeholder="Password" className="form-control here" required="required" onChange={this.onChange} onBlur={this.validatePassword}/>
+                                                        <input type="password" name="password" placeholder="Password" className="form-control" required="required" onChange={this.onChange} onBlur={this.validatePassword}/>
                                                         <div className="message">
                                                             {this.state.error.password}
                                                         </div>
                                                     </div>
+                                                </div>
+
+                                                <div className="form-group row">
+                                                    <label className="col-4 col-form-label">Avatar</label> 
+                                                    <div className="col-4">
+                                                        <input type="file" name="avatar" accept="image/*" onChange={(event) => this.loadFile(event)}/>  
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div className="form-group row">
+                                                    <div className='col-4'/>
+                                                    <div className="col-4 img-preview">
+                                                        <img src='' id='preview' alt=''/>
+                                                    </div>
+                                                    <div className='col-4'>{this.state.imageLink}</div>
                                                 </div>
                                                 <div className="form-group row">
                                                     <div className="offset-4 col-8">
@@ -209,6 +251,7 @@ class CustomerCreate extends Component {
                                                                 Back to list
                                                             </Link>
                                                         </button>
+
                                                         <button name="submit" type="submit" className="btn btn-success">Create</button>
                                                     </div>                                               
                                                 </div>
