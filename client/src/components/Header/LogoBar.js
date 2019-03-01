@@ -6,7 +6,7 @@ class LogoBar extends Component {
         return (
             <div className="logo-content">
                 <Link to="/">
-                    <img src="./assets/images/logo.png" alt="" />
+                    <img src={process.env.PUBLIC_URL + '/assets/images/logo.png'} alt="" />
                 </Link>
             </div>
         );
