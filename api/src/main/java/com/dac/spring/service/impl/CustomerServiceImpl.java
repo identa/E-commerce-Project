@@ -2,14 +2,14 @@ package com.dac.spring.service.impl;
 
 import com.dac.spring.constant.CustomerSignInConst;
 import com.dac.spring.constant.CustomerSignUpConst;
+import com.dac.spring.entity.CategoryEntity;
 import com.dac.spring.entity.EmployeeEntity;
 import com.dac.spring.entity.StatusEntity;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
 import com.dac.spring.model.enums.StatusName;
-import com.dac.spring.model.resp.CustomerGetInfoResponse;
-import com.dac.spring.model.resp.CustomerSignInSignUpResponse;
-import com.dac.spring.model.resp.CustomerUpdateInfoResponse;
+import com.dac.spring.model.resp.*;
+import com.dac.spring.repository.CategoryRepository;
 import com.dac.spring.repository.EmployeeRepository;
 import com.dac.spring.repository.RoleRepository;
 import com.dac.spring.repository.StatusRepository;
@@ -23,6 +23,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
@@ -34,6 +37,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     StatusRepository statusRepository;
+
+    @Autowired
+    CategoryRepository categoryRepository;
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -51,6 +57,44 @@ public class CustomerServiceImpl implements CustomerService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return jwtProvider.generateJwtToken(authentication);
+    }
+
+    private CustomerGetCategoryTreeResponse getCategoryTreeResponse(CategoryEntity categoryEntity) {
+        CustomerGetCategoryTreeResponse response = new CustomerGetCategoryTreeResponse();
+        response.setId(categoryEntity.getId());
+        response.setName(categoryEntity.getName());
+        response.setSubCategory(getCategoryTreeResponseList(categoryRepository.findAllByParentID(categoryEntity.getId())));
+        if (response.getSubCategory().isEmpty()) response.setSubCategory(null);
+
+        return response;
+    }
+
+    private List<CustomerGetCategoryTreeResponse> getCategoryTreeResponseList(List<CategoryEntity> categoryList) {
+        List<CustomerGetCategoryTreeResponse> responseList = new ArrayList<>();
+        for (CategoryEntity category : categoryList) {
+            responseList.add(getCategoryTreeResponse(category));
+        }
+        return responseList;
+    }
+
+    private CustomerGetAllCategoryResponse getAllCategoryResponse(CategoryEntity categoryEntity) {
+        CustomerGetAllCategoryResponse response = new CustomerGetAllCategoryResponse();
+        response.setId(categoryEntity.getId());
+        response.setName(categoryEntity.getName());
+        CategoryEntity category = categoryRepository.findById(categoryEntity.getParentID()).orElse(null);
+        if (category != null)
+        response.setParentCategory(category.getName());
+        else response.setParentCategory(null);
+
+        return response;
+    }
+
+    private List<CustomerGetAllCategoryResponse> getAllCategoryResponseList(List<CategoryEntity> categoryList) {
+        List<CustomerGetAllCategoryResponse> responseList = new ArrayList<>();
+        for (CategoryEntity category : categoryList) {
+            responseList.add(getAllCategoryResponse(category));
+        }
+        return responseList;
     }
 
     @Override
@@ -161,6 +205,36 @@ public class CustomerServiceImpl implements CustomerService {
         } else {
             result.setMessage("Customer not found");
             result.setStatus(ServiceResult.Status.FAILED);
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceResult getCategoryTree() {
+        ServiceResult result = new ServiceResult();
+        List<CustomerGetCategoryTreeResponse> categoryResponses = getCategoryTreeResponseList(categoryRepository.findAllByParentID(0));
+        if (categoryResponses != null){
+            result.setMessage("Get category tree successfully");
+            result.setData(categoryResponses);
+        }
+        else {
+            result.setStatus(ServiceResult.Status.FAILED);
+            result.setMessage("Category not found");
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceResult getAllCategory() {
+        ServiceResult result = new ServiceResult();
+        List<CustomerGetAllCategoryResponse> categoryResponses = getAllCategoryResponseList(categoryRepository.findAll());
+        if (categoryResponses != null){
+            result.setMessage("Get category successfully");
+            result.setData(categoryResponses);
+        }
+        else {
+            result.setStatus(ServiceResult.Status.FAILED);
+            result.setMessage("Category not found");
         }
         return result;
     }

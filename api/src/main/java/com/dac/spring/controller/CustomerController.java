@@ -62,4 +62,14 @@ public class CustomerController {
                 request.getPassword(),
                 request.getImageURL()),HttpStatus.OK);
     }
+
+    @GetMapping("/getCategoryTree")
+    public ResponseEntity<ServiceResult> getCategoryTree(){
+        return new ResponseEntity<>(customerService.getCategoryTree(),HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllCategory")
+    public ResponseEntity<ServiceResult> getAllCategory(){
+        return new ResponseEntity<>(customerService.getAllCategory(),HttpStatus.OK);
+    }
 }
