@@ -115,10 +115,10 @@ public class AdminServiceImpl implements AdminService {
                     employee.getEmail(),
                     employee.getStatus().getName().name());
             result.setData(response);
-            result.setMessage("ádas");
+            result.setMessage("Get customer successfully");
         } else {
             result.setStatus(ServiceResult.Status.FAILED);
-            result.setMessage("ádasád");
+            result.setMessage("Customer not found");
         }
         return result;
     }
@@ -127,14 +127,13 @@ public class AdminServiceImpl implements AdminService {
     public ServiceResult updateUser(int id, String firstName, String lastName, String password,
                                     String statusName, String roleName) {
         ServiceResult result = new ServiceResult();
-        boolean isEmployeeExist = employeeRepository.existsById(id);
-        if (isEmployeeExist) {
+        EmployeeEntity employee = employeeRepository.findByIdAndDeletedAndRoleNameOrRoleName(id, false, RoleName.ROLE_CUSTOMER, RoleName.ROLE_SHOP).orElse(null);
+        if (employee != null) {
             if (firstName != null && lastName != null && password != null &&
                     statusName != null && roleName != null) {
                 boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch((t) -> t.name().equals(statusName));
                 boolean isRoleExist = Arrays.stream(RoleName.values()).anyMatch((t) -> t.name().equals(roleName));
                 if (isStatusExist && isRoleExist){
-                    EmployeeEntity employee = employeeRepository.findById(id);
                     employee.setFirstName(firstName);
                     employee.setLastName(lastName);
                     employee.setPassword(encoder.encode(password));
@@ -169,9 +168,8 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public ServiceResult deleteUserById(int id) {
         ServiceResult result = new ServiceResult();
-        boolean isEmployeeExist = employeeRepository.existsById(id);
-        if (isEmployeeExist) {
-            EmployeeEntity employee = employeeRepository.findById(id);
+        EmployeeEntity employee = employeeRepository.findByIdAndDeletedAndRoleNameOrRoleName(id, false, RoleName.ROLE_CUSTOMER, RoleName.ROLE_SHOP).orElse(null);
+        if (employee != null) {
             employee.setDeleted(true);
             employeeRepository.save(employee);
             result.setMessage("Delete customer successfully");
@@ -186,7 +184,6 @@ public class AdminServiceImpl implements AdminService {
     public ServiceResult createEmployee(String firstName, String lastName, String email, String password,
                                         String statusName, String roleName) {
         ServiceResult result = new ServiceResult();
-
         if (firstName != null && lastName != null && email != null && password != null &&
                 statusName != null && roleName != null) {
             boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch((t) -> t.name().equals(statusName));

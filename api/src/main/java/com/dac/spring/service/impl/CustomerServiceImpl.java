@@ -59,10 +59,10 @@ public class CustomerServiceImpl implements CustomerService {
         StatusEntity activeStatus = statusRepository.findByName(StatusName.ACTIVE);
         boolean isEmailExist = employeeRepository.existsByEmail(email);
         if (isEmailExist) {
-            if (employeeRepository.existsByEmailAndDeleted(email,true)){
+            if (employeeRepository.existsByEmailAndDeleted(email, true)) {
                 result.setStatus(ServiceResult.Status.FAILED);
                 result.setMessage("This email cannot be used to sign up");
-            }else {
+            } else {
                 result.setStatus(ServiceResult.Status.FAILED);
                 result.setMessage(CustomerSignUpConst.EMAIL_EXIST);
             }
@@ -81,8 +81,7 @@ public class CustomerServiceImpl implements CustomerService {
                         jwt);
                 result.setMessage(CustomerSignUpConst.SUCCESS);
                 result.setData(response);
-            }
-            else {
+            } else {
                 result.setMessage(CustomerSignUpConst.NULL_DATA);
                 result.setStatus(ServiceResult.Status.FAILED);
             }
@@ -120,7 +119,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult getInfoById(int id) {
         ServiceResult result = new ServiceResult();
-        EmployeeEntity customer = employeeRepository.findByIdAndDeletedAndRoleName(id,false,
+        EmployeeEntity customer = employeeRepository.findByIdAndDeletedAndRoleName(id, false,
                 RoleName.ROLE_CUSTOMER).orElse(null);
         if (customer != null) {
             CustomerGetInfoResponse response = new CustomerGetInfoResponse(
@@ -144,17 +143,17 @@ public class CustomerServiceImpl implements CustomerService {
                 RoleName.ROLE_CUSTOMER).orElse(null);
         if (customer != null) {
             if (firstName != null && lastName != null && password != null) {
-                    customer.setFirstName(firstName);
-                    customer.setLastName(lastName);
-                    customer.setPassword(encoder.encode(password));
-                    customer.setImageURL(imageURL);
-                    employeeRepository.save(customer);
-                    CustomerUpdateInfoResponse response = new CustomerUpdateInfoResponse(customer.getId(),
-                            customer.getFirstName(),
-                            customer.getLastName(),
-                            customer.getImageURL());
-                    result.setMessage("Update info successfully");
-                    result.setData(response);
+                customer.setFirstName(firstName);
+                customer.setLastName(lastName);
+                customer.setPassword(encoder.encode(password));
+                customer.setImageURL(imageURL);
+                employeeRepository.save(customer);
+                CustomerUpdateInfoResponse response = new CustomerUpdateInfoResponse(customer.getId(),
+                        customer.getFirstName(),
+                        customer.getLastName(),
+                        customer.getImageURL());
+                result.setMessage("Update info successfully");
+                result.setData(response);
             } else {
                 result.setMessage("Fields cannot be empty");
                 result.setStatus(ServiceResult.Status.FAILED);
