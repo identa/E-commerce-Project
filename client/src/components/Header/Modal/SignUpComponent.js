@@ -32,6 +32,11 @@ class SignUpComponent extends Component {
         this.props.showSignIn(this.state.isSignUpShowing);
     }
 
+    validateMessage = () => {
+        const message = this.state.error.message;
+        return message.length === 0;
+    }
+
     validateEmail = () => {
         const email = this.state.email;
         if(email.length === 0){
@@ -144,7 +149,7 @@ class SignUpComponent extends Component {
     formSubmit =(event) =>{
         event.preventDefault();
 
-        if(this.validateFirstName() && this.validateLastName() && this.validateEmail() && this.validatePassword()){
+        if(this.validateFirstName() && this.validateLastName() && this.validateEmail() && this.validatePassword() && this.validateMessage()){
             const { firstName, lastName, email, password } = this.state;
             fetch("https://dac-java.herokuapp.com/api/customer/signup", {
             method: "POST",
@@ -162,7 +167,7 @@ class SignUpComponent extends Component {
             .then(data =>{
                 if(data.status === 'SUCCESS'){
                     localStorage.setItem("token", "Bearer "+ data.data.token);   
-                    sessionStorage.setItem("name", data.data.firstName +  " " + data.data.lastName);   
+                    localStorage.setItem("name", data.data.firstName +  " " + data.data.lastName);   
                     this.setState({isModalShow : false});      
                     this.props.onHideModal(this.state.isModalShow);
                     this.props.changeAuthenticated();
@@ -192,7 +197,7 @@ class SignUpComponent extends Component {
             this.setState(prevState => ({
                 error: {
                     ...prevState.error,
-                    email: ''
+                    email: '',
                 }
             }));
         }

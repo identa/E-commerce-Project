@@ -24,6 +24,11 @@ class SignInComponent extends Component {
         this.props.showSignUp(this.state.isSignUpShowing);
     }
 
+    validateMessage = () =>{
+        const message = this.state.error.message;
+        return message.length === 0;
+    }
+    
     validateEmail = () => {
         const email = this.state.email;
         if(email.length === 0){
@@ -89,7 +94,7 @@ class SignInComponent extends Component {
 
     formSubmit = (event) =>{
         event.preventDefault();
-        if(this.validateEmail() && this.validatePassword()){
+        if(this.validateEmail() && this.validatePassword() && this.validateMessage()){
             const data = {
                 email : this.state.email,
                 password : this.state.password
@@ -106,7 +111,7 @@ class SignInComponent extends Component {
             .then(data =>{
                 if(data.status === 'SUCCESS'){  
                     localStorage.setItem("token", "Bearer "+ data.data.token);   
-                    sessionStorage.setItem("name", data.data.firstName +  " " + data.data.lastName);   
+                    localStorage.setItem("name", data.data.firstName +  " " + data.data.lastName);   
                     this.setState({isModalShow : false});      
                     this.props.onHideModal(this.state.isModalShow);
                     this.props.changeAuthenticated();
@@ -136,19 +141,21 @@ class SignInComponent extends Component {
 
     onFocus = (event) =>{
         let name = event.target.name;
-        if(name==='email'){
+        if(name ==='email'){
             this.setState(prevState => ({
                 error: {
                     ...prevState.error,
-                    email: ''
+                    email: '',
+                    message : ''
                 }
             }));
         }
-        if(name==='password'){
+        if(name ==='password'){
             this.setState(prevState => ({
                 error: {
                     ...prevState.error,
-                    password: ''
+                    password: '',
+                    message : ''
                 }
             }));
         }

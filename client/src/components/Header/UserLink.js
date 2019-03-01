@@ -6,7 +6,7 @@ class UserLink extends Component {
         super(props);
         
         this.state = {
-            name : sessionStorage.getItem("name"),
+            name : localStorage.getItem("name"), 
             role : ''
         }
     }
@@ -14,7 +14,7 @@ class UserLink extends Component {
     logout = () =>{
         if(localStorage.getItem("token")){
             localStorage.removeItem("token");
-            sessionStorage.removeItem("name");
+            localStorage.removeItem("name");
             this.props.changeAuthenticated();
         }
     }

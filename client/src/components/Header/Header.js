@@ -31,7 +31,7 @@ class Header extends Component {
     
     render() {
 
-        const authenticate = sessionStorage.getItem("name"); 
+        const authenticate = localStorage.getItem("name"); 
         
         return (
             <>
