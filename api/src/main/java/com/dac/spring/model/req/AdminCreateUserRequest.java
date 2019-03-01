@@ -9,6 +9,8 @@ public class AdminCreateUserRequest {
 
     private String password;
 
+    private String imageURL;
+
     private String status;
 
     private String role;
@@ -43,6 +45,14 @@ public class AdminCreateUserRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
     }
 
     public String getStatus() {

@@ -9,15 +9,18 @@ public class UserResponse {
 
     private String email;
 
+    private String imageURL;
+
     private String status;
 
     private String role;
 
-    public UserResponse(int id, String firstName, String lastName, String email, String status, String role) {
+    public UserResponse(int id, String firstName, String lastName, String email, String imageURL, String status, String role) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.imageURL = imageURL;
         this.status = status;
         this.role = role;
     }

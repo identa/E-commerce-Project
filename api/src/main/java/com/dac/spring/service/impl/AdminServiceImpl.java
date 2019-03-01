@@ -83,7 +83,8 @@ public class AdminServiceImpl implements AdminService {
     }
 
     private List<AdminGetAllCustomerResponse> createCustomerGetResponseList() {
-        List<EmployeeEntity> customerList = employeeRepository.findByDeletedAndRoleName(false, RoleName.ROLE_CUSTOMER);
+        List<EmployeeEntity> customerList = employeeRepository.findByDeletedAndRoleName(false,
+                RoleName.ROLE_CUSTOMER);
         List<AdminGetAllCustomerResponse> responseList = new ArrayList<>();
         for (EmployeeEntity entity : customerList) {
             responseList.add(createGetAllCustomerResponse(entity));
@@ -125,9 +126,10 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public ServiceResult updateUser(int id, String firstName, String lastName, String password,
-                                    String statusName, String roleName) {
+                                    String imageURL, String statusName, String roleName) {
         ServiceResult result = new ServiceResult();
-        EmployeeEntity employee = employeeRepository.findByIdAndDeletedAndRoleNameOrRoleName(id, false, RoleName.ROLE_CUSTOMER, RoleName.ROLE_SHOP).orElse(null);
+        EmployeeEntity employee = employeeRepository.findByIdAndDeletedAndRoleNameOrRoleName(id, false,
+                RoleName.ROLE_CUSTOMER, RoleName.ROLE_SHOP).orElse(null);
         if (employee != null) {
             if (firstName != null && lastName != null && password != null &&
                     statusName != null && roleName != null) {
@@ -139,6 +141,7 @@ public class AdminServiceImpl implements AdminService {
                     employee.setPassword(encoder.encode(password));
                     employee.setStatus(statusRepository.findByName(StatusName.valueOf(statusName)));
                     employee.setRole(roleRepository.findByName(RoleName.valueOf(roleName)));
+                    employee.setImageURL(imageURL);
 
                     employeeRepository.save(employee);
                     AdminUpdateUserResponse response = new AdminUpdateUserResponse(employee.getId(),
@@ -168,7 +171,8 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public ServiceResult deleteUserById(int id) {
         ServiceResult result = new ServiceResult();
-        EmployeeEntity employee = employeeRepository.findByIdAndDeletedAndRoleNameOrRoleName(id, false, RoleName.ROLE_CUSTOMER, RoleName.ROLE_SHOP).orElse(null);
+        EmployeeEntity employee = employeeRepository.findByIdAndDeletedAndRoleNameOrRoleName(id, false,
+                RoleName.ROLE_CUSTOMER, RoleName.ROLE_SHOP).orElse(null);
         if (employee != null) {
             employee.setDeleted(true);
             employeeRepository.save(employee);
@@ -182,7 +186,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public ServiceResult createEmployee(String firstName, String lastName, String email, String password,
-                                        String statusName, String roleName) {
+                                        String imageURL, String statusName, String roleName) {
         ServiceResult result = new ServiceResult();
         if (firstName != null && lastName != null && email != null && password != null &&
                 statusName != null && roleName != null) {
@@ -258,7 +262,8 @@ public class AdminServiceImpl implements AdminService {
     public ServiceResult paginateUser(int page, int size) {
         ServiceResult result = new ServiceResult();
         Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
-        Page<EmployeeEntity> employeeList = userPaginationRepository.findAllByDeletedAndRoleNameOrRoleName(info, false, RoleName.ROLE_CUSTOMER, RoleName.ROLE_SHOP);
+        Page<EmployeeEntity> employeeList = userPaginationRepository.findAllByDeletedAndRoleNameOrRoleName(info,
+                false, RoleName.ROLE_CUSTOMER, RoleName.ROLE_SHOP);
         boolean isUserListEmpty = employeeList.isEmpty();
         if (!isUserListEmpty) {
                     int totalPages = employeeList.getTotalPages();
@@ -268,6 +273,7 @@ public class AdminServiceImpl implements AdminService {
                                 entity.getFirstName(),
                                 entity.getLastName(),
                                 entity.getEmail(),
+                                entity.getImageURL(),
                                 entity.getStatus().getName().name(),
                                 entity.getRole().getName().name());
                         responses.add(userResponse);

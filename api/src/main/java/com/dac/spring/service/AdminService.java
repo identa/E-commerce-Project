@@ -5,9 +5,9 @@ import com.dac.spring.model.ServiceResult;
 public interface AdminService {
     ServiceResult getAllCustomer();
     ServiceResult getCustomerById(int id);
-    ServiceResult updateUser(int id, String firstName, String lastName, String password, String statusName, String roleName);
+    ServiceResult updateUser(int id, String firstName, String lastName, String password, String imageURL, String statusName, String roleName);
     ServiceResult deleteUserById(int id);
-    ServiceResult createEmployee(String firstName, String lastName, String email, String password, String statusName, String roleName);
+    ServiceResult createEmployee(String firstName, String lastName, String email, String password, String imageURL, String statusName, String roleName);
     ServiceResult signupAdmin(String firstName, String lastName, String email, String password);
     ServiceResult paginateUser(int page, int size);
 }

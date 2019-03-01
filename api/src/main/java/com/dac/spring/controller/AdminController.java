@@ -1,10 +1,7 @@
 package com.dac.spring.controller;
 
 import com.dac.spring.model.ServiceResult;
-import com.dac.spring.model.req.AdminCreateUserRequest;
-import com.dac.spring.model.req.AdminGetCustomerByIdRequest;
-import com.dac.spring.model.req.AdminPaginateUserRequest;
-import com.dac.spring.model.req.AdminUpdateCustomerRequest;
+import com.dac.spring.model.req.*;
 import com.dac.spring.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,6 +30,7 @@ public class AdminController {
                 request.getLastName(),
                 request.getEmail(),
                 request.getPassword(),
+                request.getImageURL(),
                 request.getStatus(),
                 request.getRole()),
                 HttpStatus.OK);
@@ -49,13 +47,14 @@ public class AdminController {
                 request.getFirstName(),
                 request.getLastName(),
                 request.getPassword(),
+                request.getImageURL(),
                 request.getStatus(),
                 request.getRole()),
                 HttpStatus.OK);
     }
 
     @PutMapping("/delete")
-    public ResponseEntity<ServiceResult> deleteCustomer(@RequestBody AdminGetCustomerByIdRequest request) {
+    public ResponseEntity<ServiceResult> deleteCustomer(@RequestBody AdminDeleteCustomerRequest request) {
         return new ResponseEntity<>(adminService.deleteUserById(request.getId()), HttpStatus.OK);
     }
 
