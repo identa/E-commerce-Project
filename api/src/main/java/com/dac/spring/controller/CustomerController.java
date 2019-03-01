@@ -42,15 +42,15 @@ public class CustomerController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<ServiceResult> customerSignIn(@Valid @RequestBody CustomerSignInRequest request) {
-        return new ResponseEntity<>(customerService.signInCustomer(request.getEmail(),
+    public ResponseEntity<ServiceResult> signIn(@Valid @RequestBody CustomerSignInRequest request) {
+        return new ResponseEntity<>(customerService.signIn(request.getEmail(),
                 request.getPassword()), HttpStatus.OK);
     }
 
     @PostMapping("/getById")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<ServiceResult> getInfoById(@Valid @RequestBody CustomerGetInfoRequest request) {
-        return new ResponseEntity<>(customerService.getCustomerById(request.getId()), HttpStatus.OK);
+        return new ResponseEntity<>(customerService.getInfoById(request.getId()), HttpStatus.OK);
     }
 
     @PutMapping("/update")

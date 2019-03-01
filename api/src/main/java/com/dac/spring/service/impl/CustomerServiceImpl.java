@@ -59,8 +59,13 @@ public class CustomerServiceImpl implements CustomerService {
         StatusEntity activeStatus = statusRepository.findByName(StatusName.ACTIVE);
         boolean isEmailExist = employeeRepository.existsByEmail(email);
         if (isEmailExist) {
-            result.setStatus(ServiceResult.Status.FAILED);
-            result.setMessage(CustomerSignUpConst.EMAIL_EXIST);
+            if (employeeRepository.existsByEmailAndDeleted(email,true)){
+                result.setStatus(ServiceResult.Status.FAILED);
+                result.setMessage("This email cannot be used to sign up");
+            }else {
+                result.setStatus(ServiceResult.Status.FAILED);
+                result.setMessage(CustomerSignUpConst.EMAIL_EXIST);
+            }
         } else {
             if (firstName != null && lastName != null && email != null && password != null && activeStatus != null) {
                 EmployeeEntity employee = new EmployeeEntity(firstName, lastName, email,
@@ -86,50 +91,48 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ServiceResult signInCustomer(String email, String password) {
+    public ServiceResult signIn(String email, String password) {
         ServiceResult result = new ServiceResult();
-        boolean isEmailExist = employeeRepository.existsByEmailAndDeleted(email, true);
-        if (!isEmailExist) {
+        EmployeeEntity customer = employeeRepository.findByEmailAndDeleted(email, false).orElse(null);
+        if (customer != null) {
+            boolean isPasswordChecked = encoder.matches(password, customer.getPassword());
+            if (isPasswordChecked) {
+                String jwt = authenticationWithJwt(email, password);
+                CustomerSignInSignUpResponse response = new CustomerSignInSignUpResponse(customer.getId(),
+                        customer.getFirstName(),
+                        customer.getLastName(),
+                        customer.getRole().getName().name(),
+                        jwt);
+                result.setMessage(CustomerSignInConst.SUCCESS);
+                result.setData(response);
+            } else {
+                result.setStatus(ServiceResult.Status.FAILED);
+                result.setMessage(CustomerSignInConst.EMAIL_PASSWORD_WRONG_FORMAT);
+            }
+
+        } else {
             result.setMessage(CustomerSignInConst.EMAIL_NOT_FOUND);
             result.setStatus(ServiceResult.Status.FAILED);
-        } else {
-                EmployeeEntity employee = employeeRepository.findByEmail(email).orElse(null);
-                boolean isPasswordChecked = encoder.matches(password, employee.getPassword());
-                if (isPasswordChecked) {
-
-                    String jwt = authenticationWithJwt(email, password);
-                    CustomerSignInSignUpResponse response = new CustomerSignInSignUpResponse(employee.getId(),
-                            employee.getFirstName(),
-                            employee.getLastName(),
-                            employee.getRole().getName().name(),
-                            jwt);
-                    result.setMessage(CustomerSignInConst.SUCCESS);
-                    result.setData(response);
-                } else {
-                    result.setStatus(ServiceResult.Status.FAILED);
-                    result.setMessage(CustomerSignInConst.EMAIL_PASSWORD_WRONG_FORMAT);
-                }
         }
-
         return result;
     }
 
     @Override
-    public ServiceResult getCustomerById(int id) {
+    public ServiceResult getInfoById(int id) {
         ServiceResult result = new ServiceResult();
-        boolean isCustomerExist = employeeRepository.existsByIdAndRoleName(id, RoleName.ROLE_CUSTOMER);
-        if (isCustomerExist) {
-            EmployeeEntity employee = employeeRepository.findById(id);
+        EmployeeEntity customer = employeeRepository.findByIdAndDeletedAndRoleName(id,false,
+                RoleName.ROLE_CUSTOMER).orElse(null);
+        if (customer != null) {
             CustomerGetInfoResponse response = new CustomerGetInfoResponse(
-                    employee.getId(),
-                    employee.getFirstName(),
-                    employee.getLastName(),
-                    employee.getImageURL());
+                    customer.getId(),
+                    customer.getFirstName(),
+                    customer.getLastName(),
+                    customer.getImageURL());
             result.setData(response);
-            result.setMessage("ádas");
+            result.setMessage("Get info successfully");
         } else {
             result.setStatus(ServiceResult.Status.FAILED);
-            result.setMessage("ádasád");
+            result.setMessage("Customer not found");
         }
         return result;
     }
@@ -137,23 +140,21 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult updateInfo(int id, String firstName, String lastName, String password, String imageURL) {
         ServiceResult result = new ServiceResult();
-        boolean isUserExist = employeeRepository.existsByIdAndRoleNameOrRoleName(id, RoleName.ROLE_CUSTOMER, RoleName.ROLE_SHOP);
-        if (isUserExist) {
+        EmployeeEntity customer = employeeRepository.findByIdAndDeletedAndRoleName(id, false,
+                RoleName.ROLE_CUSTOMER).orElse(null);
+        if (customer != null) {
             if (firstName != null && lastName != null && password != null) {
-                    EmployeeEntity employee = employeeRepository.findById(id);
-                    employee.setFirstName(firstName);
-                    employee.setLastName(lastName);
-                    employee.setPassword(encoder.encode(password));
-                    employee.setImageURL(imageURL);
-                    employeeRepository.save(employee);
-                    CustomerUpdateInfoResponse response = new CustomerUpdateInfoResponse(employee.getId(),
-                            employee.getFirstName(),
-                            employee.getLastName(),
-                            employee.getImageURL());
+                    customer.setFirstName(firstName);
+                    customer.setLastName(lastName);
+                    customer.setPassword(encoder.encode(password));
+                    customer.setImageURL(imageURL);
+                    employeeRepository.save(customer);
+                    CustomerUpdateInfoResponse response = new CustomerUpdateInfoResponse(customer.getId(),
+                            customer.getFirstName(),
+                            customer.getLastName(),
+                            customer.getImageURL());
                     result.setMessage("Update info successfully");
                     result.setData(response);
-
-
             } else {
                 result.setMessage("Fields cannot be empty");
                 result.setStatus(ServiceResult.Status.FAILED);
