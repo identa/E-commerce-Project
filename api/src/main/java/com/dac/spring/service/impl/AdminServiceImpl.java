@@ -2,6 +2,7 @@ package com.dac.spring.service.impl;
 
 import com.dac.spring.constant.AdminUserCreateConst;
 import com.dac.spring.constant.CustomerSignUpConst;
+import com.dac.spring.entity.CategoryEntity;
 import com.dac.spring.entity.EmployeeEntity;
 import com.dac.spring.entity.StatusEntity;
 import com.dac.spring.model.ServiceResult;
@@ -135,7 +136,7 @@ public class AdminServiceImpl implements AdminService {
                     statusName != null && roleName != null) {
                 boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch((t) -> t.name().equals(statusName));
                 boolean isRoleExist = Arrays.stream(RoleName.values()).anyMatch((t) -> t.name().equals(roleName));
-                if (isStatusExist && isRoleExist){
+                if (isStatusExist && isRoleExist) {
                     employee.setFirstName(firstName);
                     employee.setLastName(lastName);
                     employee.setPassword(encoder.encode(password));
@@ -152,7 +153,7 @@ public class AdminServiceImpl implements AdminService {
                             employee.getRole().getName().name());
                     result.setMessage("Update customer successfully");
                     result.setData(response);
-                }else {
+                } else {
                     result.setMessage(AdminUserCreateConst.STATUS_ROLE_NOT_EXIST);
                     result.setStatus(ServiceResult.Status.FAILED);
                 }
@@ -266,23 +267,69 @@ public class AdminServiceImpl implements AdminService {
                 false, RoleName.ROLE_CUSTOMER, RoleName.ROLE_SHOP);
         boolean isUserListEmpty = employeeList.isEmpty();
         if (!isUserListEmpty) {
-                    int totalPages = employeeList.getTotalPages();
-                    List<UserResponse> responses = new ArrayList<>();
-                    for (EmployeeEntity entity : employeeList) {
-                        UserResponse userResponse = new UserResponse(entity.getId(),
-                                entity.getFirstName(),
-                                entity.getLastName(),
-                                entity.getEmail(),
-                                entity.getImageURL(),
-                                entity.getStatus().getName().name(),
-                                entity.getRole().getName().name());
-                        responses.add(userResponse);
-                    }
-                    AdminPaginateUserResponse response = new AdminPaginateUserResponse(totalPages, responses);
-                    result.setMessage("Users are returned successfully");
-                    result.setData(response);
+            int totalPages = employeeList.getTotalPages();
+            List<UserResponse> responses = new ArrayList<>();
+            for (EmployeeEntity entity : employeeList) {
+                UserResponse userResponse = new UserResponse(entity.getId(),
+                        entity.getFirstName(),
+                        entity.getLastName(),
+                        entity.getEmail(),
+                        entity.getImageURL(),
+                        entity.getStatus().getName().name(),
+                        entity.getRole().getName().name());
+                responses.add(userResponse);
+            }
+            AdminPaginateUserResponse response = new AdminPaginateUserResponse(totalPages, responses);
+            result.setMessage("Users are returned successfully");
+            result.setData(response);
         } else {
             result.setMessage("User list is empty");
+            result.setStatus(ServiceResult.Status.FAILED);
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceResult createCategory(String name, String parentName) {
+        ServiceResult result = new ServiceResult();
+        if (name != null) {
+            boolean isCategoryExist = categoryRepository.existsByName(name);
+            if (!isCategoryExist) {
+                if (parentName != null) {
+                    CategoryEntity parentCategory = categoryRepository.findByName(parentName).orElse(null);
+                    if (parentCategory != null) {
+                        CategoryEntity category = new CategoryEntity();
+                        category.setName(name);
+                        category.setParentID(parentCategory.getId());
+                        categoryRepository.save(category);
+                        AdminCreateCategoryResponse response = new AdminCreateCategoryResponse(category.getId(),
+                                category.getName(),
+                                parentName);
+
+                        result.setMessage(AdminUserCreateConst.SUCCESS);
+                        result.setData(response);
+                    } else {
+                        result.setStatus(ServiceResult.Status.FAILED);
+                        result.setMessage("This category is not existed");
+                    }
+                } else {
+                    CategoryEntity category = new CategoryEntity();
+                    category.setName(name);
+                    category.setParentID(0);
+                    categoryRepository.save(category);
+                    AdminCreateCategoryResponse response = new AdminCreateCategoryResponse(category.getId(),
+                            category.getName(),
+                            null);
+
+                    result.setMessage(AdminUserCreateConst.SUCCESS);
+                    result.setData(response);
+                }
+            } else {
+                result.setMessage("This category is existed");
+                result.setStatus(ServiceResult.Status.FAILED);
+            }
+        } else {
+            result.setMessage(AdminUserCreateConst.NULL_DATA);
             result.setStatus(ServiceResult.Status.FAILED);
         }
         return result;

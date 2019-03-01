@@ -63,4 +63,9 @@ public class AdminController {
         return new ResponseEntity<>(adminService.paginateUser(request.getPage(),
                 request.getSize()), HttpStatus.OK);
     }
+
+    @PostMapping("/createCategory")
+    public ResponseEntity<ServiceResult> createCategory(@RequestBody AdminCreateCategoryRequest request){
+        return new ResponseEntity<>(adminService.createCategory(request.getName(), request.getParentName()),HttpStatus.OK);
+    }
 }
