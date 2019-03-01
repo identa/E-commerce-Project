@@ -11,4 +11,6 @@ public interface AdminService {
     ServiceResult signupAdmin(String firstName, String lastName, String email, String password);
     ServiceResult paginateUser(int page, int size);
     ServiceResult createCategory(String name, String parentName);
+    ServiceResult updateCategory(int id, String name, String parentName);
+
 }

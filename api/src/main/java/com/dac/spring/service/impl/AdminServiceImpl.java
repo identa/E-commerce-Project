@@ -334,4 +334,55 @@ public class AdminServiceImpl implements AdminService {
         }
         return result;
     }
+
+    @Override
+    public ServiceResult updateCategory(int id, String name, String parentName) {
+        ServiceResult result = new ServiceResult();
+        CategoryEntity category = categoryRepository.findById(id).orElse(null);
+        if (category != null){
+            if (name != null) {
+                boolean isCategoryExist = categoryRepository.existsByNameAndIdNot(name,id);
+                if (!isCategoryExist) {
+                    if (parentName != null) {
+                        CategoryEntity parentCategory = categoryRepository.findByName(parentName).orElse(null);
+                        if (parentCategory != null) {
+                            category.setName(name);
+                            category.setParentID(parentCategory.getId());
+                            categoryRepository.save(category);
+                            AdminCreateCategoryResponse response = new AdminCreateCategoryResponse(category.getId(),
+                                    category.getName(),
+                                    parentName);
+
+                            result.setMessage(AdminUserCreateConst.SUCCESS);
+                            result.setData(response);
+                        } else {
+                            result.setStatus(ServiceResult.Status.FAILED);
+                            result.setMessage("This category is not existed");
+                        }
+                    } else {
+                        category.setName(name);
+                        category.setParentID(0);
+                        categoryRepository.save(category);
+                        AdminCreateCategoryResponse response = new AdminCreateCategoryResponse(category.getId(),
+                                category.getName(),
+                                null);
+
+                        result.setMessage(AdminUserCreateConst.SUCCESS);
+                        result.setData(response);
+                    }
+                } else {
+                    result.setMessage("This name is already used");
+                    result.setStatus(ServiceResult.Status.FAILED);
+                }
+            } else {
+                result.setMessage(AdminUserCreateConst.NULL_DATA);
+                result.setStatus(ServiceResult.Status.FAILED);
+            }
+        }else {
+            result.setMessage("This category is not exist");
+            result.setStatus(ServiceResult.Status.FAILED);
+        }
+
+        return result;
+    }
 }
