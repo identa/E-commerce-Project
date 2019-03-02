@@ -12,5 +12,7 @@ public interface AdminService {
     ServiceResult paginateUser(int page, int size);
     ServiceResult createCategory(String name, String parentName);
     ServiceResult updateCategory(int id, String name, String parentName);
+    ServiceResult paginateCategory(int page, int size);
+    ServiceResult deleteCategory(int id);
 
 }

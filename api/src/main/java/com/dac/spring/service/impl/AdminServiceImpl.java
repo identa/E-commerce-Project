@@ -8,6 +8,7 @@ import com.dac.spring.entity.StatusEntity;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
 import com.dac.spring.model.enums.StatusName;
+import com.dac.spring.model.resp.AdminPaginateCategoryResponse;
 import com.dac.spring.model.resp.*;
 import com.dac.spring.repository.*;
 import com.dac.spring.service.AdminService;
@@ -57,6 +58,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     UserPaginationRepository userPaginationRepository;
+
+    @Autowired
+    CategoryPagingRepository categoryPagingRepository;
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -384,5 +388,39 @@ public class AdminServiceImpl implements AdminService {
         }
 
         return result;
+    }
+
+    @Override
+    public ServiceResult paginateCategory(int page, int size) {
+        ServiceResult result = new ServiceResult();
+        Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
+        Page<CategoryEntity> categoryList = categoryPagingRepository.findAll(info);
+        boolean isCategoryListEmpty = categoryList.isEmpty();
+        if (!isCategoryListEmpty) {
+            int totalPages = categoryList.getTotalPages();
+            List<CustomerGetAllCategoryResponse> responses = new ArrayList<>();
+            for (CategoryEntity entity : categoryList) {
+                CustomerGetAllCategoryResponse response = new CustomerGetAllCategoryResponse();
+                response.setId(entity.getId());
+                response.setName(entity.getName());
+                if (entity.getParentID() != 0){
+                    CategoryEntity category = categoryRepository.findById(entity.getParentID()).orElse(null);
+                    if (category != null) response.setParentCategory(category.getName());
+                }
+                responses.add(response);
+            }
+            AdminPaginateCategoryResponse response = new AdminPaginateCategoryResponse(totalPages, responses);
+            result.setMessage("Categories are returned successfully");
+            result.setData(response);
+        } else {
+            result.setMessage("Category list is empty");
+            result.setStatus(ServiceResult.Status.FAILED);
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceResult deleteCategory(int id) {
+        return null;
     }
 }
