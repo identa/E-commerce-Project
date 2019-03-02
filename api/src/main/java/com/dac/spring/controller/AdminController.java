@@ -79,4 +79,8 @@ public class AdminController {
         return new ResponseEntity<>(adminService.paginateCategory(request.getPage(), request.getSize()),HttpStatus.OK);
     }
 
+    @DeleteMapping("/deleteCategory")
+    public ResponseEntity<ServiceResult> deleteCategory(@RequestBody AdminDeleteCategoryRequest request){
+        return new ResponseEntity<>(adminService.deleteCategory(request.getId()),HttpStatus.OK);
+    }
 }

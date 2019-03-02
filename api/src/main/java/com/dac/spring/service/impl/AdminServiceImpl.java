@@ -343,9 +343,9 @@ public class AdminServiceImpl implements AdminService {
     public ServiceResult updateCategory(int id, String name, String parentName) {
         ServiceResult result = new ServiceResult();
         CategoryEntity category = categoryRepository.findById(id).orElse(null);
-        if (category != null){
+        if (category != null) {
             if (name != null) {
-                boolean isCategoryExist = categoryRepository.existsByNameAndIdNot(name,id);
+                boolean isCategoryExist = categoryRepository.existsByNameAndIdNot(name, id);
                 if (!isCategoryExist) {
                     if (parentName != null) {
                         CategoryEntity parentCategory = categoryRepository.findByName(parentName).orElse(null);
@@ -382,7 +382,7 @@ public class AdminServiceImpl implements AdminService {
                 result.setMessage(AdminUserCreateConst.NULL_DATA);
                 result.setStatus(ServiceResult.Status.FAILED);
             }
-        }else {
+        } else {
             result.setMessage("This category is not exist");
             result.setStatus(ServiceResult.Status.FAILED);
         }
@@ -403,7 +403,7 @@ public class AdminServiceImpl implements AdminService {
                 CustomerGetAllCategoryResponse response = new CustomerGetAllCategoryResponse();
                 response.setId(entity.getId());
                 response.setName(entity.getName());
-                if (entity.getParentID() != 0){
+                if (entity.getParentID() != 0) {
                     CategoryEntity category = categoryRepository.findById(entity.getParentID()).orElse(null);
                     if (category != null) response.setParentCategory(category.getName());
                 }
@@ -421,6 +421,15 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public ServiceResult deleteCategory(int id) {
-        return null;
+        ServiceResult result = new ServiceResult();
+        CategoryEntity category = categoryRepository.findById(id).orElse(null);
+        if (category != null) {
+            categoryRepository.delete(category);
+            result.setMessage("Delete customer successfully");
+        } else {
+            result.setMessage("Category not found");
+            result.setStatus(ServiceResult.Status.FAILED);
+        }
+        return result;
     }
 }
