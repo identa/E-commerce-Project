@@ -23,24 +23,12 @@ public class OrderEntity {
 
     @ManyToOne
     @JoinColumn(name = "shopID")
-    private ShopEntity shop;
+    private EmployeeEntity shop;
 
     @OneToMany(mappedBy = "order")
     private List<OrderDetailEntity> orderDetailEntityList;
 
     public OrderEntity() {
-    }
-
-    public OrderEntity(String status,
-                       double totalPrice,
-                       EmployeeEntity employee,
-                       ShopEntity shop,
-                       List<OrderDetailEntity> orderDetailEntityList) {
-        this.status = status;
-        this.totalPrice = totalPrice;
-        this.employee = employee;
-        this.shop = shop;
-        this.orderDetailEntityList = orderDetailEntityList;
     }
 
     public int getId() {
@@ -83,11 +71,11 @@ public class OrderEntity {
         this.employee = employee;
     }
 
-    public ShopEntity getShop() {
+    public EmployeeEntity getShop() {
         return shop;
     }
 
-    public void setShop(ShopEntity shop) {
+    public void setShop(EmployeeEntity shop) {
         this.shop = shop;
     }
 

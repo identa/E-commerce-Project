@@ -72,7 +72,7 @@ public class CustomerController {
 
     @PostMapping("/getProductByCat")
     public ResponseEntity<ServiceResult> getProductByCat(@RequestBody CustomerGetProductByCatRequest request){
-        return new ResponseEntity<>(customerService.getProductByCat(request.getId(),
+        return new ResponseEntity<>(customerService.paginateProductByCat(request.getId(),
                 request.getPage(),
                 request.getSize()),HttpStatus.OK);
     }

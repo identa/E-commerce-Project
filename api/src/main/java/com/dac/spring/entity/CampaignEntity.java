@@ -12,7 +12,7 @@ public class CampaignEntity {
 
     @ManyToOne
     @JoinColumn(name = "shopID")
-    private ShopEntity shop;
+    private EmployeeEntity shop;
 
     @ManyToOne
     @JoinColumn(name = "productID")
@@ -29,11 +29,11 @@ public class CampaignEntity {
         this.id = id;
     }
 
-    public ShopEntity getShop() {
+    public EmployeeEntity getShop() {
         return shop;
     }
 
-    public void setShop(ShopEntity shop) {
+    public void setShop(EmployeeEntity shop) {
         this.shop = shop;
     }
 

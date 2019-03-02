@@ -35,6 +35,15 @@ public class EmployeeEntity {
     @OneToMany(mappedBy = "employee")
     private List<OrderEntity> orderEntityList;
 
+    @OneToMany(mappedBy = "shop")
+    private List<ProductEntity> productEntityList;
+
+    @OneToMany(mappedBy = "shop")
+    private List<OrderEntity> orderShopList;
+
+    @OneToMany(mappedBy = "shop")
+    private List<CampaignEntity> campaignEntityList;
+
     public EmployeeEntity() {
     }
 
@@ -133,5 +142,29 @@ public class EmployeeEntity {
 
     public void setOrderEntityList(List<OrderEntity> orderEntityList) {
         this.orderEntityList = orderEntityList;
+    }
+
+    public List<ProductEntity> getProductEntityList() {
+        return productEntityList;
+    }
+
+    public void setProductEntityList(List<ProductEntity> productEntityList) {
+        this.productEntityList = productEntityList;
+    }
+
+    public List<OrderEntity> getOrderShopList() {
+        return orderShopList;
+    }
+
+    public void setOrderShopList(List<OrderEntity> orderShopList) {
+        this.orderShopList = orderShopList;
+    }
+
+    public List<CampaignEntity> getCampaignEntityList() {
+        return campaignEntityList;
+    }
+
+    public void setCampaignEntityList(List<CampaignEntity> campaignEntityList) {
+        this.campaignEntityList = campaignEntityList;
     }
 }

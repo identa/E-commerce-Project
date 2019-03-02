@@ -245,7 +245,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ServiceResult getProductByCat(int id, int page, int size) {
+    public ServiceResult paginateProductByCat(int id, int page, int size) {
         ServiceResult result = new ServiceResult();
         Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
         Page<ProductEntity> productList = productPaginationRepository.

@@ -36,7 +36,7 @@ public class ProductEntity {
 
     @ManyToOne
     @JoinColumn(name = "shopID")
-    private ShopEntity shop;
+    private EmployeeEntity shop;
 
     @OneToMany(mappedBy = "product")
     private List<OrderDetailEntity> orderDetailEntityList;
@@ -143,11 +143,11 @@ public class ProductEntity {
         this.campaignEntityList = campaignEntityList;
     }
 
-    public ShopEntity getShop() {
+    public EmployeeEntity getShop() {
         return shop;
     }
 
-    public void setShop(ShopEntity shop) {
+    public void setShop(EmployeeEntity shop) {
         this.shop = shop;
     }
 

@@ -45,9 +45,6 @@ public class AdminServiceImpl implements AdminService {
     CategoryRepository categoryRepository;
 
     @Autowired
-    ShopRepository shopRepository;
-
-    @Autowired
     OrderRepository orderRepository;
 
     @Autowired
