@@ -15,8 +15,12 @@ public class StatusEntity {
 
     @Enumerated(EnumType.STRING)
     private StatusName name;
+
     @OneToMany(mappedBy = "status")
     private List<EmployeeEntity> employeeEntityList;
+
+    @OneToMany(mappedBy = "status")
+    private List<ProductEntity> productEntityList;
 
     public StatusEntity() {
     }
@@ -43,5 +47,13 @@ public class StatusEntity {
 
     public void setEmployeeEntityList(List<EmployeeEntity> employeeEntityList) {
         this.employeeEntityList = employeeEntityList;
+    }
+
+    public List<ProductEntity> getProductEntityList() {
+        return productEntityList;
+    }
+
+    public void setProductEntityList(List<ProductEntity> productEntityList) {
+        this.productEntityList = productEntityList;
     }
 }

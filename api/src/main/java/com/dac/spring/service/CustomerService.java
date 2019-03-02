@@ -9,4 +9,6 @@ public interface CustomerService {
     ServiceResult updateInfo(int id, String firstName, String lastName, String password, String imageURL);
     ServiceResult getCategoryTree();
     ServiceResult getAllCategory();
+    ServiceResult getProductByCat(int id, int page, int size);
+
 }

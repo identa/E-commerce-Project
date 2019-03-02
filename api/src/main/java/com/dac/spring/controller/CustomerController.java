@@ -1,10 +1,7 @@
 package com.dac.spring.controller;
 
 import com.dac.spring.model.ServiceResult;
-import com.dac.spring.model.req.CustomerGetInfoRequest;
-import com.dac.spring.model.req.CustomerSignInRequest;
-import com.dac.spring.model.req.CustomerSignUpRequest;
-import com.dac.spring.model.req.CustomerUpdateInfoRequest;
+import com.dac.spring.model.req.*;
 import com.dac.spring.service.CustomerService;
 import com.dac.spring.utils.jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,5 +68,12 @@ public class CustomerController {
     @GetMapping("/getAllCategory")
     public ResponseEntity<ServiceResult> getAllCategory(){
         return new ResponseEntity<>(customerService.getAllCategory(),HttpStatus.OK);
+    }
+
+    @PostMapping("/getProductByCat")
+    public ResponseEntity<ServiceResult> getProductByCat(@RequestBody CustomerGetProductByCatRequest request){
+        return new ResponseEntity<>(customerService.getProductByCat(request.getId(),
+                request.getPage(),
+                request.getSize()),HttpStatus.OK);
     }
 }

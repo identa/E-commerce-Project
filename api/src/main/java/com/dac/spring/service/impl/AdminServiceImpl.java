@@ -425,7 +425,7 @@ public class AdminServiceImpl implements AdminService {
         CategoryEntity category = categoryRepository.findById(id).orElse(null);
         if (category != null) {
             categoryRepository.delete(category);
-            result.setMessage("Delete customer successfully");
+            result.setMessage("Delete category successfully");
         } else {
             result.setMessage("Category not found");
             result.setStatus(ServiceResult.Status.FAILED);

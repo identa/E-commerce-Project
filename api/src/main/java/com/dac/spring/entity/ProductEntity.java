@@ -12,7 +12,9 @@ public class ProductEntity {
 
     private String name;
 
-    private String status;
+    @ManyToOne
+    @JoinColumn(name = "statusID")
+    private StatusEntity status;
 
     private boolean deleted;
 
@@ -45,16 +47,6 @@ public class ProductEntity {
     public ProductEntity() {
     }
 
-    public ProductEntity(String name, String status, boolean deleted, String description, double originalPrice, CategoryEntity category, ShopEntity shop) {
-        this.name = name;
-        this.status = status;
-        this.deleted = deleted;
-        this.description = description;
-        this.originalPrice = originalPrice;
-        this.category = category;
-        this.shop = shop;
-    }
-
     public int getId() {
         return id;
     }
@@ -71,11 +63,11 @@ public class ProductEntity {
         this.name = name;
     }
 
-    public String getStatus() {
+    public StatusEntity getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusEntity status) {
         this.status = status;
     }
 

@@ -4,18 +4,20 @@ import com.dac.spring.constant.CustomerSignInConst;
 import com.dac.spring.constant.CustomerSignUpConst;
 import com.dac.spring.entity.CategoryEntity;
 import com.dac.spring.entity.EmployeeEntity;
+import com.dac.spring.entity.ProductEntity;
 import com.dac.spring.entity.StatusEntity;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
 import com.dac.spring.model.enums.StatusName;
 import com.dac.spring.model.resp.*;
-import com.dac.spring.repository.CategoryRepository;
-import com.dac.spring.repository.EmployeeRepository;
-import com.dac.spring.repository.RoleRepository;
-import com.dac.spring.repository.StatusRepository;
+import com.dac.spring.repository.*;
 import com.dac.spring.service.CustomerService;
 import com.dac.spring.utils.jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -40,6 +42,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     CategoryRepository categoryRepository;
+
+    @Autowired
+    ProductPaginationRepository productPaginationRepository;
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -235,6 +240,40 @@ public class CustomerServiceImpl implements CustomerService {
         else {
             result.setStatus(ServiceResult.Status.FAILED);
             result.setMessage("Category not found");
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceResult getProductByCat(int id, int page, int size) {
+        ServiceResult result = new ServiceResult();
+        Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
+        Page<ProductEntity> productList = productPaginationRepository.
+                findAllByDeletedAndStatusNameAndCategoryIdAndQuantityGreaterThan(
+                info, false, StatusName.ACTIVE, id, 0);
+        boolean isProductListEmpty = productList.isEmpty();
+        if (!isProductListEmpty) {
+            int totalPages = productList.getTotalPages();
+            List<CustomerGetProductByCatResponse> responses = new ArrayList<>();
+            for (ProductEntity entity : productList) {
+                CategoryEntity category = categoryRepository.findById(id).orElse(null);
+                if (category != null){
+                    CustomerGetProductByCatResponse response = new CustomerGetProductByCatResponse(entity.getId(),
+                            entity.getName(),
+                            entity.getDescription(),
+                            entity.getOriginalPrice(),
+                            entity.getDiscount(),
+                            entity.getProductImageURL(),
+                            category.getName());
+                    responses.add(response);
+                }
+            }
+            CustomerPaginateProductByCatResponse response = new CustomerPaginateProductByCatResponse(totalPages, responses);
+            result.setMessage("Products are returned successfully");
+            result.setData(response);
+        } else {
+            result.setMessage("Product list is empty");
+            result.setStatus(ServiceResult.Status.FAILED);
         }
         return result;
     }
