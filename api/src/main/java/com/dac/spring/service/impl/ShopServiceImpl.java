@@ -243,4 +243,18 @@ public class ShopServiceImpl implements ShopService {
         }
         return result;
     }
+
+    @Override
+    public ServiceResult deleteProduct(int id) {
+        ServiceResult result = new ServiceResult();
+        ProductEntity product = productRepository.findByIdAndDeleted(id, false);
+        if (product != null){
+            product.setDeleted(true);
+            result.setMessage("Delete product successfully");
+        }else {
+            result.setMessage("Cannot delete this product");
+            result.setStatus(ServiceResult.Status.FAILED);
+        }
+        return result;
+    }
 }

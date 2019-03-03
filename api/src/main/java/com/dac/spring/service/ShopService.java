@@ -10,4 +10,6 @@ public interface ShopService {
                                 double originalPrice, int discount, String productImageURL, int categoryID, int shopID);
     ServiceResult updateProduct(int id, String name, String status, String description, int quantity,
                                 double originalPrice, int discount, String productImageURL, int categoryID);
+
+    ServiceResult deleteProduct(int id);
 }

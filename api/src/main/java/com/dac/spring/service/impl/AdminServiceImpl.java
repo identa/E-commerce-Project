@@ -4,6 +4,7 @@ import com.dac.spring.constant.AdminUserCreateConst;
 import com.dac.spring.constant.CustomerSignUpConst;
 import com.dac.spring.entity.CategoryEntity;
 import com.dac.spring.entity.EmployeeEntity;
+import com.dac.spring.entity.ProductEntity;
 import com.dac.spring.entity.StatusEntity;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
@@ -422,6 +423,10 @@ public class AdminServiceImpl implements AdminService {
         CategoryEntity category = categoryRepository.findById(id).orElse(null);
         if (category != null) {
             categoryRepository.delete(category);
+            for (ProductEntity product : productRepository.findByCategoryId(id)){
+                product.setDeleted(true);
+                productRepository.save(product);
+            }
             result.setMessage("Delete category successfully");
         } else {
             result.setMessage("Category not found");

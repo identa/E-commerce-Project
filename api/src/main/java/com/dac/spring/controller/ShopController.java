@@ -70,4 +70,10 @@ public class ShopController {
                 request.getProductImageURL(),
                 request.getCategoryID()),HttpStatus.OK);
     }
+
+    @PutMapping("/deleteProduct")
+    @PreAuthorize("hasRole('SHOP')")
+    public ResponseEntity<ServiceResult> deleteProduct(@Valid @RequestBody ShopDeleteProductRequest request) {
+        return new ResponseEntity<>(shopService.deleteProduct(request.getId()),HttpStatus.OK);
+    }
 }
