@@ -8,4 +8,6 @@ public interface ShopService {
     ServiceResult paginateProductById(int id, int page, int size);
     ServiceResult createProduct(String name, String status, String description, int quantity,
                                 double originalPrice, int discount, String productImageURL, int categoryID, int shopID);
+    ServiceResult updateProduct(int id, String name, String status, String description, int quantity,
+                                double originalPrice, int discount, String productImageURL, int categoryID);
 }

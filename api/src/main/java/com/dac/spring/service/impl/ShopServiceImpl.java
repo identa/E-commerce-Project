@@ -185,7 +185,60 @@ public class ShopServiceImpl implements ShopService {
                 result.setStatus(ServiceResult.Status.FAILED);
             }
         } else {
-            result.setMessage("Name and status cannot be empty");
+            result.setMessage("Fields cannot be empty");
+            result.setStatus(ServiceResult.Status.FAILED);
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceResult updateProduct(int id, String name, String status, String description, int quantity, double originalPrice, int discount, String productImageURL, int categoryID) {
+        ServiceResult result = new ServiceResult();
+        if (name != null && status != null) {
+            boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch((t) -> t.name().equals(status));
+            if (isStatusExist) {
+                CategoryEntity category = categoryRepository.findById(categoryID).orElse(null);
+                if (category != null){
+                    ProductEntity product = productRepository.findByIdAndDeletedAndStatusName(
+                            id, false, StatusName.ACTIVE);
+                    if (product != null){
+                        product.setName(name);
+                        product.setDescription(description);
+                        product.setOriginalPrice(originalPrice);
+                        product.setDiscount(discount);
+                        product.setStatus(statusRepository.findByName(StatusName.valueOf(status)));
+                        product.setQuantity(quantity);
+                        product.setProductImageURL(productImageURL);
+                        product.setCategory(category);
+
+                        productRepository.save(product);
+                        ShopUpdateProductResponse response = new ShopUpdateProductResponse(product.getId(),
+                                product.getName(),
+                                product.getStatus().getName().name(),
+                                product.getDescription(),
+                                product.getQuantity(),
+                                product.getOriginalPrice(),
+                                product.getDiscount(),
+                                product.getProductImageURL(),
+                                product.getCategory().getName(),
+                                product.getShop().getFirstName() + " " + product.getShop().getLastName());
+
+                        result.setMessage("Create product successfully");
+                        result.setData(response);
+                    }else {
+                        result.setMessage("Shop not found");
+                        result.setStatus(ServiceResult.Status.FAILED);
+                    }
+                }else {
+                    result.setMessage("Category not found");
+                    result.setStatus(ServiceResult.Status.FAILED);
+                }
+            } else {
+                result.setMessage("Status is not existed");
+                result.setStatus(ServiceResult.Status.FAILED);
+            }
+        } else {
+            result.setMessage("Fields cannot be empty");
             result.setStatus(ServiceResult.Status.FAILED);
         }
         return result;

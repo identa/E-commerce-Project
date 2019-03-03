@@ -1,10 +1,7 @@
 package com.dac.spring.controller;
 
 import com.dac.spring.model.ServiceResult;
-import com.dac.spring.model.req.ShopCreateProductRequest;
-import com.dac.spring.model.req.ShopGetInfoRequest;
-import com.dac.spring.model.req.ShopGetProductRequest;
-import com.dac.spring.model.req.ShopUpdateInfoRequest;
+import com.dac.spring.model.req.*;
 import com.dac.spring.service.ShopService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -62,21 +59,15 @@ public class ShopController {
 
     @PostMapping("/updateProduct")
     @PreAuthorize("hasRole('SHOP')")
-    public ResponseEntity<ServiceResult> updateProduct(@Valid @RequestBody ShopUpdateInfoRequest request) {
-        return new ResponseEntity<>(shopService.updateInfo(request.getId(),
-                request.getFirstName(),
-                request.getLastName(),
-                request.getPassword(),
-                request.getImageURL()),HttpStatus.OK);
-    }
-
-    @PostMapping("/deleteProduct")
-    @PreAuthorize("hasRole('SHOP')")
-    public ResponseEntity<ServiceResult> deleteProduct(@Valid @RequestBody ShopUpdateInfoRequest request) {
-        return new ResponseEntity<>(shopService.updateInfo(request.getId(),
-                request.getFirstName(),
-                request.getLastName(),
-                request.getPassword(),
-                request.getImageURL()),HttpStatus.OK);
+    public ResponseEntity<ServiceResult> updateProduct(@Valid @RequestBody ShopUpdateProductRequest request) {
+        return new ResponseEntity<>(shopService.updateProduct(request.getId(),
+                request.getName(),
+                request.getStatus(),
+                request.getDescription(),
+                request.getQuantity(),
+                request.getOriginalPrice(),
+                request.getDiscount(),
+                request.getProductImageURL(),
+                request.getCategoryID()),HttpStatus.OK);
     }
 }
