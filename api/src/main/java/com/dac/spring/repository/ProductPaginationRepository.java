@@ -12,5 +12,6 @@ public interface ProductPaginationRepository extends PagingAndSortingRepository<
     Page<ProductEntity> findAllByDeletedAndCategoryId(Pageable pageable, boolean deleted, int categoryID);
     Page<ProductEntity> findAllByDeletedAndStatusNameAndCategoryId(Pageable pageable, boolean deleted, StatusName statusName, int categoryID);
     Page<ProductEntity> findAllByDeletedAndStatusNameAndCategoryIdAndQuantityGreaterThan(Pageable pageable, boolean deleted, StatusName statusName, int categoryID, int quantity);
+    Page<ProductEntity> findAllByDeletedAndShopId(Pageable pageable, boolean deleted, int id);
 
 }

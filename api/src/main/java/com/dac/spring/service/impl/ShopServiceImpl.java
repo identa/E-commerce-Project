@@ -1,17 +1,26 @@
 package com.dac.spring.service.impl;
 
+import com.dac.spring.entity.CategoryEntity;
 import com.dac.spring.entity.EmployeeEntity;
+import com.dac.spring.entity.ProductEntity;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
 import com.dac.spring.model.resp.ShopGetInfoResponse;
+import com.dac.spring.model.resp.ShopGetProductResponse;
+import com.dac.spring.model.resp.ShopPaginateProductByIdResponse;
 import com.dac.spring.model.resp.ShopUpdateInfoResponse;
-import com.dac.spring.repository.EmployeeRepository;
-import com.dac.spring.repository.RoleRepository;
-import com.dac.spring.repository.StatusRepository;
+import com.dac.spring.repository.*;
 import com.dac.spring.service.ShopService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ShopServiceImpl implements ShopService {
@@ -23,6 +32,12 @@ public class ShopServiceImpl implements ShopService {
 
     @Autowired
     StatusRepository statusRepository;
+
+    @Autowired
+    CategoryRepository categoryRepository;
+
+    @Autowired
+    ProductPaginationRepository productPaginationRepository;
 
     @Autowired
     PasswordEncoder encoder;
@@ -72,6 +87,50 @@ public class ShopServiceImpl implements ShopService {
         } else {
             result.setMessage("Shop not found");
             result.setStatus(ServiceResult.Status.FAILED);
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceResult paginateProductById(int id, int page, int size) {
+        ServiceResult result = new ServiceResult();
+        EmployeeEntity shop = employeeRepository.findByIdAndDeletedAndRoleName(id, false,
+                RoleName.ROLE_SHOP).orElse(null);
+        if (shop != null) {
+            Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
+            Page<ProductEntity> productList = productPaginationRepository.
+                    findAllByDeletedAndShopId(info, false, id);
+            boolean isProductListEmpty = productList.isEmpty();
+            if (!isProductListEmpty) {
+                int totalPages = productList.getTotalPages();
+                List<ShopGetProductResponse> responses = new ArrayList<>();
+                for (ProductEntity entity : productList) {
+                    CategoryEntity category = categoryRepository.findById(id).orElse(null);
+                    if (category != null) {
+                        ShopGetProductResponse response = new ShopGetProductResponse(entity.getId(),
+                                entity.getName(),
+                                entity.getStatus().getName().name(),
+                                entity.getDescription(),
+                                entity.getQuantity(),
+                                entity.getOriginalPrice(),
+                                entity.getDiscount(),
+                                entity.getView(),
+                                entity.getProductImageURL(),
+                                category.getName());
+                        responses.add(response);
+                    }
+                }
+                ShopPaginateProductByIdResponse response = new ShopPaginateProductByIdResponse(totalPages, responses);
+                result.setMessage("Products are returned successfully");
+                result.setData(response);
+            } else {
+                result.setMessage("Product list is empty");
+                result.setStatus(ServiceResult.Status.FAILED);
+            }
+            return result;
+        } else {
+            result.setStatus(ServiceResult.Status.FAILED);
+            result.setMessage("Shop not found");
         }
         return result;
     }
