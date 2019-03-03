@@ -111,7 +111,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public ServiceResult getCustomerById(int id) {
         ServiceResult result = new ServiceResult();
-        EmployeeEntity employee = employeeRepository.findById(id);
+        EmployeeEntity employee = employeeRepository.findById(id).orElse(null);
         if (employee != null) {
             AdminGetCustomerByIdResponse response = new AdminGetCustomerByIdResponse(employee.getFirstName(),
                     employee.getLastName(),

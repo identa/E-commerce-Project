@@ -6,5 +6,6 @@ public interface ShopService {
     ServiceResult getInfoById(int id);
     ServiceResult updateInfo(int id, String firstName, String lastName, String password, String imageURL);
     ServiceResult paginateProductById(int id, int page, int size);
-
+    ServiceResult createProduct(String name, String status, String description, int quantity,
+                                double originalPrice, int discount, String productImageURL, int categoryID, int shopID);
 }

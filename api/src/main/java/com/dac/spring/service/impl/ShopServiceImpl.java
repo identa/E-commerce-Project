@@ -5,10 +5,8 @@ import com.dac.spring.entity.EmployeeEntity;
 import com.dac.spring.entity.ProductEntity;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
-import com.dac.spring.model.resp.ShopGetInfoResponse;
-import com.dac.spring.model.resp.ShopGetProductResponse;
-import com.dac.spring.model.resp.ShopPaginateProductByIdResponse;
-import com.dac.spring.model.resp.ShopUpdateInfoResponse;
+import com.dac.spring.model.enums.StatusName;
+import com.dac.spring.model.resp.*;
 import com.dac.spring.repository.*;
 import com.dac.spring.service.ShopService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -35,6 +34,9 @@ public class ShopServiceImpl implements ShopService {
 
     @Autowired
     CategoryRepository categoryRepository;
+
+    @Autowired
+    ProductRepository productRepository;
 
     @Autowired
     ProductPaginationRepository productPaginationRepository;
@@ -131,6 +133,60 @@ public class ShopServiceImpl implements ShopService {
         } else {
             result.setStatus(ServiceResult.Status.FAILED);
             result.setMessage("Shop not found");
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceResult createProduct(String name, String status, String description, int quantity,
+                                       double originalPrice, int discount, String productImageURL, int categoryID, int shopID) {
+        ServiceResult result = new ServiceResult();
+        if (name != null && status != null) {
+            boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch((t) -> t.name().equals(status));
+            if (isStatusExist) {
+                    CategoryEntity category = categoryRepository.findById(categoryID).orElse(null);
+                    if (category != null){
+                        EmployeeEntity shop = employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(
+                                shopID, false, StatusName.ACTIVE, RoleName.ROLE_SHOP);
+                        if (shop != null){
+                            ProductEntity product = new ProductEntity(name,
+                                    statusRepository.findByName(StatusName.valueOf(status)),
+                                    description,
+                                    quantity,
+                                    originalPrice,
+                                    discount,
+                                    productImageURL,
+                                    categoryRepository.findById(categoryID).orElse(null),
+                                    employeeRepository.findById(shopID).orElse(null));
+                            productRepository.save(product);
+                            ShopCreateProductResponse response = new ShopCreateProductResponse(product.getId(),
+                                    product.getName(),
+                                    product.getStatus().getName().name(),
+                                    product.getDescription(),
+                                    product.getQuantity(),
+                                    product.getOriginalPrice(),
+                                    product.getDiscount(),
+                                    product.getProductImageURL(),
+                                    product.getCategory().getName(),
+                                    product.getShop().getFirstName() + " " + product.getShop().getLastName());
+
+                            result.setMessage("Create product successfully");
+                            result.setData(response);
+                        }else {
+                            result.setMessage("Shop not found");
+                            result.setStatus(ServiceResult.Status.FAILED);
+                        }
+                    }else {
+                        result.setMessage("Category not found");
+                        result.setStatus(ServiceResult.Status.FAILED);
+                    }
+            } else {
+                result.setMessage("Status is not existed");
+                result.setStatus(ServiceResult.Status.FAILED);
+            }
+        } else {
+            result.setMessage("Name and status cannot be empty");
+            result.setStatus(ServiceResult.Status.FAILED);
         }
         return result;
     }

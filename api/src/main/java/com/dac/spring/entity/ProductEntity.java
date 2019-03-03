@@ -47,6 +47,18 @@ public class ProductEntity {
     public ProductEntity() {
     }
 
+    public ProductEntity(String name, StatusEntity status, String description, int quantity, double originalPrice, int discount, String productImageURL, CategoryEntity category, EmployeeEntity shop) {
+        this.name = name;
+        this.status = status;
+        this.description = description;
+        this.quantity = quantity;
+        this.originalPrice = originalPrice;
+        this.discount = discount;
+        this.productImageURL = productImageURL;
+        this.category = category;
+        this.shop = shop;
+    }
+
     public int getId() {
         return id;
     }

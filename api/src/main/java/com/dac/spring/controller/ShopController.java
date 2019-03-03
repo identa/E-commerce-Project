@@ -1,6 +1,7 @@
 package com.dac.spring.controller;
 
 import com.dac.spring.model.ServiceResult;
+import com.dac.spring.model.req.ShopCreateProductRequest;
 import com.dac.spring.model.req.ShopGetInfoRequest;
 import com.dac.spring.model.req.ShopGetProductRequest;
 import com.dac.spring.model.req.ShopUpdateInfoRequest;
@@ -47,12 +48,16 @@ public class ShopController {
 
     @PostMapping("/createProduct")
     @PreAuthorize("hasRole('SHOP')")
-    public ResponseEntity<ServiceResult> createProduct(@Valid @RequestBody ShopUpdateInfoRequest request) {
-        return new ResponseEntity<>(shopService.updateInfo(request.getId(),
-                request.getFirstName(),
-                request.getLastName(),
-                request.getPassword(),
-                request.getImageURL()),HttpStatus.OK);
+    public ResponseEntity<ServiceResult> createProduct(@Valid @RequestBody ShopCreateProductRequest request) {
+        return new ResponseEntity<>(shopService.createProduct(request.getName(),
+                request.getStatus(),
+                request.getDescription(),
+                request.getQuantity(),
+                request.getOriginalPrice(),
+                request.getDiscount(),
+                request.getProductImageURL(),
+                request.getCategoryID(),
+                request.getShopID()),HttpStatus.OK);
     }
 
     @PostMapping("/updateProduct")
