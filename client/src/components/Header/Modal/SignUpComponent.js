@@ -13,6 +13,7 @@ class SignUpComponent extends Component {
             lastName : '',
             email : '',
             password : '',
+            messageShowingStyle : 'form-row',
             error : {
                 firstName : '',
                 lastName : '',
@@ -25,6 +26,12 @@ class SignUpComponent extends Component {
     
     onChange = (event) =>{
         this.setState({ [event.target.name]: event.target.value });
+        this.setState(prevState =>({
+            error :{
+                ...prevState.error,
+                message : ''
+            }
+        }));
     }
 
     showSignIn = ()=>{
@@ -39,6 +46,7 @@ class SignUpComponent extends Component {
 
     validateEmail = () => {
         const email = this.state.email;
+        this.setState({messageShowingStyle : 'form-row'});
         if(email.length === 0){
             this.setState(prevState =>({
                 error :{
@@ -70,7 +78,7 @@ class SignUpComponent extends Component {
 
     validatePassword = () =>{
         const password = this.state.password;
-
+        this.setState({messageShowingStyle : 'form-row'});
         if(password.length === 0){
             this.setState(prevState =>({
                 error :{
@@ -102,7 +110,7 @@ class SignUpComponent extends Component {
 
     validateFirstName = ()=> {
         const firstName = this.state.firstName;
-
+        this.setState({messageShowingStyle : 'form-row'});
         if(firstName.length === 0){
             this.setState(prevState =>({
                 error :{
@@ -125,7 +133,7 @@ class SignUpComponent extends Component {
 
     validateLastName = ()=> {
         const lastName = this.state.lastName;
-
+        this.setState({messageShowingStyle : 'form-row'});
         if(lastName.length === 0){
             this.setState(prevState =>({
                 error :{
@@ -193,6 +201,7 @@ class SignUpComponent extends Component {
 
     onFocus = (event) =>{
         let name = event.target.name;
+        this.setState({messageShowingStyle : 'message-hidden'});
         if(name==='email'){
             this.setState(prevState => ({
                 error: {
@@ -316,7 +325,7 @@ class SignUpComponent extends Component {
                                     <button type="submit" onClick={this.formSubmit}>GET STARTED</button>
                                 </div>
 
-                                <div className="form-row">
+                                <div className={this.state.messageShowingStyle}>
                                     <div className="message">
                                         {this.state.error.message}
                                     </div>

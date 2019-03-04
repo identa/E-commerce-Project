@@ -15,7 +15,7 @@ class CustomerCreate extends Component {
             email : '',
             password : '',
             imageLink : '',
-            selectedFile : '',
+            selectedFile : {},
             error : {
                 firstName : '',
                 lastName : '',
@@ -138,17 +138,18 @@ class CustomerCreate extends Component {
             return true;
         }
     }
-
+ 
     loadFile = (event) =>{
         let reader = new FileReader();  
         let file = event.target.files[0];
+        
+        this.setState({selectedFile : file});
+        
         reader.onloadend = () =>{
             var image = document.getElementById('preview');
             image.src = reader.result;
-            this.setState({selectedFile : reader.result});
         };
         reader.readAsDataURL(file);
-        console.log(this.state.selectedFile);
     }
 
     formSubmit = (event) =>{
@@ -232,7 +233,7 @@ class CustomerCreate extends Component {
                                                 <div className="form-group row">
                                                     <label className="col-4 col-form-label">Avatar</label> 
                                                     <div className="col-4">
-                                                        <input type="file" name="avatar" accept="image/*" onChange={(event) => this.loadFile(event)}/>  
+                                                        <input type="file" name="avatar" onChange={(e)=>this.loadFile(e)}/>
                                                     </div>
                                                     
                                                 </div>

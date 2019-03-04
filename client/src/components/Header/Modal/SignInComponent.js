@@ -11,6 +11,7 @@ class SignInComponent extends Component {
             isSignUpShowing : false,
             email : '',
             password: '',
+            messageShowingStyle : 'form-row',
             error : {
                 email : '',
                 password : '',
@@ -31,6 +32,7 @@ class SignInComponent extends Component {
     
     validateEmail = () => {
         const email = this.state.email;
+        this.setState({messageShowingStyle : 'form-row'});
         if(email.length === 0){
             this.setState(prevState =>({
                 error :{
@@ -62,7 +64,7 @@ class SignInComponent extends Component {
 
     validatePassword = () =>{
         const password = this.state.password;
-
+        this.setState({messageShowingStyle : 'form-row'});
         if(password.length === 0){
             this.setState(prevState =>({
                 error :{
@@ -123,7 +125,7 @@ class SignInComponent extends Component {
                             ...prevState.error,
                             message : data.message
                         }
-                    }))
+                    }));
                 }
             })
             .catch(err => this.setState(prevState =>({
@@ -137,16 +139,22 @@ class SignInComponent extends Component {
 
     onChange = (event) =>{
         this.setState({ [event.target.name]: event.target.value });
+        this.setState(prevState =>({
+            error :{
+                ...prevState.error,
+                message : ''
+            }
+        }));
     }
 
     onFocus = (event) =>{
         let name = event.target.name;
+        this.setState({messageShowingStyle : 'message-hidden'});
         if(name ==='email'){
             this.setState(prevState => ({
                 error: {
                     ...prevState.error,
-                    email: '',
-                    message : ''
+                    email: ''
                 }
             }));
         }
@@ -154,8 +162,7 @@ class SignInComponent extends Component {
             this.setState(prevState => ({
                 error: {
                     ...prevState.error,
-                    password: '',
-                    message : ''
+                    password: ''
                 }
             }));
         }
@@ -213,7 +220,7 @@ class SignInComponent extends Component {
                                     <button type="submit" onClick={this.formSubmit}>SIGN IN</button>
                                 </div>   
 
-                                <div className="form-row">
+                                <div className={this.state.messageShowingStyle}>
                                     <div className="message">{this.state.error.message}</div>
                                 </div>                         
                             </div>

@@ -73,67 +73,74 @@ class Footer extends Component {
           </div>
         </div>
         <div className="footer-branch">
-          <div className="footer-payment row">
+          
+          <div className="footer-payment">
             <h2>Payment method</h2>
-            <div className="payment-icon col-md-2 col-sm-2 col-xs-12">
-              <img src={process.env.PUBLIC_URL + '/assets/images/icon-payment/visa.jpg'} alt="" />
-            </div>
-            <div className="payment-icon col-md-2 col-sm-2 col-xs-12">
-              <img src={process.env.PUBLIC_URL + '/assets/images/icon-payment/master-card.png'}alt="" />
-            </div>
-            <div className="payment-icon col-md-2 col-sm-2 col-xs-12">
-              <img src={process.env.PUBLIC_URL + '/assets/images/icon-payment/jcb.png'}alt="" />
-            </div>
-            <div className="payment-icon col-md-2 col-sm-2 col-xs-12">
-              <img
-                src={process.env.PUBLIC_URL + '/assets/images/icon-payment/cash-on-delivery.png'}
-                alt=""
-              />
-            </div>
-            <div className="payment-icon col-md-2 col-sm-2 col-xs-12">
-              <img src={process.env.PUBLIC_URL + '/assets/images/icon-payment/napas.png'} alt="" />
-            </div>
-            <div className="payment-icon col-md-2 col-sm-2 col-xs-12">
+
+            <div className="row">
+                <div className="payment-icon col-md-2 col-sm-2 col-xs-12">
+                <img src={process.env.PUBLIC_URL + '/assets/images/icon-payment/visa.jpg'} alt="" />
+                </div>
+                <div className="payment-icon col-md-2 col-sm-2 col-xs-12">
+                <img src={process.env.PUBLIC_URL + '/assets/images/icon-payment/master-card.png'}alt="" />
+                </div>
+                <div className="payment-icon col-md-2 col-sm-2 col-xs-12">
+                <img src={process.env.PUBLIC_URL + '/assets/images/icon-payment/jcb.png'}alt="" />
+                </div>
+                <div className="payment-icon col-md-2 col-sm-2 col-xs-12">
+                <img
+                    src={process.env.PUBLIC_URL + '/assets/images/icon-payment/cash-on-delivery.png'}
+                    alt=""
+                />
+                </div>
+                <div className="payment-icon col-md-2 col-sm-2 col-xs-12">
+                <img src={process.env.PUBLIC_URL + '/assets/images/icon-payment/napas.png'} alt="" />
+                </div>
+                <div className="payment-icon col-md-2 col-sm-2 col-xs-12">
               <img src={process.env.PUBLIC_URL + '/assets/images/icon-payment/pig.jpg'} alt="" />
             </div>
+            </div>
           </div>
-          <div className="footer-delivery row">
+          
+          <div className="footer-delivery">
             <h2>Delivery Method</h2>
-            <div className="delivery-icon col-md-6 col-sm-6 col-xs-6">
-              <img src={process.env.PUBLIC_URL + '/assets/images/icon-delivery-branch/1.png'} alt="" />
-            </div>
-            <div className="delivery-icon col-md-6 col-sm-6 col-xs-6">
-              <img src={process.env.PUBLIC_URL + '/assets/images/icon-delivery-branch/2.png'} alt="" />
-            </div>
-            <div className="delivery-icon col-md-6 col-sm-6 col-xs-6">
-              <img src={process.env.PUBLIC_URL + '/assets/images/icon-delivery-branch/3.png'} alt="" />
-            </div>
-            <div className="delivery-icon col-md-6 col-sm-6 col-xs-6">
-              <img src={process.env.PUBLIC_URL + '/assets/images/icon-delivery-branch/4.png'} alt="" />
-            </div>
-            <div className="delivery-icon col-md-6 col-sm-6 col-xs-6">
-              <img src={process.env.PUBLIC_URL + '/assets/images/icon-delivery-branch/5.png'} alt="" />
-            </div>
-            <div className="delivery-icon col-md-6 col-sm-6 col-xs-6">
-              <img src={process.env.PUBLIC_URL + '/assets/images/icon-delivery-branch/6.jpg'} alt="" />
-            </div>
-            <div className="delivery-icon col-md-6 col-sm-6 col-xs-6">
-              <img src={process.env.PUBLIC_URL + '/assets/images/icon-delivery-branch/7.png'} alt="" />
-            </div>
-            <div className="delivery-icon col-md-6 col-sm-6 col-xs-6">
+            <div className="row">
+                <div className="delivery-icon col-md-6 col-sm-6 col-xs-6">
+                <img src={process.env.PUBLIC_URL + '/assets/images/icon-delivery-branch/1.png'} alt="" />
+                </div>
+                <div className="delivery-icon col-md-6 col-sm-6 col-xs-6">
+                <img src={process.env.PUBLIC_URL + '/assets/images/icon-delivery-branch/2.png'} alt="" />
+                </div>
+                <div className="delivery-icon col-md-6 col-sm-6 col-xs-6">
+                <img src={process.env.PUBLIC_URL + '/assets/images/icon-delivery-branch/3.png'} alt="" />
+                </div>
+                <div className="delivery-icon col-md-6 col-sm-6 col-xs-6">
+                <img src={process.env.PUBLIC_URL + '/assets/images/icon-delivery-branch/4.png'} alt="" />
+                </div>
+                <div className="delivery-icon col-md-6 col-sm-6 col-xs-6">
+                <img src={process.env.PUBLIC_URL + '/assets/images/icon-delivery-branch/5.png'} alt="" />
+                </div>
+                <div className="delivery-icon col-md-6 col-sm-6 col-xs-6">
+                <img src={process.env.PUBLIC_URL + '/assets/images/icon-delivery-branch/6.jpg'} alt="" />
+                </div>
+                <div className="delivery-icon col-md-6 col-sm-6 col-xs-6">
+                <img src={process.env.PUBLIC_URL + '/assets/images/icon-delivery-branch/7.png'} alt="" />
+                </div>
+                <div className="delivery-icon col-md-6 col-sm-6 col-xs-6">
               <img src={process.env.PUBLIC_URL + '/assets/images/icon-delivery-branch/8.png'} alt="" />
             </div>
+            </div>
           </div>
-          <div className="footer-cetificate row">
+          
+          <div className="footer-cetificate">
             <h2>Certification</h2>
-            <div className="certificate-icon">
-              <div className="certificate-left">
-                <img src={process.env.PUBLIC_URL + '/assets/images/icon-verify/1.png'} alt="" />
-              </div>
-              <div className="certificate-right col-md-12 col-sm-12 col-xs-12">
-                <img src={process.env.PUBLIC_URL + '/assets/images/icon-verify/2.png'} />
-                <img src={process.env.PUBLIC_URL + '/assets/images/icon-verify/3.png'} />
-              </div>
+            <div className="row">
+                <div className="certificate-icon">
+                    <div className="certificate-contain col-md-12 col-sm-12 col-xs-12">
+                        <img src={process.env.PUBLIC_URL + '/assets/images/icon-verify/2.png'} />
+                        <img src={process.env.PUBLIC_URL + '/assets/images/icon-verify/3.png'} />
+                    </div>
+                </div>
             </div>
           </div>
         </div>
