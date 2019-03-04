@@ -1,33 +1,52 @@
 import React, { Component } from 'react';
 import {Button} from 'react-bootstrap';
-import {Link} from 'react-router-dom';
+import {Link,Redirect} from 'react-router-dom';
+const url = 'https://dac-java.herokuapp.com/api/customer/signout';
 class UserLink extends Component {
     constructor(props) {
         super(props);
         
         this.state = {
-            name : localStorage.getItem("name"), 
-            role : ''
+            name : '',
+            role : '',
         }
     }
     
     logout = () =>{
         if(localStorage.getItem("token")){
-            localStorage.removeItem("token");
-            localStorage.removeItem("name");
-            this.props.changeAuthenticated();
+            const token ={
+                token : localStorage.token.replace('Bearer','').trim()
+            } 
+            fetch(url, {
+                method : 'DELETE',
+                headers : {
+                    'Content-Type' : 'application/json',
+                    'Authorization' : localStorage.token
+                },
+                body : JSON.stringify(token)
+            })
+            .then(res=>res.json())
+            .then(data => {
+                if(data.status === 'SUCCESS'){
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("name");
+                    this.props.changeAuthenticated();
+                }
+            });
         }
     }
 
     render() {
         const role = this.props.getRole();
+        const name = localStorage.name;
+
         return (
             <div className="links-bar">
                 <Button variant="link" className="menu-action-link">
                     
                         <img src={process.env.PUBLIC_URL + '/assets/images/user.png'} className="img-avatar" alt=""/> 
   
-                    Hello {this.state.name}
+                    Hello {name}
                 </Button>
                 <div className="menu-action">
                     <ul>

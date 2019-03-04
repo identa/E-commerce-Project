@@ -300,10 +300,11 @@ a:hover{
     display: flex;
 }
 .certificate-contain{
-    width: 190%;
+    width: 100%;
     padding: 0;
 }
 .certificate-contain img{
+    display: block;
     max-width: 100%;
     height: auto;
 }

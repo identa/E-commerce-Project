@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 const REGEX_EMAIL = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const url = 'https://dac-java.herokuapp.com/api/customer/signin';
 class SignInComponent extends Component {
 
     constructor(props) {
@@ -102,7 +103,7 @@ class SignInComponent extends Component {
                 password : this.state.password
             };
 
-            fetch("https://dac-java.herokuapp.com/api/customer/signin", {
+            fetch(url, {
                 method: "POST",
                 body: JSON.stringify(data),
                 headers: {

@@ -14,8 +14,7 @@ class CustomerCreate extends Component {
             lastName : '',
             email : '',
             password : '',
-            imageLink : '',
-            selectedFile : {},
+            imageURL : '',
             error : {
                 firstName : '',
                 lastName : '',
@@ -143,8 +142,6 @@ class CustomerCreate extends Component {
         let reader = new FileReader();  
         let file = event.target.files[0];
         
-        this.setState({selectedFile : file});
-        
         reader.onloadend = () =>{
             var image = document.getElementById('preview');
             image.src = reader.result;
@@ -154,11 +151,29 @@ class CustomerCreate extends Component {
 
     formSubmit = (event) =>{
         event.preventDefault();
+        const data = new FormData();
+    
+        let fileField = document.querySelector("input[type='file']");
 
+        data.append('image', fileField.files[0]);
+        
+        //upload image to imgur
         fetch(urlImgur, {
             method : 'POST',
-
+            headers :{
+                'Authorization' : `Client-ID ${clientId}`
+            },
+            body : data
+        })
+        .then(res =>res.json())
+        .catch(err =>{
+            console.log('failed : ' + err);
+        })
+        .then(data => {
+            this.setState({imageURL : data.data.link});
         });
+
+        //post data to api
     }
     render() {
         return (
@@ -180,7 +195,7 @@ class CustomerCreate extends Component {
                                                 <div className="form-group row">
                                                     <label className="col-4 col-form-label">First Name *</label> 
                                                     <div className="col-8">
-                                                        <input type="text" name="firstname" placeholder="First name" className="form-control" required="required" onChange={this.onChange} onBlur={this.validateFirstName}/>
+                                                        <input type="text" name="firstName" placeholder="First name" className="form-control" required="required" onChange={this.onChange} onBlur={this.validateFirstName}/>
                                                         <div className="message">
                                                             {this.state.error.firstName}
                                                         </div>
@@ -191,7 +206,7 @@ class CustomerCreate extends Component {
                                                 <div className="form-group row">
                                                     <label className="col-4 col-form-label">Last Name*</label> 
                                                     <div className="col-8">
-                                                        <input type="text" name="lastname" placeholder="Last name" className="form-control" required="required" onChange={this.onChange} onBlur={this.validateLastName}/>
+                                                        <input type="text" name="lastName" placeholder="Last name" className="form-control" required="required" onChange={this.onChange} onBlur={this.validateLastName}/>
                                                         <div className="message">
                                                             {this.state.error.lastName}
                                                         </div>
@@ -241,8 +256,8 @@ class CustomerCreate extends Component {
                                                     <div className='col-4'/>
                                                     <div className="col-4 img-preview">
                                                         <img src='' id='preview' alt=''/>
+                                                        {this.state.imageLink}
                                                     </div>
-                                                    <div className='col-4'>{this.state.imageLink}</div>
                                                 </div>
                                                 <div className="form-group row">
                                                     <div className="offset-4 col-8">
