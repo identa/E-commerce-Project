@@ -9,8 +9,11 @@ import com.dac.spring.model.enums.StatusName;
 import com.dac.spring.model.resp.*;
 import com.dac.spring.repository.*;
 import com.dac.spring.service.CustomerService;
+import com.dac.spring.utils.jwt.JwtAuthTokenFilter;
 import com.dac.spring.utils.jwt.JwtProvider;
+import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +58,12 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     PasswordEncoder encoder;
+
+    @Value("${jwtSecretKey}")
+    private String jwtSecret;
+
+    @Value("${jwtExpireTime}")
+    private int jwtExpiration;
 
     private String authenticationWithJwt(String email, String password) {
         Authentication authentication = authenticationManager.authenticate(
@@ -183,8 +193,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ServiceResult signOut(String token) {
+    public ServiceResult signOut(HttpServletRequest request) {
         ServiceResult result = new ServiceResult();
+        String token = request.getHeader("Authorization").split(" ")[1];
         JWTEntity jwt = jwtRepository.findByToken(token).orElse(null);
         if (jwt != null){
             jwtRepository.delete(jwt);
@@ -307,5 +318,21 @@ public class CustomerServiceImpl implements CustomerService {
             result.setStatus(ServiceResult.Status.FAILED);
         }
         return result;
+    }
+
+    @Override
+    public ServiceResult returnRole(HttpServletRequest request) {
+        ServiceResult result = new ServiceResult();
+        String authHeader = request.getHeader("Authorization").split(" ")[1];
+        String roleName= employeeRepository.findByEmail(getUserNameFromJwtToken(authHeader)).orElse(null).getRole().getName().name();
+        result.setData(roleName);
+        return result;
+    }
+
+    private String getUserNameFromJwtToken(String token) {
+        return Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody().getSubject();
     }
 }

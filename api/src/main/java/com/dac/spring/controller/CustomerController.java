@@ -12,12 +12,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/customer")
-public class CustomerController {
+public class CustomerController extends HttpServlet {
     @Autowired
     CustomerService customerService;
 
@@ -45,8 +47,8 @@ public class CustomerController {
     }
 
     @DeleteMapping("/signout")
-    public ResponseEntity<ServiceResult> signOut(@Valid @RequestBody CustomerSignOutRequest request) {
-        return new ResponseEntity<>(customerService.signOut(request.getToken()), HttpStatus.OK);
+    public ResponseEntity<ServiceResult> signOut(HttpServletRequest request) {
+        return new ResponseEntity<>(customerService.signOut(request), HttpStatus.OK);
     }
 
     @PostMapping("/getById")
@@ -80,5 +82,10 @@ public class CustomerController {
         return new ResponseEntity<>(customerService.paginateProductByCat(request.getId(),
                 request.getPage(),
                 request.getSize()),HttpStatus.OK);
+    }
+
+    @GetMapping("/getRole")
+    public ResponseEntity<ServiceResult> test(HttpServletRequest request){
+        return new ResponseEntity<>(customerService.returnRole(request),HttpStatus.OK);
     }
 }
