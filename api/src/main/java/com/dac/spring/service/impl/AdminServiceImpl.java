@@ -2,10 +2,7 @@ package com.dac.spring.service.impl;
 
 import com.dac.spring.constant.AdminUserCreateConst;
 import com.dac.spring.constant.CustomerSignUpConst;
-import com.dac.spring.entity.CategoryEntity;
-import com.dac.spring.entity.EmployeeEntity;
-import com.dac.spring.entity.ProductEntity;
-import com.dac.spring.entity.StatusEntity;
+import com.dac.spring.entity.*;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
 import com.dac.spring.model.enums.StatusName;
@@ -61,6 +58,9 @@ public class AdminServiceImpl implements AdminService {
     CategoryPagingRepository categoryPagingRepository;
 
     @Autowired
+    JWTRepository jwtRepository;
+
+    @Autowired
     AuthenticationManager authenticationManager;
 
     @Autowired
@@ -99,6 +99,12 @@ public class AdminServiceImpl implements AdminService {
         boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch((t) -> t.name().equals(statusName));
         boolean isRoleExist = Arrays.stream(RoleName.values()).anyMatch((t) -> t.name().equals(roleName));
         return isStatusExist && isRoleExist;
+    }
+
+    private JWTEntity saveJwt(String token){
+        JWTEntity jwtEntity = new JWTEntity();
+        jwtEntity.setToken(token);
+        return jwtRepository.save(jwtEntity);
     }
 
     @Override
@@ -254,7 +260,7 @@ public class AdminServiceImpl implements AdminService {
                         employee.getLastName(),
                         employee.getRole().getName().name(),
                         jwt);
-
+                saveJwt(jwt);
                 result.setMessage(CustomerSignUpConst.SUCCESS);
                 result.setData(response);
             } else {

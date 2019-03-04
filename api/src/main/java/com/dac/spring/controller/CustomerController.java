@@ -44,6 +44,11 @@ public class CustomerController {
                 request.getPassword()), HttpStatus.OK);
     }
 
+    @DeleteMapping("/signout")
+    public ResponseEntity<ServiceResult> signOut(@Valid @RequestBody CustomerSignOutRequest request) {
+        return new ResponseEntity<>(customerService.signOut(request.getToken()), HttpStatus.OK);
+    }
+
     @PostMapping("/getById")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<ServiceResult> getInfoById(@Valid @RequestBody CustomerGetInfoRequest request) {

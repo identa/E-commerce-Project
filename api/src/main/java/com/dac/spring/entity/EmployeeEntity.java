@@ -19,7 +19,6 @@ public class EmployeeEntity {
 
     private String password;
 
-    @Column(columnDefinition = "longtext")
     private String imageURL;
 
     private boolean deleted = false;
