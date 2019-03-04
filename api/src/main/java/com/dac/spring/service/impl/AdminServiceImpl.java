@@ -95,6 +95,12 @@ public class AdminServiceImpl implements AdminService {
         return responseList;
     }
 
+    private boolean isStatusAndRoleExisted(String statusName, String roleName){
+        boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch((t) -> t.name().equals(statusName));
+        boolean isRoleExist = Arrays.stream(RoleName.values()).anyMatch((t) -> t.name().equals(roleName));
+        return isStatusExist && isRoleExist;
+    }
+
     @Override
     public ServiceResult getAllCustomer() {
         ServiceResult result = new ServiceResult();
@@ -136,9 +142,7 @@ public class AdminServiceImpl implements AdminService {
         if (employee != null) {
             if (firstName != null && lastName != null && password != null &&
                     statusName != null && roleName != null) {
-                boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch((t) -> t.name().equals(statusName));
-                boolean isRoleExist = Arrays.stream(RoleName.values()).anyMatch((t) -> t.name().equals(roleName));
-                if (isStatusExist && isRoleExist) {
+                if (isStatusAndRoleExisted(statusName, roleName)) {
                     employee.setFirstName(firstName);
                     employee.setLastName(lastName);
                     employee.setPassword(encoder.encode(password));
@@ -193,9 +197,8 @@ public class AdminServiceImpl implements AdminService {
         ServiceResult result = new ServiceResult();
         if (firstName != null && lastName != null && email != null && password != null &&
                 statusName != null && roleName != null) {
-            boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch((t) -> t.name().equals(statusName));
-            boolean isRoleExist = Arrays.stream(RoleName.values()).anyMatch((t) -> t.name().equals(roleName));
-            if (isStatusExist && isRoleExist) {
+
+            if (isStatusAndRoleExisted(statusName, roleName)) {
                 boolean isEmailExisted = employeeRepository.existsByEmail(email);
                 if (!isEmailExisted) {
                     EmployeeEntity employee = new EmployeeEntity(firstName, lastName, email,
