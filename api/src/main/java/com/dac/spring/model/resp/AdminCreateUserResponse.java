@@ -9,15 +9,18 @@ public class AdminCreateUserResponse {
 
     private String email;
 
+    private String imageURL;
+
     private String status;
 
     private String role;
 
-    public AdminCreateUserResponse(int id, String firstName, String lastName, String email, String status, String role) {
+    public AdminCreateUserResponse(int id, String firstName, String lastName, String email, String imageURL, String status, String role) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.imageURL = imageURL;
         this.status = status;
         this.role = role;
     }
@@ -68,5 +71,13 @@ public class AdminCreateUserResponse {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
     }
 }

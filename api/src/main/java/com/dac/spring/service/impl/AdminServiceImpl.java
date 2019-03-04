@@ -207,6 +207,7 @@ public class AdminServiceImpl implements AdminService {
                             employee.getFirstName(),
                             employee.getLastName(),
                             employee.getEmail(),
+                            employee.getImageURL(),
                             employee.getStatus().getName().name(),
                             employee.getRole().getName().name());
 

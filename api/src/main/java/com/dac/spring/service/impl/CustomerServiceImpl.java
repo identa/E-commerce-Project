@@ -141,22 +141,28 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult signIn(String email, String password) {
         ServiceResult result = new ServiceResult();
-        EmployeeEntity customer = employeeRepository.findByEmailAndDeleted(email, false).orElse(null);
+        EmployeeEntity customer = employeeRepository.findByEmail(email).orElse(null);
         if (customer != null) {
-            boolean isPasswordChecked = encoder.matches(password, customer.getPassword());
-            if (isPasswordChecked) {
-                String jwt = authenticationWithJwt(email, password);
-                CustomerSignInSignUpResponse response = new CustomerSignInSignUpResponse(customer.getId(),
-                        customer.getFirstName(),
-                        customer.getLastName(),
-                        customer.getRole().getName().name(),
-                        jwt);
-                result.setMessage(CustomerSignInConst.SUCCESS);
-                result.setData(response);
-            } else {
+            if (!customer.isDeleted()){
+                boolean isPasswordChecked = encoder.matches(password, customer.getPassword());
+                if (isPasswordChecked) {
+                    String jwt = authenticationWithJwt(email, password);
+                    CustomerSignInSignUpResponse response = new CustomerSignInSignUpResponse(customer.getId(),
+                            customer.getFirstName(),
+                            customer.getLastName(),
+                            customer.getRole().getName().name(),
+                            jwt);
+                    result.setMessage(CustomerSignInConst.SUCCESS);
+                    result.setData(response);
+                } else {
+                    result.setStatus(ServiceResult.Status.FAILED);
+                    result.setMessage(CustomerSignInConst.EMAIL_PASSWORD_WRONG_FORMAT);
+                }
+            }else {
                 result.setStatus(ServiceResult.Status.FAILED);
-                result.setMessage(CustomerSignInConst.EMAIL_PASSWORD_WRONG_FORMAT);
+                result.setMessage("Cannot sign in with this account");
             }
+
 
         } else {
             result.setMessage(CustomerSignInConst.EMAIL_NOT_FOUND);
