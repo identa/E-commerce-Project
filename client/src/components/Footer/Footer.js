@@ -10,11 +10,11 @@ class Footer extends Component {
             <ul>
               <li>
                 <i className="fa fa-angle-right" />
-                <a href="#">About Lazada</a>
+                <a href="#">About DAC Tech VN</a>
               </li>
               <li>
                 <i className="fa fa-angle-right" />
-                <a href="#">Sell on Lazada</a>
+                <a href="#">Sell on DAC Tech VN</a>
               </li>
               <li>
                 <i className="fa fa-angle-right" />
