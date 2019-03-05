@@ -7,6 +7,8 @@ import com.dac.spring.entity.ProductEntity;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
 import com.dac.spring.model.enums.StatusName;
+import com.dac.spring.model.req.ShopCreateProductRequest;
+import com.dac.spring.model.req.ShopUpdateProductRequest;
 import com.dac.spring.model.resp.*;
 import com.dac.spring.repository.*;
 import com.dac.spring.service.ShopService;
@@ -139,26 +141,25 @@ public class ShopServiceImpl implements ShopService {
     }
 
     @Override
-    public ServiceResult createProduct(String name, String status, String description, int quantity,
-                                       double originalPrice, int discount, String productImageURL, int categoryID, int shopID) {
+    public ServiceResult createProduct(ShopCreateProductRequest request) {
         ServiceResult result = new ServiceResult();
-        if (name != null && status != null) {
-            boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch(t -> t.name().equals(status));
+        if (request.getName() != null && request.getStatus() != null) {
+            boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch(t -> t.name().equals(request.getStatus()));
             if (isStatusExist) {
-                    CategoryEntity category = categoryRepository.findById(categoryID).orElse(null);
+                    CategoryEntity category = categoryRepository.findById(request.getCategoryID()).orElse(null);
                     if (category != null){
                         EmployeeEntity shop = employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(
-                                shopID, false, StatusName.ACTIVE, RoleName.ROLE_SHOP);
+                                request.getShopID(), false, StatusName.ACTIVE, RoleName.ROLE_SHOP);
                         if (shop != null){
-                            ProductEntity product = new ProductEntity(name,
-                                    statusRepository.findByName(StatusName.valueOf(status)),
-                                    description,
-                                    quantity,
-                                    originalPrice,
-                                    discount,
-                                    productImageURL,
-                                    categoryRepository.findById(categoryID).orElse(null),
-                                    employeeRepository.findById(shopID).orElse(null));
+                            ProductEntity product = new ProductEntity(request.getName(),
+                                    statusRepository.findByName(StatusName.valueOf(request.getStatus())),
+                                    request.getDescription(),
+                                    request.getQuantity(),
+                                    request.getOriginalPrice(),
+                                    request.getDiscount(),
+                                    request.getProductImageURL(),
+                                    categoryRepository.findById(request.getCategoryID()).orElse(null),
+                                    employeeRepository.findById(request.getShopID()).orElse(null));
                             productRepository.save(product);
                             ShopCreateProductResponse response = new ShopCreateProductResponse(product.getId(),
                                     product.getName(),
@@ -193,24 +194,23 @@ public class ShopServiceImpl implements ShopService {
     }
 
     @Override
-    public ServiceResult updateProduct(int id, String name, String status, String description, int quantity,
-                                       double originalPrice, int discount, String productImageURL, int categoryID) {
+    public ServiceResult updateProduct(ShopUpdateProductRequest request) {
         ServiceResult result = new ServiceResult();
-        if (name != null && status != null) {
-            boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch(t -> t.name().equals(status));
+        if (request.getName() != null && request.getStatus() != null) {
+            boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch(t -> t.name().equals(request.getStatus()));
             if (isStatusExist) {
-                CategoryEntity category = categoryRepository.findById(categoryID).orElse(null);
+                CategoryEntity category = categoryRepository.findById(request.getCategoryID()).orElse(null);
                 if (category != null){
                     ProductEntity product = productRepository.findByIdAndDeletedAndStatusName(
-                            id, false, StatusName.ACTIVE);
+                            request.getId(), false, StatusName.ACTIVE);
                     if (product != null){
-                        product.setName(name);
-                        product.setDescription(description);
-                        product.setOriginalPrice(originalPrice);
-                        product.setDiscount(discount);
-                        product.setStatus(statusRepository.findByName(StatusName.valueOf(status)));
-                        product.setQuantity(quantity);
-                        product.setProductImageURL(productImageURL);
+                        product.setName(request.getName());
+                        product.setDescription(request.getDescription());
+                        product.setOriginalPrice(request.getOriginalPrice());
+                        product.setDiscount(request.getDiscount());
+                        product.setStatus(statusRepository.findByName(StatusName.valueOf(request.getStatus())));
+                        product.setQuantity(request.getQuantity());
+                        product.setProductImageURL(request.getProductImageURL());
                         product.setCategory(category);
 
                         productRepository.save(product);

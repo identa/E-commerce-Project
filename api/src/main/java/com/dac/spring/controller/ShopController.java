@@ -46,29 +46,13 @@ public class ShopController {
     @PostMapping("/createProduct")
     @PreAuthorize("hasRole('SHOP')")
     public ResponseEntity<ServiceResult> createProduct(@Valid @RequestBody ShopCreateProductRequest request) {
-        return new ResponseEntity<>(shopService.createProduct(request.getName(),
-                request.getStatus(),
-                request.getDescription(),
-                request.getQuantity(),
-                request.getOriginalPrice(),
-                request.getDiscount(),
-                request.getProductImageURL(),
-                request.getCategoryID(),
-                request.getShopID()),HttpStatus.OK);
+        return new ResponseEntity<>(shopService.createProduct(request),HttpStatus.OK);
     }
 
     @PostMapping("/updateProduct")
     @PreAuthorize("hasRole('SHOP')")
     public ResponseEntity<ServiceResult> updateProduct(@Valid @RequestBody ShopUpdateProductRequest request) {
-        return new ResponseEntity<>(shopService.updateProduct(request.getId(),
-                request.getName(),
-                request.getStatus(),
-                request.getDescription(),
-                request.getQuantity(),
-                request.getOriginalPrice(),
-                request.getDiscount(),
-                request.getProductImageURL(),
-                request.getCategoryID()),HttpStatus.OK);
+        return new ResponseEntity<>(shopService.updateProduct(request),HttpStatus.OK);
     }
 
     @PutMapping("/deleteProduct")
