@@ -385,6 +385,28 @@ public class CustomerServiceImpl implements CustomerService {
         return result;
     }
 
+    @Override
+    public ServiceResult searchProduct(String name, int page, int size) {
+        ServiceResult result = new ServiceResult();
+        Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
+        Page<ProductEntity> productList = productPaginationRepository.findAllByNameContainingAndDeletedAndStatusName(info,
+                name.trim(),false,StatusName.ACTIVE);
+        List<CustomerGetProductByCatResponse> responses = new ArrayList<>();
+        for (ProductEntity product: productList){
+            CustomerGetProductByCatResponse response = new CustomerGetProductByCatResponse(product.getId(),
+                    product.getName(),
+                    product.getDescription(),
+                    product.getOriginalPrice(),
+                    product.getDiscount(),
+                    product.getProductImageURL(),
+                    product.getCategory().getName());
+            responses.add(response);
+        }
+        result.setData(responses);
+        result.setMessage("Products are returned successfully");
+        return result;
+    }
+
     private double calculatePrice(int quantity, double price, double discount){
         return (price - price*discount/100)*quantity;
     }
