@@ -88,4 +88,9 @@ public class CustomerController extends HttpServlet {
     public ResponseEntity<ServiceResult> test(HttpServletRequest request){
         return new ResponseEntity<>(customerService.returnRole(request),HttpStatus.OK);
     }
+
+    @PostMapping("/createOrder")
+    public ResponseEntity<ServiceResult> createOrder(CustomerCreateOrderRequest request){
+        return new ResponseEntity<>(customerService.createOrder(request.getCustomerID(),request.getOrderDetailRequests()),HttpStatus.OK);
+    }
 }

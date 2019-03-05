@@ -22,6 +22,9 @@ public class StatusEntity {
     @OneToMany(mappedBy = "status")
     private List<ProductEntity> productEntityList;
 
+    @OneToMany(mappedBy = "status")
+    private List<OrderEntity> orderEntityList;
+
     public StatusEntity() {
     }
 
@@ -55,5 +58,13 @@ public class StatusEntity {
 
     public void setProductEntityList(List<ProductEntity> productEntityList) {
         this.productEntityList = productEntityList;
+    }
+
+    public List<OrderEntity> getOrderEntityList() {
+        return orderEntityList;
+    }
+
+    public void setOrderEntityList(List<OrderEntity> orderEntityList) {
+        this.orderEntityList = orderEntityList;
     }
 }

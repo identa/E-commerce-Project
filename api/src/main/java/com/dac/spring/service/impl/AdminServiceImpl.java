@@ -96,8 +96,8 @@ public class AdminServiceImpl implements AdminService {
     }
 
     private boolean isStatusAndRoleExisted(String statusName, String roleName){
-        boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch((t) -> t.name().equals(statusName));
-        boolean isRoleExist = Arrays.stream(RoleName.values()).anyMatch((t) -> t.name().equals(roleName));
+        boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch(t -> t.name().equals(statusName));
+        boolean isRoleExist = Arrays.stream(RoleName.values()).anyMatch(t -> t.name().equals(roleName));
         return isStatusExist && isRoleExist;
     }
 
@@ -143,8 +143,8 @@ public class AdminServiceImpl implements AdminService {
     public ServiceResult updateUser(int id, String firstName, String lastName, String password,
                                     String imageURL, String statusName, String roleName) {
         ServiceResult result = new ServiceResult();
-        EmployeeEntity employee = employeeRepository.findByIdAndDeletedAndRoleNameOrRoleName(id, false,
-                RoleName.ROLE_CUSTOMER, RoleName.ROLE_SHOP).orElse(null);
+        EmployeeEntity employee = employeeRepository.findByIdAndDeletedAndRoleNameOrIdAndDeletedAndRoleName(id, false,
+                RoleName.ROLE_CUSTOMER, id, false, RoleName.ROLE_SHOP).orElse(null);
         if (employee != null) {
             if (firstName != null && lastName != null && password != null &&
                     statusName != null && roleName != null) {
@@ -184,8 +184,8 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public ServiceResult deleteUserById(int id) {
         ServiceResult result = new ServiceResult();
-        EmployeeEntity employee = employeeRepository.findByIdAndDeletedAndRoleNameOrRoleName(id, false,
-                RoleName.ROLE_CUSTOMER, RoleName.ROLE_SHOP).orElse(null);
+        EmployeeEntity employee = employeeRepository.findByIdAndDeletedAndRoleNameOrIdAndDeletedAndRoleName(id, false,
+                RoleName.ROLE_CUSTOMER, id, false, RoleName.ROLE_SHOP).orElse(null);
         if (employee != null) {
             employee.setDeleted(true);
             employeeRepository.save(employee);
@@ -209,6 +209,7 @@ public class AdminServiceImpl implements AdminService {
                 if (!isEmailExisted) {
                     EmployeeEntity employee = new EmployeeEntity(firstName, lastName, email,
                             encoder.encode(password),
+                            imageURL,
                             statusRepository.findByName(StatusName.valueOf(statusName)),
                             roleRepository.findByName(RoleName.valueOf(roleName)));
                     employeeRepository.save(employee);

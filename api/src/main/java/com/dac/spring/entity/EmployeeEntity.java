@@ -23,22 +23,19 @@ public class EmployeeEntity {
 
     private boolean deleted = false;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "roleID")
-    private RoleEntity role;
-
     @ManyToOne
     @JoinColumn(name = "statusID")
     private StatusEntity status;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "roleID")
+    private RoleEntity role;
 
     @OneToMany(mappedBy = "employee")
     private List<OrderEntity> orderEntityList;
 
     @OneToMany(mappedBy = "shop")
     private List<ProductEntity> productEntityList;
-
-    @OneToMany(mappedBy = "shop")
-    private List<OrderEntity> orderShopList;
 
     @OneToMany(mappedBy = "shop")
     private List<CampaignEntity> campaignEntityList;
@@ -54,11 +51,12 @@ public class EmployeeEntity {
         this.status = status;
     }
 
-    public EmployeeEntity(String firstName, String lastName, String email, String password, StatusEntity status, RoleEntity role) {
+    public EmployeeEntity(String firstName, String lastName, String email, String password, String imageURL, StatusEntity status, RoleEntity role) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.imageURL = imageURL;
         this.status = status;
         this.role = role;
     }
@@ -149,14 +147,6 @@ public class EmployeeEntity {
 
     public void setProductEntityList(List<ProductEntity> productEntityList) {
         this.productEntityList = productEntityList;
-    }
-
-    public List<OrderEntity> getOrderShopList() {
-        return orderShopList;
-    }
-
-    public void setOrderShopList(List<OrderEntity> orderShopList) {
-        this.orderShopList = orderShopList;
     }
 
     public List<CampaignEntity> getCampaignEntityList() {

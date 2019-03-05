@@ -1,5 +1,7 @@
 package com.dac.spring.entity;
 
+import com.dac.spring.model.enums.StatusName;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -11,9 +13,11 @@ public class OrderEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String status;
+    @ManyToOne
+    @JoinColumn(name = "statusID")
+    private StatusEntity status;
 
-    private boolean deleted;
+    private boolean deleted= false;
 
     private double totalPrice;
 
@@ -21,14 +25,19 @@ public class OrderEntity {
     @JoinColumn(name = "employeeID")
     private EmployeeEntity employee;
 
-    @ManyToOne
-    @JoinColumn(name = "shopID")
-    private EmployeeEntity shop;
-
     @OneToMany(mappedBy = "order")
     private List<OrderDetailEntity> orderDetailEntityList;
 
     public OrderEntity() {
+    }
+
+    public OrderEntity(StatusEntity status, EmployeeEntity employee) {
+        this.status = status;
+        this.employee = employee;
+    }
+
+    public void setStatus(StatusEntity status) {
+        this.status = status;
     }
 
     public int getId() {
@@ -39,12 +48,8 @@ public class OrderEntity {
         this.id = id;
     }
 
-    public String getStatus() {
+    public StatusEntity getStatus() {
         return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public boolean isDeleted() {
@@ -69,14 +74,6 @@ public class OrderEntity {
 
     public void setEmployee(EmployeeEntity employee) {
         this.employee = employee;
-    }
-
-    public EmployeeEntity getShop() {
-        return shop;
-    }
-
-    public void setShop(EmployeeEntity shop) {
-        this.shop = shop;
     }
 
     public List<OrderDetailEntity> getOrderDetailEntityList() {

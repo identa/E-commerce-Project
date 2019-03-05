@@ -6,10 +6,11 @@ import com.dac.spring.entity.*;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
 import com.dac.spring.model.enums.StatusName;
+import com.dac.spring.model.req.CustomerCreateOrderDetailRequest;
+import com.dac.spring.model.req.CustomerCreateOrderRequest;
 import com.dac.spring.model.resp.*;
 import com.dac.spring.repository.*;
 import com.dac.spring.service.CustomerService;
-import com.dac.spring.utils.jwt.JwtAuthTokenFilter;
 import com.dac.spring.utils.jwt.JwtProvider;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,15 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     ProductPaginationRepository productPaginationRepository;
+
+    @Autowired
+    ProductRepository productRepository;
+
+    @Autowired
+    OrderRepository orderRepository;
+
+    @Autowired
+    OrderDetailRepository orderDetailRepository;
 
     @Autowired
     JWTRepository jwtRepository;
@@ -324,8 +334,18 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult returnRole(HttpServletRequest request) {
         ServiceResult result = new ServiceResult();
         String authHeader = request.getHeader("Authorization").split(" ")[1];
-        String roleName= employeeRepository.findByEmail(getUserNameFromJwtToken(authHeader)).orElse(null).getRole().getName().name();
+        String roleName = employeeRepository.findByEmail(getUserNameFromJwtToken(authHeader)).orElse(null).getRole().getName().name();
         result.setData(roleName);
+        return result;
+    }
+
+    @Override
+    public ServiceResult createOrder(int customerID, List<CustomerCreateOrderDetailRequest> orderDetailRequests) {
+        ServiceResult result = new ServiceResult();
+        OrderEntity createdOrder = createOrderEntity(customerID);
+        if (createdOrder != null) orderRepository.save(createdOrder);
+        orderDetailRepository.saveAll(createOrderDetailList(orderDetailRequests, createdOrder));
+
         return result;
     }
 
@@ -334,5 +354,30 @@ public class CustomerServiceImpl implements CustomerService {
                 .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)
                 .getBody().getSubject();
+    }
+
+    private OrderDetailEntity createOrderDetail(CustomerCreateOrderDetailRequest request, OrderEntity order) {
+        ProductEntity product = productRepository.findByIdAndDeletedAndStatusName(request.getProductID(), false, StatusName.ACTIVE);
+        if (product != null && order != null) {
+            return new OrderDetailEntity(product.getOriginalPrice()*product.getDiscount(),
+                    request.getQuantity(),
+                    product,
+                    order);
+        } else return null;
+    }
+
+    private List<OrderDetailEntity> createOrderDetailList(List<CustomerCreateOrderDetailRequest> requestList, OrderEntity order) {
+        List<OrderDetailEntity> orderDetailList = new ArrayList<>();
+        for (CustomerCreateOrderDetailRequest detailCreateRequest : requestList) {
+            orderDetailList.add(createOrderDetail(detailCreateRequest, order));
+        }
+        return orderDetailList;
+    }
+
+    private OrderEntity createOrderEntity(int customerID) {
+        EmployeeEntity customer = employeeRepository.findByIdAndDeletedAndRoleName(customerID,
+                false, RoleName.ROLE_CUSTOMER).orElse(null);
+        if (customer != null) return new OrderEntity(statusRepository.findByName(StatusName.ACTIVE), customer);
+        else return null;
     }
 }

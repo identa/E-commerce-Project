@@ -192,7 +192,8 @@ public class ShopServiceImpl implements ShopService {
     }
 
     @Override
-    public ServiceResult updateProduct(int id, String name, String status, String description, int quantity, double originalPrice, int discount, String productImageURL, int categoryID) {
+    public ServiceResult updateProduct(int id, String name, String status, String description, int quantity,
+                                       double originalPrice, int discount, String productImageURL, int categoryID) {
         ServiceResult result = new ServiceResult();
         if (name != null && status != null) {
             boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch((t) -> t.name().equals(status));

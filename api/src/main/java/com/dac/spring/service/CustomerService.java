@@ -1,8 +1,10 @@
 package com.dac.spring.service;
 
 import com.dac.spring.model.ServiceResult;
+import com.dac.spring.model.req.CustomerCreateOrderDetailRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 public interface CustomerService {
     ServiceResult signUpCustomer(String email, String password, String firstName, String lastName);
@@ -14,4 +16,6 @@ public interface CustomerService {
     ServiceResult getAllCategory();
     ServiceResult paginateProductByCat(int id, int page, int size);
     ServiceResult returnRole(HttpServletRequest request);
+    ServiceResult createOrder(int customerID, List<CustomerCreateOrderDetailRequest> orderDetailRequests);
+
 }
