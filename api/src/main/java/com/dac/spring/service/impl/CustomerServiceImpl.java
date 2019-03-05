@@ -328,14 +328,75 @@ public class CustomerServiceImpl implements CustomerService {
         return result;
     }
 
+//    @Override
+//    public ServiceResult createOrder(int customerID, List<CustomerCreateOrderDetailRequest> orderDetailRequests) {
+//        ServiceResult result = new ServiceResult();
+//        OrderEntity createdOrder = createOrderEntity(customerID);
+//        if (createdOrder != null) orderRepository.save(createdOrder);
+//        orderDetailRepository.saveAll(createOrderDetailList(orderDetailRequests, createdOrder));
+//
+//        return result;
+//    }
+
     @Override
     public ServiceResult createOrder(int customerID, List<CustomerCreateOrderDetailRequest> orderDetailRequests) {
         ServiceResult result = new ServiceResult();
-        OrderEntity createdOrder = createOrderEntity(customerID);
-        if (createdOrder != null) orderRepository.save(createdOrder);
-        orderDetailRepository.saveAll(createOrderDetailList(orderDetailRequests, createdOrder));
-
+        EmployeeEntity customer = employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(customerID,
+                false, StatusName.ACTIVE, RoleName.ROLE_CUSTOMER);
+        if (customer != null) {
+            OrderEntity createdOrder = new OrderEntity(statusRepository.findByName(StatusName.ACTIVE), customer);
+            orderRepository.save(createdOrder);
+            List<OrderDetailEntity> orderDetailEntityList = new ArrayList<>();
+            double totalPrice =0;
+            for (CustomerCreateOrderDetailRequest detailRequest : orderDetailRequests){
+                ProductEntity product = productRepository.findByIdAndDeletedAndStatusName(detailRequest.getProductID(),
+                        false, StatusName.ACTIVE);
+                if (product != null){
+                    if (product.getQuantity() >= detailRequest.getQuantity()){
+                        OrderDetailEntity orderDetail = new OrderDetailEntity(
+                                calculatePrice(detailRequest.getQuantity(),product.getOriginalPrice(),product.getDiscount()),
+                                detailRequest.getQuantity(),
+                                product,
+                                createdOrder);
+                        orderDetailEntityList.add(orderDetail);
+                        product.setQuantity(product.getQuantity()-detailRequest.getQuantity());
+                        totalPrice+= calculatePrice(detailRequest.getQuantity(),product.getOriginalPrice(),product.getDiscount());
+                    }else {
+                        result.setStatus(ServiceResult.Status.FAILED);
+                        result.setMessage("The quantity of " + product.getName() +" is exceeded");
+                        return result;
+                    }
+                }else {
+                    result.setStatus(ServiceResult.Status.FAILED);
+                    result.setMessage("Product not found");
+                    return result;
+                }
+            }
+            orderRepository.save(createdOrder);
+            orderDetailRepository.saveAll(orderDetailEntityList);
+            List<CustomerCreateOrderDetailResponse> orderDetailResponses = new ArrayList<>();
+            for (OrderDetailEntity orderDetail : orderDetailEntityList){
+                CustomerCreateOrderDetailResponse response = new CustomerCreateOrderDetailResponse(orderDetail.getId(),
+                        orderDetail.getPrice(),
+                        orderDetail.getQuantity(),
+                        orderDetail.getProduct().getName());
+                orderDetailResponses.add(response);
+            }
+            CustomerCreateOrderResponse orderResponse = new CustomerCreateOrderResponse(createdOrder.getId(),
+                    totalPrice,
+                    customerID,
+                    orderDetailResponses);
+            result.setMessage("You ordered successfully");
+            result.setData(orderResponse);
+        }else {
+            result.setStatus(ServiceResult.Status.FAILED);
+            result.setMessage("Customer not found");
+        }
         return result;
+    }
+
+    private double calculatePrice(int quantity, double price, double discount){
+        return (price - price*discount/100)*quantity;
     }
 
     private String getUserNameFromJwtToken(String token) {
