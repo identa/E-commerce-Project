@@ -72,4 +72,12 @@ public class UserResponse {
     public void setRole(String role) {
         this.role = role;
     }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
 }
