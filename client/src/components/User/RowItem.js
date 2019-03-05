@@ -1,5 +1,24 @@
 import React, { Component } from "react";
+import {Link} from 'react-router-dom'
 class RowItem extends Component {
+
+    constructor(props) {
+        super(props);
+        
+        this.state = {
+            isModalShowing :  false
+        }
+
+        this.handleShowModal = this.handleShowModal.bind(this);
+    }
+
+    handleShowModal = () =>{     
+        this.setState({isModalShowing : true});
+        this.props.handleShowModal(this.state.isModalShowing);
+        this.props.getCustomerId(this.props.uid);
+    }
+
+
     render() {
         return (
             <tr>
@@ -10,11 +29,13 @@ class RowItem extends Component {
                 <td>{this.props.role}</td>
                 <td>{this.props.status}</td>
                 <td>
-                    <button className="btn btn-info btn-action">
-                        <i className="fa fa-edit" />
-                        Edit
-                    </button>
-                    <button className="btn btn-danger btn-action">
+                    <Link to="/manage/customer/edit">
+                        <button className="btn btn-info btn-action">
+                            <i className="fa fa-edit" />
+                            Edit
+                        </button>
+                    </Link>
+                    <button className="btn btn-danger btn-action" onClick={this.handleShowModal}>
                         <i className="fa fa-remove" />
                         Delete
                     </button>

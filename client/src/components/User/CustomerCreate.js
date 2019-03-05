@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import {Link} from 'react-router-dom';
+import {Link,Redirect} from 'react-router-dom';
 
 const clientId = '78bc0dc37ea9d00';
 const urlImgur = 'https://api.imgur.com/3/image';
+const url = 'https://dac-java.herokuapp.com/api/admin/create';
 const REGEX_EMAIL = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 class CustomerCreate extends Component {
 
@@ -14,7 +15,10 @@ class CustomerCreate extends Component {
             lastName : '',
             email : '',
             password : '',
-            imageURL : '',
+            role : 'ROLE_CUSTOMER',
+            imageURL : 'https://imgur.com/2G9UXB2',
+            messageShowingStyle : 'message',
+            isRedirect : false,
             error : {
                 firstName : '',
                 lastName : '',
@@ -27,10 +31,22 @@ class CustomerCreate extends Component {
     
     onChange = (event) =>{
         this.setState({ [event.target.name]: event.target.value });
+        this.setState(prevState =>({
+            error :{
+                ...prevState.error,
+                message : ''
+            }
+        }));
+    }
+
+    validateMessage = () =>{
+        const message = this.state.error.message;
+        return message.length === 0;
     }
 
     validateEmail = () => {
         const email = this.state.email;
+        this.setState({messageShowingStyle : 'message'});
         if(email.length === 0){
             this.setState(prevState =>({
                 error :{
@@ -62,7 +78,7 @@ class CustomerCreate extends Component {
 
     validatePassword = () =>{
         const password = this.state.password;
-
+        this.setState({messageShowingStyle : 'message'});
         if(password.length === 0){
             this.setState(prevState =>({
                 error :{
@@ -94,7 +110,7 @@ class CustomerCreate extends Component {
 
     validateFirstName = ()=> {
         const firstName = this.state.firstName;
-
+        this.setState({messageShowingStyle : 'message'});
         if(firstName.length === 0){
             this.setState(prevState =>({
                 error :{
@@ -117,7 +133,7 @@ class CustomerCreate extends Component {
 
     validateLastName = ()=> {
         const lastName = this.state.lastName;
-
+        this.setState({messageShowingStyle : 'message'});
         if(lastName.length === 0){
             this.setState(prevState =>({
                 error :{
@@ -138,6 +154,43 @@ class CustomerCreate extends Component {
         }
     }
  
+    onFocus = (event) =>{
+        let name = event.target.name;
+        this.setState({messageShowingStyle : 'message-hidden'});
+        if(name ==='firstName'){
+            this.setState(prevState => ({
+                error: {
+                    ...prevState.error,
+                    firstName: ''
+                }
+            }));
+        }
+        if(name ==='lastName'){
+            this.setState(prevState => ({
+                error: {
+                    ...prevState.error,
+                    lastName: ''
+                }
+            }));
+        }
+        if(name ==='email'){
+            this.setState(prevState => ({
+                error: {
+                    ...prevState.error,
+                    email: ''
+                }
+            }));
+        }
+        if(name ==='password'){
+            this.setState(prevState => ({
+                error: {
+                    ...prevState.error,
+                    password: ''
+                }
+            }));
+        }
+    }
+
     loadFile = (event) =>{
         let reader = new FileReader();  
         let file = event.target.files[0];
@@ -151,31 +204,70 @@ class CustomerCreate extends Component {
 
     formSubmit = (event) =>{
         event.preventDefault();
-        const data = new FormData();
-    
-        let fileField = document.querySelector("input[type='file']");
+        if(this.validateFirstName() && this.validateLastName() && this.validateEmail() && this.validatePassword() && this.validateMessage()){
+            const data = {
+                firstName : this.state.firstName,
+                lastName : this.state.lastName,
+                email : this.state.email,
+                password : this.state.password,
+                imageURL : this.state.imageURL,
+                status : 'ACTIVE',
+                role : this.state.role
+            }
+                  
+            let file = document.querySelector("input[type='file']").files[0];
 
-        data.append('image', fileField.files[0]);
-        
-        //upload image to imgur
-        fetch(urlImgur, {
-            method : 'POST',
-            headers :{
-                'Authorization' : `Client-ID ${clientId}`
-            },
-            body : data
-        })
-        .then(res =>res.json())
-        .catch(err =>{
-            console.log('failed : ' + err);
-        })
-        .then(data => {
-            this.setState({imageURL : data.data.link});
-        });
+            if(file !== undefined){
+                const formData = new FormData();
+                formData.append('image', file);
+                fetch(urlImgur, {
+                    method : 'POST',
+                    headers :{
+                        'Authorization' : `Client-ID ${clientId}`
+                    },
+                    body : formData
+                })
+                .then(res =>res.json())
+                .catch(err =>{
+                    console.log('failed : ' + err);
+                })
+                .then(data => {
+                    this.setState({imageURL : data.data.link});
+                }); 
+            }
 
-        //post data to api
+            fetch(url, {
+                method : 'POST',
+                headers : {
+                    'Content-Type' : 'application/json',
+                    'Authorization' : localStorage.token
+                },
+                body : JSON.stringify(data)
+            })
+            .then(res=>res.json())
+            .then(data =>{
+                if(data.status === 'SUCCESS'){
+                    this.setState({isRedirect : true});
+                }
+                else if(data.status === 'FAILED'){
+                    this.setState(prevState =>({
+                        error :{
+                            ...prevState.error,
+                            message : data.message
+                        }
+                    }));
+                }
+            })
+        }
     }
     render() {
+        const isRedirect = this.state.isRedirect;
+
+        if(isRedirect){
+            return(
+                <Redirect to="/manage/customer/dashboard"/>
+            )
+        }
         return (
             <div className="main">
                 <div className="container">
@@ -195,7 +287,7 @@ class CustomerCreate extends Component {
                                                 <div className="form-group row">
                                                     <label className="col-4 col-form-label">First Name *</label> 
                                                     <div className="col-8">
-                                                        <input type="text" name="firstName" placeholder="First name" className="form-control" required="required" onChange={this.onChange} onBlur={this.validateFirstName}/>
+                                                        <input type="text" name="firstName" placeholder="First name" className="form-control" required="required" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.validateFirstName}/>
                                                         <div className="message">
                                                             {this.state.error.firstName}
                                                         </div>
@@ -206,29 +298,18 @@ class CustomerCreate extends Component {
                                                 <div className="form-group row">
                                                     <label className="col-4 col-form-label">Last Name*</label> 
                                                     <div className="col-8">
-                                                        <input type="text" name="lastName" placeholder="Last name" className="form-control" required="required" onChange={this.onChange} onBlur={this.validateLastName}/>
+                                                        <input type="text" name="lastName" placeholder="Last name" className="form-control" required="required" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.validateLastName}/>
                                                         <div className="message">
                                                             {this.state.error.lastName}
                                                         </div>
                                                     </div>
                                                     
-                                                </div>
-                                                
-                                                <div className="form-group row">
-                                                    <label htmlFor="select" className="col-4 col-form-label">Role*</label> 
-                                                    <div className="col-8">
-                                                        <select name="select" className="custom-select">
-                                                            <option value="ROLE_ADMIN">Admin</option>
-                                                            <option value="ROLE_SHOP">Shop</option>
-                                                            <option value="ROLE_CUSTOMER">Customer</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                                </div>                                           
                                                 
                                                 <div className="form-group row">
                                                     <label className="col-4 col-form-label">Email *</label> 
                                                     <div className="col-8">
-                                                        <input type="email" name="email" placeholder="Email" className="form-control" onChange={this.onChange} onBlur={this.validateEmail}/>
+                                                        <input type="email" name="email" placeholder="Email" className="form-control" required="required" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.validateEmail}/>
                                                         <div className="message">
                                                             {this.state.error.email}
                                                         </div>
@@ -238,7 +319,7 @@ class CustomerCreate extends Component {
                                                 <div className="form-group row">
                                                     <label className="col-4 col-form-label">Password*</label> 
                                                     <div className="col-8">
-                                                        <input type="password" name="password" placeholder="Password" className="form-control" required="required" onChange={this.onChange} onBlur={this.validatePassword}/>
+                                                        <input type="password" name="password" placeholder="Password" className="form-control" required="required" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.validatePassword}/>
                                                         <div className="message">
                                                             {this.state.error.password}
                                                         </div>
@@ -246,15 +327,25 @@ class CustomerCreate extends Component {
                                                 </div>
 
                                                 <div className="form-group row">
+                                                    <label htmlFor="select" className="col-4 col-form-label">Role*</label> 
+                                                    <div className="col-8">
+                                                        <select name="role" className="custom-select" value={this.state.role} onChange={this.onChange}>
+                                                            <option value="ROLE_CUSTOMER">Customer</option>
+                                                            <option value="ROLE_ADMIN">Admin</option>
+                                                            <option value="ROLE_SHOP">Shop</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div className="form-group row">
                                                     <label className="col-4 col-form-label">Avatar</label> 
                                                     <div className="col-4">
-                                                        <input type="file" name="avatar" onChange={(e)=>this.loadFile(e)}/>
+                                                        <input type="file" accept="image/*" name="imgURL" onChange={(e)=>this.loadFile(e)}/>
                                                     </div>
                                                     
                                                 </div>
                                                 <div className="form-group row">
-                                                    <div className='col-4'/>
-                                                    <div className="col-4 img-preview">
+                                                    <div className="offset-4 col-4 img-preview">
                                                         <img src='' id='preview' alt=''/>
                                                         {this.state.imageLink}
                                                     </div>
@@ -270,6 +361,14 @@ class CustomerCreate extends Component {
 
                                                         <button name="submit" type="submit" className="btn btn-success">Create</button>
                                                     </div>                                               
+                                                </div>
+
+                                                <div className="form-group row">
+                                                    <div className="offset-4 col-8">
+                                                        <div className="message">
+                                                            {this.state.error.message}
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </form>
                                         </div>

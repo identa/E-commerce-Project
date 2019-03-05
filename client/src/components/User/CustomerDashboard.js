@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import RowItem from './RowItem';
-import {Link} from 'react-router-dom';
-const url = 'https://dac-java.herokuapp.com/api/admin/getByPageAndSize';
+import {Link,Redirect} from 'react-router-dom';
+import {Modal,Button} from 'react-bootstrap';
 
+const urlGetListCustomer = 'https://dac-java.herokuapp.com/api/admin/getByPageAndSize';
+const urlDeleteCustomer = 'https://dac-java.herokuapp.com/api/admin/delete';
 class CustomerDashboard extends Component {
     constructor(props) {
         super(props);
@@ -12,10 +14,26 @@ class CustomerDashboard extends Component {
             totalPages : 0,
             userResponseList : [],
             activePage: 1,
-            activeClassName : 'page-item'
+            activeClassName : 'page-item',
+            isModalShowing : false,
+            customerId : 0,
         }
+
+        this.handleShowModal = this.handleShowModal.bind(this);
     }
     
+    handleShowModal = () => {
+        this.setState({isModalShowing : true});
+    }
+
+    handleCloseModal = () => {
+        this.setState({isModalShowing: false });
+    }
+
+    getCustomerId = (customerId) =>{
+        this.setState({customerId : customerId});
+    }
+
 
     componentDidMount() {
         const dataGet = {
@@ -48,7 +66,7 @@ class CustomerDashboard extends Component {
     fetchData = (data) => {
         const token = localStorage.getItem("token");
 
-        fetch(url ,{
+        fetch(urlGetListCustomer ,{
             method : 'POST',
             body: JSON.stringify(data),
             headers : {
@@ -69,6 +87,32 @@ class CustomerDashboard extends Component {
         .catch(err => {
 
         });
+    }
+
+    onDeleteCustomer = () =>{
+        fetch(urlDeleteCustomer ,{
+            method : 'PUT',
+            headers : {
+                'Content-Type' : 'application/json',
+                'Authorization' : localStorage.token
+            },
+            body : JSON.stringify({
+                id : this.state.customerId
+            })
+        })
+        .then(res=>res.json())
+        .then(data =>{
+            if(data.status === 'SUCCESS'){
+                const list = this.state.userResponseList.filter(element => element.id !== this.state.customerId);
+                this.setState({
+                    isModalShowing : false,
+                    userResponseList: list
+                });
+            }
+        })
+        .catch(err =>{
+            console.log(err);  
+        })
     }
 
     render() {
@@ -110,7 +154,9 @@ class CustomerDashboard extends Component {
                                                         lastName={value.lastName}
                                                         email={value.email}
                                                         status={value.status}
-                                                        role={value.role}/>
+                                                        role={value.role}
+                                                        handleShowModal={this.handleShowModal}
+                                                        getCustomerId={this.getCustomerId}/>
                                     })
                                 }
                             </tbody>
@@ -121,6 +167,15 @@ class CustomerDashboard extends Component {
                         </ul>
                     </div>
                 </div>
+                <Modal show={this.state.isModalShowing} onHide={this.handleCloseModal}>
+                    <Modal.Header closeButton/>
+
+                    <Modal.Body>
+                        <p style={{color : 'white'}}>Do you want to delete this id :{this.state.customerId} </p>
+                        <Button onClick={this.onDeleteCustomer}>Yes</Button>
+                        <Button onClick={this.handleCloseModal}>No</Button>
+                    </Modal.Body>
+                </Modal>
             </div>
         );
     }

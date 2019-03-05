@@ -14,16 +14,12 @@ class UserLink extends Component {
     
     logout = () =>{
         if(localStorage.getItem("token")){
-            const token ={
-                token : localStorage.token.replace('Bearer','').trim()
-            } 
             fetch(url, {
                 method : 'DELETE',
                 headers : {
                     'Content-Type' : 'application/json',
                     'Authorization' : localStorage.token
                 },
-                body : JSON.stringify(token)
             })
             .then(res=>res.json())
             .then(data => {
