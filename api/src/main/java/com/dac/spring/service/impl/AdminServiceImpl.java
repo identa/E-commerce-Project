@@ -1,5 +1,6 @@
 package com.dac.spring.service.impl;
 
+import com.dac.spring.constant.AdminConst;
 import com.dac.spring.constant.AdminUserCreateConst;
 import com.dac.spring.constant.CustomerSignUpConst;
 import com.dac.spring.entity.*;
@@ -77,12 +78,12 @@ public class AdminServiceImpl implements AdminService {
     }
 
     private AdminGetAllCustomerResponse createGetAllCustomerResponse(EmployeeEntity entity) {
-        AdminGetAllCustomerResponse response = new AdminGetAllCustomerResponse(entity.getId(),
+        return new AdminGetAllCustomerResponse(entity.getId(),
                 entity.getFirstName(),
                 entity.getLastName(),
                 entity.getEmail(),
                 entity.getStatus().getName().name());
-        return response;
+
     }
 
     private List<AdminGetAllCustomerResponse> createCustomerGetResponseList() {
@@ -95,13 +96,13 @@ public class AdminServiceImpl implements AdminService {
         return responseList;
     }
 
-    private boolean isStatusAndRoleExisted(String statusName, String roleName){
+    private boolean isStatusAndRoleExisted(String statusName, String roleName) {
         boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch(t -> t.name().equals(statusName));
         boolean isRoleExist = Arrays.stream(RoleName.values()).anyMatch(t -> t.name().equals(roleName));
         return isStatusExist && isRoleExist;
     }
 
-    private JWTEntity saveJwt(String token){
+    private JWTEntity saveJwt(String token) {
         JWTEntity jwtEntity = new JWTEntity();
         jwtEntity.setToken(token);
         return jwtRepository.save(jwtEntity);
@@ -111,13 +112,8 @@ public class AdminServiceImpl implements AdminService {
     public ServiceResult getAllCustomer() {
         ServiceResult result = new ServiceResult();
         List<AdminGetAllCustomerResponse> employeeEntityList = createCustomerGetResponseList();
-        if (employeeEntityList != null) {
             result.setMessage("Get all customers successfully");
             result.setData(employeeEntityList);
-        } else {
-            result.setMessage("Get all customers failed");
-            result.setStatus(ServiceResult.Status.FAILED);
-        }
         return result;
     }
 
@@ -134,7 +130,7 @@ public class AdminServiceImpl implements AdminService {
             result.setMessage("Get customer successfully");
         } else {
             result.setStatus(ServiceResult.Status.FAILED);
-            result.setMessage("Customer not found");
+            result.setMessage(AdminConst.CUSTOMER_NOT_FOUND);
         }
         return result;
     }
@@ -353,42 +349,37 @@ public class AdminServiceImpl implements AdminService {
         ServiceResult result = new ServiceResult();
         CategoryEntity category = categoryRepository.findById(id).orElse(null);
         if (category != null) {
-            if (name != null) {
-                boolean isCategoryExist = categoryRepository.existsByNameAndIdNot(name, id);
-                if (!isCategoryExist) {
-                    if (parentName != null) {
-                        CategoryEntity parentCategory = categoryRepository.findByName(parentName).orElse(null);
-                        if (parentCategory != null) {
-                            category.setName(name);
-                            category.setParentID(parentCategory.getId());
-                            categoryRepository.save(category);
-                            AdminCreateCategoryResponse response = new AdminCreateCategoryResponse(category.getId(),
-                                    category.getName(),
-                                    parentName);
-
-                            result.setMessage(AdminUserCreateConst.SUCCESS);
-                            result.setData(response);
-                        } else {
-                            result.setStatus(ServiceResult.Status.FAILED);
-                            result.setMessage("This category is not existed");
-                        }
-                    } else {
+            boolean isCategoryExist = categoryRepository.existsByNameAndIdNot(name, id);
+            if (!isCategoryExist) {
+                if (parentName != null) {
+                    CategoryEntity parentCategory = categoryRepository.findByName(parentName).orElse(null);
+                    if (parentCategory != null) {
                         category.setName(name);
-                        category.setParentID(0);
+                        category.setParentID(parentCategory.getId());
                         categoryRepository.save(category);
                         AdminCreateCategoryResponse response = new AdminCreateCategoryResponse(category.getId(),
                                 category.getName(),
-                                null);
+                                parentName);
 
                         result.setMessage(AdminUserCreateConst.SUCCESS);
                         result.setData(response);
+                    } else {
+                        result.setStatus(ServiceResult.Status.FAILED);
+                        result.setMessage("This category is not existed");
                     }
                 } else {
-                    result.setMessage("This name is already used");
-                    result.setStatus(ServiceResult.Status.FAILED);
+                    category.setName(name);
+                    category.setParentID(0);
+                    categoryRepository.save(category);
+                    AdminCreateCategoryResponse response = new AdminCreateCategoryResponse(category.getId(),
+                            category.getName(),
+                            null);
+
+                    result.setMessage(AdminUserCreateConst.SUCCESS);
+                    result.setData(response);
                 }
             } else {
-                result.setMessage(AdminUserCreateConst.NULL_DATA);
+                result.setMessage("This name is already used");
                 result.setStatus(ServiceResult.Status.FAILED);
             }
         } else {
@@ -434,7 +425,7 @@ public class AdminServiceImpl implements AdminService {
         CategoryEntity category = categoryRepository.findById(id).orElse(null);
         if (category != null) {
             categoryRepository.delete(category);
-            for (ProductEntity product : productRepository.findByCategoryId(id)){
+            for (ProductEntity product : productRepository.findByCategoryId(id)) {
                 product.setDeleted(true);
                 productRepository.save(product);
             }

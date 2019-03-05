@@ -1,7 +1,5 @@
 package com.dac.spring.entity;
 
-import com.dac.spring.model.enums.StatusName;
-
 import javax.persistence.*;
 import java.util.List;
 

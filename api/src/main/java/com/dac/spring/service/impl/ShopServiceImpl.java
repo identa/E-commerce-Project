@@ -1,5 +1,6 @@
 package com.dac.spring.service.impl;
 
+import com.dac.spring.constant.ShopConst;
 import com.dac.spring.entity.CategoryEntity;
 import com.dac.spring.entity.EmployeeEntity;
 import com.dac.spring.entity.ProductEntity;
@@ -59,7 +60,7 @@ public class ShopServiceImpl implements ShopService {
             result.setMessage("Get info successfully");
         } else {
             result.setStatus(ServiceResult.Status.FAILED);
-            result.setMessage("Shop not found");
+            result.setMessage(ShopConst.SHOP_NOT_FOUND);
         }
         return result;
     }
@@ -83,11 +84,11 @@ public class ShopServiceImpl implements ShopService {
                 result.setMessage("Update info successfully");
                 result.setData(response);
             } else {
-                result.setMessage("Fields cannot be empty");
+                result.setMessage(ShopConst.EMPTY_FIELD);
                 result.setStatus(ServiceResult.Status.FAILED);
             }
         } else {
-            result.setMessage("Shop not found");
+            result.setMessage(ShopConst.SHOP_NOT_FOUND);
             result.setStatus(ServiceResult.Status.FAILED);
         }
         return result;
@@ -132,7 +133,7 @@ public class ShopServiceImpl implements ShopService {
             return result;
         } else {
             result.setStatus(ServiceResult.Status.FAILED);
-            result.setMessage("Shop not found");
+            result.setMessage(ShopConst.SHOP_NOT_FOUND);
         }
         return result;
     }
@@ -142,7 +143,7 @@ public class ShopServiceImpl implements ShopService {
                                        double originalPrice, int discount, String productImageURL, int categoryID, int shopID) {
         ServiceResult result = new ServiceResult();
         if (name != null && status != null) {
-            boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch((t) -> t.name().equals(status));
+            boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch(t -> t.name().equals(status));
             if (isStatusExist) {
                     CategoryEntity category = categoryRepository.findById(categoryID).orElse(null);
                     if (category != null){
@@ -173,7 +174,7 @@ public class ShopServiceImpl implements ShopService {
                             result.setMessage("Create product successfully");
                             result.setData(response);
                         }else {
-                            result.setMessage("Shop not found");
+                            result.setMessage(ShopConst.SHOP_NOT_FOUND);
                             result.setStatus(ServiceResult.Status.FAILED);
                         }
                     }else {
@@ -185,7 +186,7 @@ public class ShopServiceImpl implements ShopService {
                 result.setStatus(ServiceResult.Status.FAILED);
             }
         } else {
-            result.setMessage("Fields cannot be empty");
+            result.setMessage(ShopConst.EMPTY_FIELD);
             result.setStatus(ServiceResult.Status.FAILED);
         }
         return result;
@@ -196,7 +197,7 @@ public class ShopServiceImpl implements ShopService {
                                        double originalPrice, int discount, String productImageURL, int categoryID) {
         ServiceResult result = new ServiceResult();
         if (name != null && status != null) {
-            boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch((t) -> t.name().equals(status));
+            boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch(t -> t.name().equals(status));
             if (isStatusExist) {
                 CategoryEntity category = categoryRepository.findById(categoryID).orElse(null);
                 if (category != null){
@@ -227,7 +228,7 @@ public class ShopServiceImpl implements ShopService {
                         result.setMessage("Create product successfully");
                         result.setData(response);
                     }else {
-                        result.setMessage("Shop not found");
+                        result.setMessage(ShopConst.SHOP_NOT_FOUND);
                         result.setStatus(ServiceResult.Status.FAILED);
                     }
                 }else {
@@ -239,7 +240,7 @@ public class ShopServiceImpl implements ShopService {
                 result.setStatus(ServiceResult.Status.FAILED);
             }
         } else {
-            result.setMessage("Fields cannot be empty");
+            result.setMessage(ShopConst.EMPTY_FIELD);
             result.setStatus(ServiceResult.Status.FAILED);
         }
         return result;

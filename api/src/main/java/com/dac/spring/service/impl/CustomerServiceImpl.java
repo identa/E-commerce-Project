@@ -7,7 +7,6 @@ import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
 import com.dac.spring.model.enums.StatusName;
 import com.dac.spring.model.req.CustomerCreateOrderDetailRequest;
-import com.dac.spring.model.req.CustomerCreateOrderRequest;
 import com.dac.spring.model.resp.*;
 import com.dac.spring.repository.*;
 import com.dac.spring.service.CustomerService;
@@ -270,14 +269,8 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult getCategoryTree() {
         ServiceResult result = new ServiceResult();
         List<CustomerGetCategoryTreeResponse> categoryResponses = getCategoryTreeResponseList(categoryRepository.findAllByParentID(0));
-        if (categoryResponses != null){
             result.setMessage("Get category tree successfully");
             result.setData(categoryResponses);
-        }
-        else {
-            result.setStatus(ServiceResult.Status.FAILED);
-            result.setMessage("Category not found");
-        }
         return result;
     }
 
@@ -285,14 +278,8 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult getAllCategory() {
         ServiceResult result = new ServiceResult();
         List<CustomerGetAllCategoryResponse> categoryResponses = getAllCategoryResponseList(categoryRepository.findAll());
-        if (categoryResponses != null){
             result.setMessage("Get category successfully");
             result.setData(categoryResponses);
-        }
-        else {
-            result.setStatus(ServiceResult.Status.FAILED);
-            result.setMessage("Category not found");
-        }
         return result;
     }
 
@@ -334,8 +321,10 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult returnRole(HttpServletRequest request) {
         ServiceResult result = new ServiceResult();
         String authHeader = request.getHeader("Authorization").split(" ")[1];
-        String roleName = employeeRepository.findByEmail(getUserNameFromJwtToken(authHeader)).orElse(null).getRole().getName().name();
-        result.setData(roleName);
+        EmployeeEntity employee = employeeRepository.findByEmail(getUserNameFromJwtToken(authHeader)).orElse(null);
+        if (employee != null)
+        result.setData(employee.getRole().getName().name());
+        else result.setStatus(ServiceResult.Status.FAILED);
         return result;
     }
 
@@ -357,7 +346,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     private OrderDetailEntity createOrderDetail(CustomerCreateOrderDetailRequest request, OrderEntity order) {
-        ProductEntity product = productRepository.findByIdAndDeletedAndStatusName(request.getProductID(), false, StatusName.ACTIVE);
+        ProductEntity product = productRepository.findByIdAndDeletedAndStatusName(request.getProductID(),
+                false, StatusName.ACTIVE);
         if (product != null && order != null) {
             return new OrderDetailEntity(product.getOriginalPrice()*product.getDiscount(),
                     request.getQuantity(),

@@ -90,7 +90,7 @@ public class CustomerController extends HttpServlet {
     }
 
     @PostMapping("/createOrder")
-    public ResponseEntity<ServiceResult> createOrder(CustomerCreateOrderRequest request){
+    public ResponseEntity<ServiceResult> createOrder(@RequestBody CustomerCreateOrderRequest request){
         return new ResponseEntity<>(customerService.createOrder(request.getCustomerID(),request.getOrderDetailRequests()),HttpStatus.OK);
     }
 }
