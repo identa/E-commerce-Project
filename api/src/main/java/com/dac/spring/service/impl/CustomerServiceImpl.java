@@ -328,16 +328,6 @@ public class CustomerServiceImpl implements CustomerService {
         return result;
     }
 
-//    @Override
-//    public ServiceResult createOrder(int customerID, List<CustomerCreateOrderDetailRequest> orderDetailRequests) {
-//        ServiceResult result = new ServiceResult();
-//        OrderEntity createdOrder = createOrderEntity(customerID);
-//        if (createdOrder != null) orderRepository.save(createdOrder);
-//        orderDetailRepository.saveAll(createOrderDetailList(orderDetailRequests, createdOrder));
-//
-//        return result;
-//    }
-
     @Override
     public ServiceResult createOrder(int customerID, List<CustomerCreateOrderDetailRequest> orderDetailRequests) {
         ServiceResult result = new ServiceResult();
