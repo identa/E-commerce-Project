@@ -85,7 +85,7 @@ public class CustomerController extends HttpServlet {
     }
 
     @GetMapping("/getRole")
-    public ResponseEntity<ServiceResult> test(HttpServletRequest request){
+    public ResponseEntity<ServiceResult> getRole(HttpServletRequest request){
         return new ResponseEntity<>(customerService.returnRole(request),HttpStatus.OK);
     }
 

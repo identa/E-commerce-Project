@@ -13,12 +13,10 @@ import com.dac.spring.repository.*;
 import com.dac.spring.service.CustomerService;
 import com.dac.spring.utils.jwt.JwtProvider;
 import io.jsonwebtoken.Jwts;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -391,22 +389,38 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult searchProduct(String name, int page, int size) {
         ServiceResult result = new ServiceResult();
-        Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
-        Page<ProductEntity> productList = productPaginationRepository.findAllByNameIgnoreCaseContainingAndDeletedAndStatusName(info,
-                name.replaceAll("\\s+", ""),false,StatusName.ACTIVE);
-        List<CustomerGetProductByCatResponse> responses = new ArrayList<>();
-        for (ProductEntity product: productList){
-            CustomerGetProductByCatResponse response = new CustomerGetProductByCatResponse(product.getId(),
-                    product.getName(),
-                    product.getDescription(),
-                    product.getOriginalPrice(),
-                    product.getDiscount(),
-                    product.getProductImageURL(),
-                    product.getCategory().getName());
-            responses.add(response);
+
+        PageRequest pageRequest = new PageRequest(page-1, size);
+        List<ProductEntity> list = productRepository.findAll();
+        List<ProductEntity> useList = new ArrayList<>();
+        for (ProductEntity productEntity :list){
+            String subName = productEntity.getName().replaceAll("\\s+", "");
+            if (StringUtils.containsIgnoreCase(subName,name.replaceAll("\\s+", ""))){
+                useList.add(productEntity);
+            }
         }
-        result.setData(responses);
-        result.setMessage("Products are returned successfully");
+        int start = (int) pageRequest.getOffset();
+        int end = (start + size) > useList.size() ? useList.size() : (start + size );
+        if (start<end){
+        Page<ProductEntity> productList = new PageImpl<>(useList.subList(start,end), pageRequest, useList.size());
+            List<CustomerGetProductByCatResponse> responses = new ArrayList<>();
+            for (ProductEntity product : productList) {
+                CustomerGetProductByCatResponse response = new CustomerGetProductByCatResponse(product.getId(),
+                        product.getName(),
+                        product.getDescription(),
+                        product.getOriginalPrice(),
+                        product.getDiscount(),
+                        product.getProductImageURL(),
+                        product.getCategory().getName());
+                responses.add(response);
+            }
+            result.setData(responses);
+            result.setMessage("Products are returned successfully");
+        }
+        else{
+            result.setStatus(ServiceResult.Status.FAILED);
+            result.setMessage("This page is empty");
+        }
         return result;
     }
 

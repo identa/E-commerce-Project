@@ -3,10 +3,13 @@ package com.dac.spring.service.impl;
 import com.dac.spring.constant.AdminConst;
 import com.dac.spring.constant.AdminUserCreateConst;
 import com.dac.spring.constant.CustomerSignUpConst;
+import com.dac.spring.constant.ShopConst;
 import com.dac.spring.entity.*;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
 import com.dac.spring.model.enums.StatusName;
+import com.dac.spring.model.req.AdminCreateProductRequest;
+import com.dac.spring.model.req.ShopUpdateProductRequest;
 import com.dac.spring.model.resp.AdminPaginateCategoryResponse;
 import com.dac.spring.model.resp.*;
 import com.dac.spring.repository.*;
@@ -57,6 +60,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     CategoryPagingRepository categoryPagingRepository;
+
+    @Autowired
+    ProductPaginationRepository productPaginationRepository;
 
     @Autowired
     JWTRepository jwtRepository;
@@ -431,9 +437,174 @@ public class AdminServiceImpl implements AdminService {
             }
             result.setMessage("Delete category successfully");
         } else {
-            result.setMessage("Category not found");
+            result.setMessage(AdminConst.CATEGORY_NOT_FOUND);
             result.setStatus(ServiceResult.Status.FAILED);
         }
         return result;
+    }
+
+    @Override
+    public ServiceResult paginateProduct(int page, int size) {
+        ServiceResult result = new ServiceResult();
+
+            Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
+            Page<ProductEntity> productList = productPaginationRepository.
+                    findAllByDeletedAndStatusName(info, false, StatusName.ACTIVE);
+            boolean isProductListEmpty = productList.isEmpty();
+            if (!isProductListEmpty) {
+                int totalPages = productList.getTotalPages();
+                List<ShopGetProductResponse> responses = new ArrayList<>();
+                for (ProductEntity entity : productList) {
+
+                        ShopGetProductResponse response = new ShopGetProductResponse(entity.getId(),
+                                entity.getName(),
+                                entity.getStatus().getName().name(),
+                                entity.getDescription(),
+                                entity.getQuantity(),
+                                entity.getOriginalPrice(),
+                                entity.getDiscount(),
+                                entity.getView(),
+                                entity.getProductImageURL(),
+                                entity.getCategory().getName());
+                        responses.add(response);
+
+                }
+                ShopPaginateProductByIdResponse response = new ShopPaginateProductByIdResponse(totalPages, responses);
+                result.setMessage("Products are returned successfully");
+                result.setData(response);
+            } else {
+                result.setMessage("Product list is empty");
+                result.setStatus(ServiceResult.Status.FAILED);
+            }
+            return result;
+    }
+
+    @Override
+    public ServiceResult createProduct(AdminCreateProductRequest request) {
+        ServiceResult result = new ServiceResult();
+        if (request.getName() != null && request.getStatus() != null) {
+            boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch(t -> t.name().equals(request.getStatus()));
+            if (isStatusExist) {
+                CategoryEntity category = categoryRepository.findById(request.getCategoryID()).orElse(null);
+                if (category != null){
+                        if (isDiscountRight(request.getDiscount())){
+                            ProductEntity product = new ProductEntity(request.getName(),
+                                    statusRepository.findByName(StatusName.valueOf(request.getStatus())),
+                                    request.getDescription(),
+                                    request.getQuantity(),
+                                    request.getOriginalPrice(),
+                                    request.getDiscount(),
+                                    request.getProductImageURL(),
+                                    categoryRepository.findById(request.getCategoryID()).orElse(null),
+                                    employeeRepository.findById(0).orElse(null));
+                            productRepository.save(product);
+                            AdminCreateProductResponse response = new AdminCreateProductResponse(product.getId(),
+                                    product.getName(),
+                                    product.getStatus().getName().name(),
+                                    product.getDescription(),
+                                    product.getQuantity(),
+                                    product.getOriginalPrice(),
+                                    product.getDiscount(),
+                                    product.getProductImageURL(),
+                                    product.getCategory().getName(),
+                                    product.getShop().getFirstName());
+
+                            result.setMessage("Create product successfully");
+                            result.setData(response);
+                        }else {
+                            result.setMessage("Discount is less than 100");
+                            result.setStatus(ServiceResult.Status.FAILED);
+                        }
+                }else {
+                    result.setMessage(AdminConst.CATEGORY_NOT_FOUND);
+                    result.setStatus(ServiceResult.Status.FAILED);
+                }
+            } else {
+                result.setMessage("Status is not existed");
+                result.setStatus(ServiceResult.Status.FAILED);
+            }
+        } else {
+            result.setMessage(ShopConst.EMPTY_FIELD);
+            result.setStatus(ServiceResult.Status.FAILED);
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceResult updateProduct(ShopUpdateProductRequest request) {
+        ServiceResult result = new ServiceResult();
+        if (request.getName() != null && request.getStatus() != null) {
+            boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch(t -> t.name().equals(request.getStatus()));
+            if (isStatusExist) {
+                CategoryEntity category = categoryRepository.findById(request.getCategoryID()).orElse(null);
+                if (category != null){
+                    ProductEntity product = productRepository.findByIdAndDeletedAndStatusName(
+                            request.getId(), false, StatusName.ACTIVE);
+                    if (product != null){
+                        if (isDiscountRight(request.getDiscount())) {
+                            product.setName(request.getName());
+                            product.setDescription(request.getDescription());
+                            product.setOriginalPrice(request.getOriginalPrice());
+                            product.setDiscount(request.getDiscount());
+                            product.setStatus(statusRepository.findByName(StatusName.valueOf(request.getStatus())));
+                            product.setQuantity(request.getQuantity());
+                            product.setProductImageURL(request.getProductImageURL());
+                            product.setCategory(category);
+
+                            productRepository.save(product);
+                            ShopUpdateProductResponse response = new ShopUpdateProductResponse(product.getId(),
+                                    product.getName(),
+                                    product.getStatus().getName().name(),
+                                    product.getDescription(),
+                                    product.getQuantity(),
+                                    product.getOriginalPrice(),
+                                    product.getDiscount(),
+                                    product.getProductImageURL(),
+                                    product.getCategory().getName(),
+                                    product.getShop().getFirstName() + " " + product.getShop().getLastName());
+
+                            result.setMessage("Create product successfully");
+                            result.setData(response);
+                        }
+                        else {
+                            result.setMessage("Discount is less than 100");
+                            result.setStatus(ServiceResult.Status.FAILED);
+                        }
+                    }else {
+                        result.setMessage(ShopConst.SHOP_NOT_FOUND);
+                        result.setStatus(ServiceResult.Status.FAILED);
+                    }
+                }else {
+                    result.setMessage(AdminConst.CATEGORY_NOT_FOUND);
+                    result.setStatus(ServiceResult.Status.FAILED);
+                }
+            } else {
+                result.setMessage("Status is not existed");
+                result.setStatus(ServiceResult.Status.FAILED);
+            }
+        } else {
+            result.setMessage(ShopConst.EMPTY_FIELD);
+            result.setStatus(ServiceResult.Status.FAILED);
+        }
+        return result;
+    }
+
+
+    @Override
+    public ServiceResult deleteProduct(int id) {
+        ServiceResult result = new ServiceResult();
+        ProductEntity product = productRepository.findByIdAndDeleted(id, false);
+        if (product != null){
+            product.setDeleted(true);
+            result.setMessage("Delete product successfully");
+        }else {
+            result.setMessage("Cannot delete this product");
+            result.setStatus(ServiceResult.Status.FAILED);
+        }
+        return result;
+    }
+
+    private boolean isDiscountRight(int discount){
+        return discount >= 0 && discount < 100;
     }
 }

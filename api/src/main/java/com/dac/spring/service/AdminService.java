@@ -1,6 +1,8 @@
 package com.dac.spring.service;
 
 import com.dac.spring.model.ServiceResult;
+import com.dac.spring.model.req.AdminCreateProductRequest;
+import com.dac.spring.model.req.ShopUpdateProductRequest;
 
 public interface AdminService {
     ServiceResult getAllCustomer();
@@ -14,5 +16,8 @@ public interface AdminService {
     ServiceResult updateCategory(int id, String name, String parentName);
     ServiceResult paginateCategory(int page, int size);
     ServiceResult deleteCategory(int id);
-
+    ServiceResult paginateProduct(int page, int size);
+    ServiceResult createProduct(AdminCreateProductRequest request);
+    ServiceResult updateProduct(ShopUpdateProductRequest request);
+    ServiceResult deleteProduct(int id);
 }

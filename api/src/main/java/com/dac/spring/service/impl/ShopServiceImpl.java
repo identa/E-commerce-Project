@@ -104,14 +104,12 @@ public class ShopServiceImpl implements ShopService {
         if (shop != null) {
             Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
             Page<ProductEntity> productList = productPaginationRepository.
-                    findAllByDeletedAndShopId(info, false, id);
+                    findAllByDeletedAndStatusNameAndShopId(info, false, StatusName.ACTIVE, id);
             boolean isProductListEmpty = productList.isEmpty();
             if (!isProductListEmpty) {
                 int totalPages = productList.getTotalPages();
                 List<ShopGetProductResponse> responses = new ArrayList<>();
                 for (ProductEntity entity : productList) {
-                    CategoryEntity category = categoryRepository.findById(id).orElse(null);
-                    if (category != null) {
                         ShopGetProductResponse response = new ShopGetProductResponse(entity.getId(),
                                 entity.getName(),
                                 entity.getStatus().getName().name(),
@@ -121,9 +119,8 @@ public class ShopServiceImpl implements ShopService {
                                 entity.getDiscount(),
                                 entity.getView(),
                                 entity.getProductImageURL(),
-                                category.getName());
+                                entity.getCategory().getName());
                         responses.add(response);
-                    }
                 }
                 ShopPaginateProductByIdResponse response = new ShopPaginateProductByIdResponse(totalPages, responses);
                 result.setMessage("Products are returned successfully");
@@ -132,7 +129,6 @@ public class ShopServiceImpl implements ShopService {
                 result.setMessage("Product list is empty");
                 result.setStatus(ServiceResult.Status.FAILED);
             }
-            return result;
         } else {
             result.setStatus(ServiceResult.Status.FAILED);
             result.setMessage(ShopConst.SHOP_NOT_FOUND);
@@ -151,29 +147,34 @@ public class ShopServiceImpl implements ShopService {
                         EmployeeEntity shop = employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(
                                 request.getShopID(), false, StatusName.ACTIVE, RoleName.ROLE_SHOP);
                         if (shop != null){
-                            ProductEntity product = new ProductEntity(request.getName(),
-                                    statusRepository.findByName(StatusName.valueOf(request.getStatus())),
-                                    request.getDescription(),
-                                    request.getQuantity(),
-                                    request.getOriginalPrice(),
-                                    request.getDiscount(),
-                                    request.getProductImageURL(),
-                                    categoryRepository.findById(request.getCategoryID()).orElse(null),
-                                    employeeRepository.findById(request.getShopID()).orElse(null));
-                            productRepository.save(product);
-                            ShopCreateProductResponse response = new ShopCreateProductResponse(product.getId(),
-                                    product.getName(),
-                                    product.getStatus().getName().name(),
-                                    product.getDescription(),
-                                    product.getQuantity(),
-                                    product.getOriginalPrice(),
-                                    product.getDiscount(),
-                                    product.getProductImageURL(),
-                                    product.getCategory().getName(),
-                                    product.getShop().getFirstName() + " " + product.getShop().getLastName());
+                            if (isDiscountRight(request.getDiscount())){
+                                ProductEntity product = new ProductEntity(request.getName(),
+                                        statusRepository.findByName(StatusName.valueOf(request.getStatus())),
+                                        request.getDescription(),
+                                        request.getQuantity(),
+                                        request.getOriginalPrice(),
+                                        request.getDiscount(),
+                                        request.getProductImageURL(),
+                                        categoryRepository.findById(request.getCategoryID()).orElse(null),
+                                        employeeRepository.findById(request.getShopID()).orElse(null));
+                                productRepository.save(product);
+                                ShopCreateProductResponse response = new ShopCreateProductResponse(product.getId(),
+                                        product.getName(),
+                                        product.getStatus().getName().name(),
+                                        product.getDescription(),
+                                        product.getQuantity(),
+                                        product.getOriginalPrice(),
+                                        product.getDiscount(),
+                                        product.getProductImageURL(),
+                                        product.getCategory().getName(),
+                                        product.getShop().getFirstName() + " " + product.getShop().getLastName());
 
-                            result.setMessage("Create product successfully");
-                            result.setData(response);
+                                result.setMessage("Create product successfully");
+                                result.setData(response);
+                            }else {
+                                result.setMessage("Discount is less than 100");
+                                result.setStatus(ServiceResult.Status.FAILED);
+                            }
                         }else {
                             result.setMessage(ShopConst.SHOP_NOT_FOUND);
                             result.setStatus(ServiceResult.Status.FAILED);
@@ -204,29 +205,35 @@ public class ShopServiceImpl implements ShopService {
                     ProductEntity product = productRepository.findByIdAndDeletedAndStatusName(
                             request.getId(), false, StatusName.ACTIVE);
                     if (product != null){
-                        product.setName(request.getName());
-                        product.setDescription(request.getDescription());
-                        product.setOriginalPrice(request.getOriginalPrice());
-                        product.setDiscount(request.getDiscount());
-                        product.setStatus(statusRepository.findByName(StatusName.valueOf(request.getStatus())));
-                        product.setQuantity(request.getQuantity());
-                        product.setProductImageURL(request.getProductImageURL());
-                        product.setCategory(category);
+                        if (isDiscountRight(request.getDiscount())) {
+                            product.setName(request.getName());
+                            product.setDescription(request.getDescription());
+                            product.setOriginalPrice(request.getOriginalPrice());
+                            product.setDiscount(request.getDiscount());
+                            product.setStatus(statusRepository.findByName(StatusName.valueOf(request.getStatus())));
+                            product.setQuantity(request.getQuantity());
+                            product.setProductImageURL(request.getProductImageURL());
+                            product.setCategory(category);
 
-                        productRepository.save(product);
-                        ShopUpdateProductResponse response = new ShopUpdateProductResponse(product.getId(),
-                                product.getName(),
-                                product.getStatus().getName().name(),
-                                product.getDescription(),
-                                product.getQuantity(),
-                                product.getOriginalPrice(),
-                                product.getDiscount(),
-                                product.getProductImageURL(),
-                                product.getCategory().getName(),
-                                product.getShop().getFirstName() + " " + product.getShop().getLastName());
+                            productRepository.save(product);
+                            ShopUpdateProductResponse response = new ShopUpdateProductResponse(product.getId(),
+                                    product.getName(),
+                                    product.getStatus().getName().name(),
+                                    product.getDescription(),
+                                    product.getQuantity(),
+                                    product.getOriginalPrice(),
+                                    product.getDiscount(),
+                                    product.getProductImageURL(),
+                                    product.getCategory().getName(),
+                                    product.getShop().getFirstName() + " " + product.getShop().getLastName());
 
-                        result.setMessage("Create product successfully");
-                        result.setData(response);
+                            result.setMessage("Create product successfully");
+                            result.setData(response);
+                        }
+                        else {
+                            result.setMessage("Discount is less than 100");
+                            result.setStatus(ServiceResult.Status.FAILED);
+                        }
                     }else {
                         result.setMessage(ShopConst.SHOP_NOT_FOUND);
                         result.setStatus(ServiceResult.Status.FAILED);
@@ -244,6 +251,10 @@ public class ShopServiceImpl implements ShopService {
             result.setStatus(ServiceResult.Status.FAILED);
         }
         return result;
+    }
+
+    private boolean isDiscountRight(int discount){
+        return discount >= 0 && discount < 100;
     }
 
     @Override

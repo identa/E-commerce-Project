@@ -14,19 +14,18 @@ import javax.validation.Valid;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/shop")
+@PreAuthorize("hasRole('SHOP')")
 public class ShopController {
 
     @Autowired
     ShopService shopService;
 
     @PostMapping("/getInfoById")
-    @PreAuthorize("hasRole('SHOP')")
     public ResponseEntity<ServiceResult> getInfoById(@Valid @RequestBody ShopGetInfoRequest request) {
         return new ResponseEntity<>(shopService.getInfoById(request.getId()), HttpStatus.OK);
     }
 
     @PutMapping("/update")
-    @PreAuthorize("hasRole('SHOP')")
     public ResponseEntity<ServiceResult> updateInfo(@Valid @RequestBody ShopUpdateInfoRequest request) {
         return new ResponseEntity<>(shopService.updateInfo(request.getId(),
                 request.getFirstName(),
@@ -36,7 +35,6 @@ public class ShopController {
     }
 
     @PostMapping("/paginateProduct")
-    @PreAuthorize("hasRole('SHOP')")
     public ResponseEntity<ServiceResult> paginateProduct(@Valid @RequestBody ShopGetProductRequest request) {
         return new ResponseEntity<>(shopService.paginateProductById(request.getId(),
                 request.getPage(),
@@ -44,19 +42,16 @@ public class ShopController {
     }
 
     @PostMapping("/createProduct")
-    @PreAuthorize("hasRole('SHOP')")
     public ResponseEntity<ServiceResult> createProduct(@Valid @RequestBody ShopCreateProductRequest request) {
         return new ResponseEntity<>(shopService.createProduct(request),HttpStatus.OK);
     }
 
-    @PostMapping("/updateProduct")
-    @PreAuthorize("hasRole('SHOP')")
+    @PutMapping("/updateProduct")
     public ResponseEntity<ServiceResult> updateProduct(@Valid @RequestBody ShopUpdateProductRequest request) {
         return new ResponseEntity<>(shopService.updateProduct(request),HttpStatus.OK);
     }
 
-    @PutMapping("/deleteProduct")
-    @PreAuthorize("hasRole('SHOP')")
+    @DeleteMapping("/deleteProduct")
     public ResponseEntity<ServiceResult> deleteProduct(@Valid @RequestBody ShopDeleteProductRequest request) {
         return new ResponseEntity<>(shopService.deleteProduct(request.getId()),HttpStatus.OK);
     }
