@@ -350,7 +350,7 @@ a:hover{
 }
 .modal-content{
     background: #212C37;
-    min-height: 415px;
+    min-height: 170px;
     height: auto;
 }
 .modal-header{
@@ -377,6 +377,15 @@ a:hover{
 .active button{
     background: #083B4C;
     color: white;
+}
+/*--------------------------------------
+               modal confirm
+--------------------------------------*/
+.modal-confirm{
+    background: white;
+}
+.modal-confirm .modal-header span {
+    color: black;
 }
 /*-----------------sign up--------------*/
 .sign-up-content{
@@ -628,4 +637,9 @@ a:hover{
 }
 .img-preview img {
     width: 100%;
+}
+table tr td img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
 }

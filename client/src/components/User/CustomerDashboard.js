@@ -75,7 +75,7 @@ class CustomerDashboard extends Component {
             }    
         })
         .then(res => res.json())
-        .then(data =>{
+        .then(data =>{            
             if(data.status === 'SUCCESS'){
                 this.setState({totalPages : data.data.totalPages});               
                 this.setState({userResponseList : data.data.userResponseList}); 
@@ -90,8 +90,9 @@ class CustomerDashboard extends Component {
     }
 
     onDeleteCustomer = () =>{
+        
         fetch(urlDeleteCustomer ,{
-            method : 'PUT',
+            method : 'DELETE',
             headers : {
                 'Content-Type' : 'application/json',
                 'Authorization' : localStorage.token
@@ -135,13 +136,14 @@ class CustomerDashboard extends Component {
                         </div>
                     </div>
                     <div className="row">
-                        <table className="table table-bordered">
+                        <table className="table table-bordered table-hover">
                             <tbody>
                                 <tr>
                                     <th>Id</th>
                                     <th>First Name</th>
                                     <th>Last Name</th>
                                     <th>Email</th>
+                                    <th>Avatar</th>
                                     <th>Role</th>
                                     <th>Status</th>
                                     <th>&nbsp;</th>
@@ -155,6 +157,7 @@ class CustomerDashboard extends Component {
                                                         email={value.email}
                                                         status={value.status}
                                                         role={value.role}
+                                                        imageURL={value.imageURL}
                                                         handleShowModal={this.handleShowModal}
                                                         getCustomerId={this.getCustomerId}/>
                                     })
@@ -168,13 +171,16 @@ class CustomerDashboard extends Component {
                     </div>
                 </div>
                 <Modal show={this.state.isModalShowing} onHide={this.handleCloseModal}>
-                    <Modal.Header closeButton/>
-
-                    <Modal.Body>
-                        <p style={{color : 'white'}}>Do you want to delete this id :{this.state.customerId} </p>
-                        <Button onClick={this.onDeleteCustomer}>Yes</Button>
-                        <Button onClick={this.handleCloseModal}>No</Button>
-                    </Modal.Body>
+                    <div className='modal-confirm'>
+                        <Modal.Header closeButton />
+                        <Modal.Body>
+                            <p>Do you want to delete this user ?</p>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button variant='primary' onClick={this.onDeleteCustomer}>Yes</Button>
+                            <Button variant='secondary' onClick={this.handleCloseModal}>No</Button>
+                        </Modal.Footer>
+                    </div>
                 </Modal>
             </div>
         );

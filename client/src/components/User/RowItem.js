@@ -20,16 +20,29 @@ class RowItem extends Component {
 
 
     render() {
+        const data = {
+            uid : this.props.uid,
+            firstName : this.props.firstName,
+            lastName : this.props.lastName,
+            email : this.props.email,
+            role : this.props.role,
+            status : this.props.status,
+            imageURL : this.props.imageURL
+        }
+    
         return (
             <tr>
                 <td>{this.props.uid}</td>
                 <td>{this.props.firstName}</td>
                 <td>{this.props.lastName}</td>
                 <td>{this.props.email}</td>
+                <td>
+                    <img src={this.props.imageURL} alt=''/>
+                </td>
                 <td>{this.props.role}</td>
                 <td>{this.props.status}</td>
                 <td>
-                    <Link to="/manage/customer/edit">
+                    <Link to={{pathname : "/manage/customer/edit", state : {data : data} }}>
                         <button className="btn btn-info btn-action">
                             <i className="fa fa-edit" />
                             Edit
