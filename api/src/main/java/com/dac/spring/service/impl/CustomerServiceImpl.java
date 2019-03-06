@@ -424,6 +424,34 @@ public class CustomerServiceImpl implements CustomerService {
         return result;
     }
 
+    @Override
+    public ServiceResult paginateProduct(int page, int size) {
+        ServiceResult result = new ServiceResult();
+            Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
+            Page<ProductEntity> productList = productPaginationRepository.
+                    findAllByDeletedAndStatusNameAndQuantityGreaterThan(info, false, StatusName.ACTIVE, 0);
+            boolean isProductListEmpty = productList.isEmpty();
+            if (!isProductListEmpty) {
+                int totalPages = productList.getTotalPages();
+                List<CustomerPaginateProductResponse> responses = new ArrayList<>();
+                for (ProductEntity entity : productList) {
+                    CustomerPaginateProductResponse response = new CustomerPaginateProductResponse(entity.getId(),
+                            entity.getName(),
+                            entity.getOriginalPrice(),
+                            entity.getDiscount(),
+                            entity.getProductImageURL());
+                    responses.add(response);
+                }
+                CustomerPaginateProductListResponse response = new CustomerPaginateProductListResponse(totalPages, responses);
+                result.setMessage("Products are returned successfully");
+                result.setData(response);
+            } else {
+                result.setMessage("Product list is empty");
+                result.setStatus(ServiceResult.Status.FAILED);
+            }
+        return result;
+    }
+
     private double calculatePrice(int quantity, double price, double discount){
         return (price - price*discount/100)*quantity;
     }

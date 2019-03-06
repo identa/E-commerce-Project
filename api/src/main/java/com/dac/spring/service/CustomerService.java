@@ -18,4 +18,5 @@ public interface CustomerService {
     ServiceResult returnRole(HttpServletRequest request);
     ServiceResult createOrder(int customerID, List<CustomerCreateOrderDetailRequest> orderDetailRequests);
     ServiceResult searchProduct(String name, int page, int size);
+    ServiceResult paginateProduct(int page, int size);
 }

@@ -100,4 +100,11 @@ public class CustomerController extends HttpServlet {
                 request.getPage(),
                 request.getSize()),HttpStatus.OK);
     }
+
+    @PostMapping("/paginateProduct")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<ServiceResult> paginateProduct(@RequestBody AdminPaginateCategoryRequest request){
+        return new ResponseEntity<>(customerService.paginateProduct(request.getPage(),
+                request.getSize()),HttpStatus.OK);
+    }
 }
