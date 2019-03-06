@@ -148,12 +148,14 @@ public class AdminServiceImpl implements AdminService {
         EmployeeEntity employee = employeeRepository.findByIdAndDeletedAndRoleNameOrIdAndDeletedAndRoleName(id, false,
                 RoleName.ROLE_CUSTOMER, id, false, RoleName.ROLE_SHOP).orElse(null);
         if (employee != null) {
-            if (firstName != null && lastName != null && password != null &&
+            if (firstName != null && lastName != null &&
                     statusName != null && roleName != null) {
                 if (isStatusAndRoleExisted(statusName, roleName)) {
                     employee.setFirstName(firstName);
                     employee.setLastName(lastName);
-                    employee.setPassword(encoder.encode(password));
+                    if (password != null){
+                        employee.setPassword(encoder.encode(password));
+                    }else employee.setPassword(employee.getPassword());
                     employee.setStatus(statusRepository.findByName(StatusName.valueOf(statusName)));
                     employee.setRole(roleRepository.findByName(RoleName.valueOf(roleName)));
                     employee.setImageURL(imageURL);
