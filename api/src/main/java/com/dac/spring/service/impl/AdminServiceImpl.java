@@ -153,7 +153,7 @@ public class AdminServiceImpl implements AdminService {
                 if (isStatusAndRoleExisted(statusName, roleName)) {
                     employee.setFirstName(firstName);
                     employee.setLastName(lastName);
-                    if (password.equals("")){
+                    if (!password.equals("")){
                         employee.setPassword(encoder.encode(password));
                     }else employee.setPassword(employee.getPassword());
                     employee.setStatus(statusRepository.findByName(StatusName.valueOf(statusName)));
