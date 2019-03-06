@@ -490,9 +490,10 @@ public class AdminServiceImpl implements AdminService {
                                     request.getQuantity(),
                                     request.getOriginalPrice(),
                                     request.getDiscount(),
-                                    request.getProductImageURL(),
                                     categoryRepository.findById(request.getCategoryID()).orElse(null),
                                     employeeRepository.findById(0).orElse(null));
+                            if (request.getProductImageURL()==null) product.setProductImageURL(ShopConst.DEFAULT_AVATAR);
+                            else product.setProductImageURL(request.getProductImageURL());
                             productRepository.save(product);
                             AdminCreateProductResponse response = new AdminCreateProductResponse(product.getId(),
                                     product.getName(),
@@ -544,9 +545,9 @@ public class AdminServiceImpl implements AdminService {
                             product.setDiscount(request.getDiscount());
                             product.setStatus(statusRepository.findByName(StatusName.valueOf(request.getStatus())));
                             product.setQuantity(request.getQuantity());
-                            product.setProductImageURL(request.getProductImageURL());
+                            if (request.getProductImageURL()==null) product.setProductImageURL(ShopConst.DEFAULT_AVATAR);
+                            else product.setProductImageURL(request.getProductImageURL());
                             product.setCategory(category);
-
                             productRepository.save(product);
                             ShopUpdateProductResponse response = new ShopUpdateProductResponse(product.getId(),
                                     product.getName(),

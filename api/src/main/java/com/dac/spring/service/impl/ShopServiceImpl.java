@@ -154,9 +154,10 @@ public class ShopServiceImpl implements ShopService {
                                         request.getQuantity(),
                                         request.getOriginalPrice(),
                                         request.getDiscount(),
-                                        request.getProductImageURL(),
                                         categoryRepository.findById(request.getCategoryID()).orElse(null),
                                         employeeRepository.findById(request.getShopID()).orElse(null));
+                                if (request.getProductImageURL()==null) product.setProductImageURL(ShopConst.DEFAULT_AVATAR);
+                                else product.setProductImageURL(request.getProductImageURL());
                                 productRepository.save(product);
                                 ShopCreateProductResponse response = new ShopCreateProductResponse(product.getId(),
                                         product.getName(),
@@ -212,7 +213,8 @@ public class ShopServiceImpl implements ShopService {
                             product.setDiscount(request.getDiscount());
                             product.setStatus(statusRepository.findByName(StatusName.valueOf(request.getStatus())));
                             product.setQuantity(request.getQuantity());
-                            product.setProductImageURL(request.getProductImageURL());
+                            if (request.getProductImageURL()==null) product.setProductImageURL(ShopConst.DEFAULT_AVATAR);
+                            else product.setProductImageURL(request.getProductImageURL());
                             product.setCategory(category);
 
                             productRepository.save(product);
