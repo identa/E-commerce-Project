@@ -66,11 +66,11 @@ public class AdminController {
 
     @PostMapping("/createCategory")
     public ResponseEntity<ServiceResult> createCategory(@Valid @RequestBody AdminCreateCategoryRequest request){
-        return new ResponseEntity<>(adminService.createCategory(request.getName(), request.getParentName()),HttpStatus.OK);
+        return new ResponseEntity<>(adminService.createCategory(request.getName(), request.getParentID()),HttpStatus.OK);
     }
 
     @PutMapping("/updateCategory")
-    public ResponseEntity<ServiceResult> createCategory(@Valid @RequestBody AdminUpdateCategoryRequest request){
+    public ResponseEntity<ServiceResult> updateCategory(@Valid @RequestBody AdminUpdateCategoryRequest request){
         return new ResponseEntity<>(adminService.updateCategory(request.getId(), request.getName(), request.getParentName()),HttpStatus.OK);
     }
 

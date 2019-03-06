@@ -153,7 +153,7 @@ public class AdminServiceImpl implements AdminService {
                 if (isStatusAndRoleExisted(statusName, roleName)) {
                     employee.setFirstName(firstName);
                     employee.setLastName(lastName);
-                    if (password != null){
+                    if (password.equals("")){
                         employee.setPassword(encoder.encode(password));
                     }else employee.setPassword(employee.getPassword());
                     employee.setStatus(statusRepository.findByName(StatusName.valueOf(statusName)));
@@ -307,28 +307,23 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ServiceResult createCategory(String name, String parentName) {
+    public ServiceResult createCategory(String name, int parentID) {
         ServiceResult result = new ServiceResult();
         if (name != null) {
             boolean isCategoryExist = categoryRepository.existsByName(name);
             if (!isCategoryExist) {
-                if (parentName != null) {
-                    CategoryEntity parentCategory = categoryRepository.findByName(parentName).orElse(null);
-                    if (parentCategory != null) {
+                CategoryEntity parentCategory = categoryRepository.findById(parentID).orElse(null);
+                if (parentCategory != null) {
                         CategoryEntity category = new CategoryEntity();
                         category.setName(name);
-                        category.setParentID(parentCategory.getId());
+                        category.setParentID(parentID);
                         categoryRepository.save(category);
                         AdminCreateCategoryResponse response = new AdminCreateCategoryResponse(category.getId(),
                                 category.getName(),
-                                parentName);
+                                parentCategory.getName());
 
                         result.setMessage(AdminUserCreateConst.SUCCESS);
                         result.setData(response);
-                    } else {
-                        result.setStatus(ServiceResult.Status.FAILED);
-                        result.setMessage("This category is not existed");
-                    }
                 } else {
                     CategoryEntity category = new CategoryEntity();
                     category.setName(name);
@@ -337,7 +332,6 @@ public class AdminServiceImpl implements AdminService {
                     AdminCreateCategoryResponse response = new AdminCreateCategoryResponse(category.getId(),
                             category.getName(),
                             null);
-
                     result.setMessage(AdminUserCreateConst.SUCCESS);
                     result.setData(response);
                 }

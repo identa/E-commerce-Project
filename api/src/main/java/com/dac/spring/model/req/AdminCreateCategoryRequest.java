@@ -3,7 +3,7 @@ package com.dac.spring.model.req;
 public class AdminCreateCategoryRequest {
     private String name;
 
-    private String parentName;
+    private int parentID;
 
     public String getName() {
         return name;
@@ -13,11 +13,11 @@ public class AdminCreateCategoryRequest {
         this.name = name;
     }
 
-    public String getParentName() {
-        return parentName;
+    public int getParentID() {
+        return parentID;
     }
 
-    public void setParentName(String parentName) {
-        this.parentName = parentName;
+    public void setParentID(int parentID) {
+        this.parentID = parentID;
     }
 }
