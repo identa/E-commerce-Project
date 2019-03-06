@@ -53,7 +53,7 @@ public class AdminController {
                 HttpStatus.OK);
     }
 
-    @PutMapping("/delete")
+    @DeleteMapping("/delete")
     public ResponseEntity<ServiceResult> deleteCustomer(@Valid @RequestBody AdminDeleteCustomerRequest request) {
         return new ResponseEntity<>(adminService.deleteUserById(request.getId()), HttpStatus.OK);
     }
