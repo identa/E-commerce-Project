@@ -14,7 +14,7 @@ class CustomerEdit extends Component {
             firstName : this.props.location.state.data.firstName,
             lastName : this.props.location.state.data.lastName,
             email : this.props.location.state.data.email,
-            password : null,
+            password : '',
             role : this.props.location.state.data.role,
             status : this.props.location.state.data.status,
             imageURL : this.props.location.state.data.imageURL,
@@ -221,6 +221,8 @@ class CustomerEdit extends Component {
 
     }
     render() {
+        console.log(this.state.imageURL);
+        
         const isRedirect = this.state.isRedirect;
 
         if(isRedirect){
@@ -313,7 +315,7 @@ class CustomerEdit extends Component {
                                                 </div>
                                                 <div className="form-group row">
                                                     <div className="offset-4 col-4 img-preview">
-                                                        <img src={this.state.imageLink} id='preview' alt=''/>
+                                                        <img src={this.state.imageURL} id='preview' alt=''/>
                                                     </div>
                                                 </div>
                                                 <div className="form-group row">

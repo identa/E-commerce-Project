@@ -582,7 +582,7 @@ a:hover{
 }
 .btn-link{
     color: white;
-    margin-right: 100px;
+    margin-right: 50px;
     padding: 0;
     text-decoration: none !important;
 }
@@ -642,4 +642,8 @@ table tr td img {
     width: 60px;
     height: 60px;
     border-radius: 50%;
+}
+.form-group button[type="submit"]{
+    width: 100px;
+    border-radius: 0;
 }
