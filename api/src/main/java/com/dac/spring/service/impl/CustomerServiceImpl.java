@@ -1,5 +1,6 @@
 package com.dac.spring.service.impl;
 
+import com.dac.spring.constant.CustomerConst;
 import com.dac.spring.constant.CustomerSignInConst;
 import com.dac.spring.constant.CustomerSignUpConst;
 import com.dac.spring.entity.*;
@@ -106,8 +107,9 @@ public class CustomerServiceImpl implements CustomerService {
         response.setId(categoryEntity.getId());
         response.setName(categoryEntity.getName());
         CategoryEntity category = categoryRepository.findById(categoryEntity.getParentID()).orElse(null);
-        if (category != null)
-        response.setParentCategory(category.getName());
+        if (category != null) {
+            response.setParentCategory(category.getName());
+        }
         else response.setParentCategory(null);
 
         return response;
@@ -231,7 +233,7 @@ public class CustomerServiceImpl implements CustomerService {
             result.setMessage("Get info successfully");
         } else {
             result.setStatus(ServiceResult.Status.FAILED);
-            result.setMessage("Customer not found");
+            result.setMessage(CustomerConst.CUSTOMER_NOT_FOUND);
         }
         return result;
     }
@@ -259,7 +261,7 @@ public class CustomerServiceImpl implements CustomerService {
                 result.setStatus(ServiceResult.Status.FAILED);
             }
         } else {
-            result.setMessage("Customer not found");
+            result.setMessage(CustomerConst.CUSTOMER_NOT_FOUND);
             result.setStatus(ServiceResult.Status.FAILED);
         }
         return result;
@@ -322,8 +324,9 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult result = new ServiceResult();
         String authHeader = request.getHeader("Authorization").split(" ")[1];
         EmployeeEntity employee = employeeRepository.findByEmail(getUserNameFromJwtToken(authHeader)).orElse(null);
-        if (employee != null)
-        result.setData(employee.getRole().getName().name());
+        if (employee != null) {
+            result.setData(employee.getRole().getName().name());
+        }
         else result.setStatus(ServiceResult.Status.FAILED);
         return result;
     }
@@ -331,11 +334,84 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult createOrder(int customerID, List<CustomerCreateOrderDetailRequest> orderDetailRequests) {
         ServiceResult result = new ServiceResult();
-        OrderEntity createdOrder = createOrderEntity(customerID);
-        if (createdOrder != null) orderRepository.save(createdOrder);
-        orderDetailRepository.saveAll(createOrderDetailList(orderDetailRequests, createdOrder));
-
+        EmployeeEntity customer = employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(customerID,
+                false, StatusName.ACTIVE, RoleName.ROLE_CUSTOMER);
+        if (customer != null) {
+            OrderEntity createdOrder = new OrderEntity(statusRepository.findByName(StatusName.ACTIVE), customer);
+            orderRepository.save(createdOrder);
+            List<OrderDetailEntity> orderDetailEntityList = new ArrayList<>();
+            double totalPrice =0;
+            for (CustomerCreateOrderDetailRequest detailRequest : orderDetailRequests){
+                ProductEntity product = productRepository.findByIdAndDeletedAndStatusName(detailRequest.getProductID(),
+                        false, StatusName.ACTIVE);
+                if (product != null){
+                    if (product.getQuantity() >= detailRequest.getQuantity()){
+                        OrderDetailEntity orderDetail = new OrderDetailEntity(
+                                calculatePrice(detailRequest.getQuantity(),product.getOriginalPrice(),product.getDiscount()),
+                                detailRequest.getQuantity(),
+                                product,
+                                createdOrder);
+                        orderDetailEntityList.add(orderDetail);
+                        product.setQuantity(product.getQuantity()-detailRequest.getQuantity());
+                        totalPrice+= calculatePrice(detailRequest.getQuantity(),product.getOriginalPrice(),product.getDiscount());
+                    }else {
+                        result.setStatus(ServiceResult.Status.FAILED);
+                        result.setMessage("The quantity of " + product.getName() +" is exceeded");
+                        return result;
+                    }
+                }else {
+                    result.setStatus(ServiceResult.Status.FAILED);
+                    result.setMessage("Product not found");
+                    return result;
+                }
+            }
+            orderRepository.save(createdOrder);
+            orderDetailRepository.saveAll(orderDetailEntityList);
+            List<CustomerCreateOrderDetailResponse> orderDetailResponses = new ArrayList<>();
+            for (OrderDetailEntity orderDetail : orderDetailEntityList){
+                CustomerCreateOrderDetailResponse response = new CustomerCreateOrderDetailResponse(orderDetail.getId(),
+                        orderDetail.getPrice(),
+                        orderDetail.getQuantity(),
+                        orderDetail.getProduct().getName());
+                orderDetailResponses.add(response);
+            }
+            CustomerCreateOrderResponse orderResponse = new CustomerCreateOrderResponse(createdOrder.getId(),
+                    totalPrice,
+                    customerID,
+                    orderDetailResponses);
+            result.setMessage("You ordered successfully");
+            result.setData(orderResponse);
+        }else {
+            result.setStatus(ServiceResult.Status.FAILED);
+            result.setMessage(CustomerConst.CUSTOMER_NOT_FOUND);
+        }
         return result;
+    }
+
+    @Override
+    public ServiceResult searchProduct(String name, int page, int size) {
+        ServiceResult result = new ServiceResult();
+        Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
+        Page<ProductEntity> productList = productPaginationRepository.findAllByNameIgnoreCaseContainingAndDeletedAndStatusName(info,
+                name.replaceAll("\\s+", ""),false,StatusName.ACTIVE);
+        List<CustomerGetProductByCatResponse> responses = new ArrayList<>();
+        for (ProductEntity product: productList){
+            CustomerGetProductByCatResponse response = new CustomerGetProductByCatResponse(product.getId(),
+                    product.getName(),
+                    product.getDescription(),
+                    product.getOriginalPrice(),
+                    product.getDiscount(),
+                    product.getProductImageURL(),
+                    product.getCategory().getName());
+            responses.add(response);
+        }
+        result.setData(responses);
+        result.setMessage("Products are returned successfully");
+        return result;
+    }
+
+    private double calculatePrice(int quantity, double price, double discount){
+        return (price - price*discount/100)*quantity;
     }
 
     private String getUserNameFromJwtToken(String token) {
@@ -343,31 +419,5 @@ public class CustomerServiceImpl implements CustomerService {
                 .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)
                 .getBody().getSubject();
-    }
-
-    private OrderDetailEntity createOrderDetail(CustomerCreateOrderDetailRequest request, OrderEntity order) {
-        ProductEntity product = productRepository.findByIdAndDeletedAndStatusName(request.getProductID(),
-                false, StatusName.ACTIVE);
-        if (product != null && order != null) {
-            return new OrderDetailEntity(product.getOriginalPrice()*product.getDiscount(),
-                    request.getQuantity(),
-                    product,
-                    order);
-        } else return null;
-    }
-
-    private List<OrderDetailEntity> createOrderDetailList(List<CustomerCreateOrderDetailRequest> requestList, OrderEntity order) {
-        List<OrderDetailEntity> orderDetailList = new ArrayList<>();
-        for (CustomerCreateOrderDetailRequest detailCreateRequest : requestList) {
-            orderDetailList.add(createOrderDetail(detailCreateRequest, order));
-        }
-        return orderDetailList;
-    }
-
-    private OrderEntity createOrderEntity(int customerID) {
-        EmployeeEntity customer = employeeRepository.findByIdAndDeletedAndRoleName(customerID,
-                false, RoleName.ROLE_CUSTOMER).orElse(null);
-        if (customer != null) return new OrderEntity(statusRepository.findByName(StatusName.ACTIVE), customer);
-        else return null;
     }
 }

@@ -13,5 +13,6 @@ public interface ProductPaginationRepository extends PagingAndSortingRepository<
     Page<ProductEntity> findAllByDeletedAndStatusNameAndCategoryId(Pageable pageable, boolean deleted, StatusName statusName, int categoryID);
     Page<ProductEntity> findAllByDeletedAndStatusNameAndCategoryIdAndQuantityGreaterThan(Pageable pageable, boolean deleted, StatusName statusName, int categoryID, int quantity);
     Page<ProductEntity> findAllByDeletedAndShopId(Pageable pageable, boolean deleted, int id);
-
+    Page<ProductEntity> findAllByNameIgnoreCaseContainingAndDeletedAndStatusName(Pageable pageable, String name, boolean deleted, StatusName statusName);
+    Page<ProductEntity> findAllByNameContainsAndDeletedAndStatusName(Pageable pageable, String name, boolean deleted, StatusName statusName);Page<ProductEntity> findAllByNameContains(Pageable pageable, String name);
 }

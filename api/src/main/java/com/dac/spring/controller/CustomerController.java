@@ -93,4 +93,11 @@ public class CustomerController extends HttpServlet {
     public ResponseEntity<ServiceResult> createOrder(@RequestBody CustomerCreateOrderRequest request){
         return new ResponseEntity<>(customerService.createOrder(request.getCustomerID(),request.getOrderDetailRequests()),HttpStatus.OK);
     }
+
+    @PostMapping("/searchProduct")
+    public ResponseEntity<ServiceResult> searchProduct(@RequestBody CustomerSearchProductRequest request){
+        return new ResponseEntity<>(customerService.searchProduct(request.getName(),
+                request.getPage(),
+                request.getSize()),HttpStatus.OK);
+    }
 }
