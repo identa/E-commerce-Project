@@ -104,7 +104,7 @@ public class ShopServiceImpl implements ShopService {
         if (shop != null) {
             Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
             Page<ProductEntity> productList = productPaginationRepository.
-                    findAllByDeletedAndStatusNameAndShopId(info, false, StatusName.ACTIVE, id);
+                    findAllByDeletedAndShopId(info, false, id);
             boolean isProductListEmpty = productList.isEmpty();
             if (!isProductListEmpty) {
                 int totalPages = productList.getTotalPages();

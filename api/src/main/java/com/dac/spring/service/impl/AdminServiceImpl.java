@@ -445,7 +445,7 @@ public class AdminServiceImpl implements AdminService {
 
             Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
             Page<ProductEntity> productList = productPaginationRepository.
-                    findAllByDeletedAndStatusName(info, false, StatusName.ACTIVE);
+                    findAllByDeleted(info, false);
             boolean isProductListEmpty = productList.isEmpty();
             if (!isProductListEmpty) {
                 int totalPages = productList.getTotalPages();
