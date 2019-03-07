@@ -3,6 +3,7 @@ package com.dac.spring.service.impl;
 import com.dac.spring.constant.CustomerConst;
 import com.dac.spring.constant.CustomerSignInConst;
 import com.dac.spring.constant.CustomerSignUpConst;
+import com.dac.spring.constant.ShopConst;
 import com.dac.spring.entity.*;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
@@ -219,13 +220,14 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult getInfoById(int id) {
         ServiceResult result = new ServiceResult();
-        EmployeeEntity customer = employeeRepository.findByIdAndDeletedAndRoleName(id, false,
-                RoleName.ROLE_CUSTOMER).orElse(null);
+        EmployeeEntity customer = employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(id, false,
+               StatusName.ACTIVE, RoleName.ROLE_CUSTOMER);
         if (customer != null) {
             CustomerGetInfoResponse response = new CustomerGetInfoResponse(
                     customer.getId(),
                     customer.getFirstName(),
                     customer.getLastName(),
+                    customer.getEmail(),
                     customer.getImageURL());
             result.setData(response);
             result.setMessage("Get info successfully");
@@ -239,13 +241,16 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult updateInfo(int id, String firstName, String lastName, String password, String imageURL) {
         ServiceResult result = new ServiceResult();
-        EmployeeEntity customer = employeeRepository.findByIdAndDeletedAndRoleName(id, false,
-                RoleName.ROLE_CUSTOMER).orElse(null);
+        EmployeeEntity customer = employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(id, false,
+                StatusName.ACTIVE, RoleName.ROLE_CUSTOMER);
         if (customer != null) {
             if (firstName != null && lastName != null && password != null) {
                 customer.setFirstName(firstName);
                 customer.setLastName(lastName);
                 customer.setPassword(encoder.encode(password));
+                if (imageURL.equals("")){
+                    customer.setImageURL(ShopConst.DEFAULT_AVATAR);
+                }
                 customer.setImageURL(imageURL);
                 employeeRepository.save(customer);
                 CustomerUpdateInfoResponse response = new CustomerUpdateInfoResponse(customer.getId(),

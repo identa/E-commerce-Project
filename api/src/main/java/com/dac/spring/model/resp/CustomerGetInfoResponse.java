@@ -7,12 +7,22 @@ public class CustomerGetInfoResponse {
 
     private String lastName;
 
+    private String email;
+
     private String imageURL;
 
     public CustomerGetInfoResponse(int id, String firstName, String lastName, String imageURL) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.imageURL = imageURL;
+    }
+
+    public CustomerGetInfoResponse(int id, String firstName, String lastName, String email, String imageURL) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
         this.imageURL = imageURL;
     }
 
@@ -46,5 +56,13 @@ public class CustomerGetInfoResponse {
 
     public void setImageURL(String imageURL) {
         this.imageURL = imageURL;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
