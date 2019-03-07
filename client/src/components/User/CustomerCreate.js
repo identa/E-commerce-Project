@@ -249,11 +249,11 @@ class CustomerCreate extends Component {
             if(result.status === 'SUCCESS'){
                 this.setState({isRedirect : true});
             }
-            else if(data.status === 'FAILED'){
+            else if(result.status === 'FAILED'){
                 this.setState(prevState =>({
                     error :{
                         ...prevState.error,
-                        message : data.message
+                        message : result.message
                     }
                 }));
             }
@@ -363,7 +363,7 @@ class CustomerCreate extends Component {
 
                                                 <div className="form-group row">
                                                     <div className="offset-4 col-8">
-                                                        <div className="message">
+                                                        <div className={this.state.messageShowingStyle}>
                                                             {this.state.error.message}
                                                         </div>
                                                     </div>

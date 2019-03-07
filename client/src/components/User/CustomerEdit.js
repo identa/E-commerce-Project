@@ -215,16 +215,14 @@ class CustomerEdit extends Component {
                 this.setState(prevState =>({
                     error :{
                         ...prevState.error,
-                        message : data.message
+                        message : result.message
                     }
                 }));
             }
         }
 
     }
-    render() {
-        console.log(this.state.imageURL);
-        
+    render() {        
         const isRedirect = this.state.isRedirect;
 
         if(isRedirect){
@@ -335,7 +333,7 @@ class CustomerEdit extends Component {
 
                                                 <div className="form-group row">
                                                     <div className="offset-4 col-8">
-                                                        <div className="message">
+                                                        <div className={this.state.messageShowingStyle}>
                                                             {this.state.error.message}
                                                         </div>
                                                     </div>
