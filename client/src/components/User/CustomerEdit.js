@@ -4,7 +4,6 @@ import {Link,Redirect} from 'react-router-dom';
 const clientId = '78bc0dc37ea9d00';
 const urlImgur = 'https://api.imgur.com/3/image';
 const urlEditCustomer = 'https://dac-java.herokuapp.com/api/admin/update';
-const REGEX_EMAIL = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 class CustomerEdit extends Component {
     constructor(props) {
         super(props);
@@ -18,6 +17,7 @@ class CustomerEdit extends Component {
             role : this.props.location.state.data.role,
             status : this.props.location.state.data.status,
             imageURL : this.props.location.state.data.imageURL,
+            messageShowingStyle : 'message',
             isRedirect : false,
             error : {
                 firstName : '',
@@ -186,7 +186,9 @@ class CustomerEdit extends Component {
         event.preventDefault();
         if(this.validateFirstName() && this.validateLastName() && this.validatePassword() && this.validateMessage()){
             const imgURL = await this.getImageUrl();
-            this.setState({imageURL : imgURL});
+            if(imgURL !== ''){
+                this.setState({imageURL : imgURL});
+            }
             const data = {
                 id : this.state.uid,
                 firstName : this.state.firstName,
