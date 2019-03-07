@@ -51,10 +51,10 @@ public class CustomerController extends HttpServlet {
         return new ResponseEntity<>(customerService.signOut(request), HttpStatus.OK);
     }
 
-    @PostMapping("/getById")
+    @GetMapping("/getById")
     @PreAuthorize("hasRole('CUSTOMER')")
-    public ResponseEntity<ServiceResult> getInfoById(@Valid @RequestBody CustomerGetInfoRequest request) {
-        return new ResponseEntity<>(customerService.getInfoById(request.getId()), HttpStatus.OK);
+    public ResponseEntity<ServiceResult> getInfoById(HttpServletRequest request) {
+        return new ResponseEntity<>(customerService.getInfo(request), HttpStatus.OK);
     }
 
     @PutMapping("/update")

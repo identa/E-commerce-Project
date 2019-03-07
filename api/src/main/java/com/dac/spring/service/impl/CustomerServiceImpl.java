@@ -218,10 +218,12 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ServiceResult getInfoById(int id) {
+    public ServiceResult getInfo(HttpServletRequest request) {
         ServiceResult result = new ServiceResult();
-        EmployeeEntity customer = employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(id, false,
-               StatusName.ACTIVE, RoleName.ROLE_CUSTOMER);
+//        EmployeeEntity customer = employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(id, false,
+//               StatusName.ACTIVE, RoleName.ROLE_CUSTOMER);
+        String authHeader = request.getHeader("Authorization").split(" ")[1];
+        EmployeeEntity customer = employeeRepository.findByEmail(getUserNameFromJwtToken(authHeader)).orElse(null);
         if (customer != null) {
             CustomerGetInfoResponse response = new CustomerGetInfoResponse(
                     customer.getId(),

@@ -10,7 +10,7 @@ public interface CustomerService {
     ServiceResult signUpCustomer(String email, String password, String firstName, String lastName);
     ServiceResult signIn(String email, String password);
     ServiceResult signOut(HttpServletRequest request);
-    ServiceResult getInfoById(int id);
+    ServiceResult getInfo(HttpServletRequest request);
     ServiceResult updateInfo(int id, String firstName, String lastName, String password, String imageURL);
     ServiceResult getCategoryTree();
     ServiceResult getAllCategory();
