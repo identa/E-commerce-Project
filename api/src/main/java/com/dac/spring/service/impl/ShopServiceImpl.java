@@ -265,7 +265,7 @@ public class ShopServiceImpl implements ShopService {
         ProductEntity product = productRepository.findByIdAndDeleted(id, false);
         if (product != null){
             product.setDeleted(true);
-            productRepository.save(product);
+            productRepository.delete(product);
             result.setMessage("Delete product successfully");
         }else {
             result.setMessage("Cannot delete this product");

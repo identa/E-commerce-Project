@@ -192,7 +192,7 @@ public class AdminServiceImpl implements AdminService {
                 RoleName.ROLE_CUSTOMER, id, false, RoleName.ROLE_SHOP).orElse(null);
         if (employee != null) {
             employee.setDeleted(true);
-            employeeRepository.save(employee);
+            employeeRepository.delete(employee);
             result.setMessage("Delete customer successfully");
         } else {
             result.setMessage("Customer not found");
@@ -593,7 +593,7 @@ public class AdminServiceImpl implements AdminService {
         ProductEntity product = productRepository.findByIdAndDeleted(id, false);
         if (product != null){
             product.setDeleted(true);
-            productRepository.save(product);
+            productRepository.delete(product);
             result.setMessage("Delete product successfully");
         }else {
             result.setMessage("Cannot delete this product");
