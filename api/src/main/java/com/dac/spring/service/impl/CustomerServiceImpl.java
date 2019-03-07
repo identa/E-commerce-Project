@@ -249,7 +249,9 @@ public class CustomerServiceImpl implements CustomerService {
             if (firstName != null && lastName != null && password != null) {
                 customer.setFirstName(firstName);
                 customer.setLastName(lastName);
-                customer.setPassword(encoder.encode(password));
+                if (!password.equals("")){
+                    customer.setPassword(encoder.encode(password));
+                }
                 if (imageURL.equals("")){
                     customer.setImageURL(ShopConst.DEFAULT_AVATAR);
                 }
