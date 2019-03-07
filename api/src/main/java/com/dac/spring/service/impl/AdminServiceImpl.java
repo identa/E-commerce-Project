@@ -535,8 +535,8 @@ public class AdminServiceImpl implements AdminService {
             if (isStatusExist) {
                 CategoryEntity category = categoryRepository.findById(request.getCategoryID()).orElse(null);
                 if (category != null){
-                    ProductEntity product = productRepository.findByIdAndDeletedAndStatusName(
-                            request.getId(), false, StatusName.ACTIVE);
+                    ProductEntity product = productRepository.findByIdAndDeleted(
+                            request.getId(), false);
                     if (product != null){
                         if (isDiscountRight(request.getDiscount())) {
                             product.setName(request.getName());
