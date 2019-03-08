@@ -24,8 +24,7 @@ class UserLink extends Component {
             .then(res=>res.json())
             .then(data => {
                 if(data.status === 'SUCCESS'){
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("name");
+                    localStorage.clear();
                     this.props.changeAuthenticated();
                 }
             });
@@ -33,8 +32,8 @@ class UserLink extends Component {
     }
 
     render() {
-        const role = this.props.getRole();
-        const name = localStorage.name;
+        const role = localStorage.role;
+        const name = localStorage.firstName + ' ' +  localStorage.lastName;
 
         return (
             <div className="links-bar">

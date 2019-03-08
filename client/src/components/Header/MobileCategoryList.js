@@ -1,6 +1,36 @@
 import React, { Component } from "react";
+import {Link} from 'react-router-dom';
+const urlGetCategories = 'https://dac-java.herokuapp.com/api/customer/getCategoryTree';
 
 class MobileCategoryList extends Component {
+    constructor(props) {
+        super(props);
+        
+        this.state ={
+            categoryList : []
+        }
+    }
+
+    componentDidMount() {
+        fetch(urlGetCategories, {
+            method : 'GET',
+            headers : {
+                'Content-Type' : 'application/json'
+            }
+        })
+        .then(res=>res.json())
+        .then(data =>{
+            if(data.status === 'SUCCESS'){
+                this.setState({categoryList : data.data});
+                console.log(this.state.categoryList);
+                
+            }
+            else if(data.status === 'FAILED'){
+                console.log(data.message);
+            }
+        })
+    }
+
     render() {
         return (
         <div className="mobile-category-list">
@@ -12,42 +42,13 @@ class MobileCategoryList extends Component {
             </div>
             <div className="mobile-category-content">
                 <ul>
-                    <li>
-                    <a href="#">Electronic Devices</a>
-                    </li>
-                    <li>
-                    <a href="#">Electronic Accessories</a>
-                    </li>
-                    <li>
-                    <a href="#">TV &amp; Home Appliances</a>
-                    </li>
-                    <li>
-                    <a href="#">Health &amp; Beauty</a>
-                    </li>
-                    <li>
-                    <a href="#">Babies &amp; Toys</a>
-                    </li>
-                    <li>
-                    <a href="#">Groceries &amp; Pets</a>
-                    </li>
-                    <li>
-                    <a href="#">Home &amp; Lifestyle</a>
-                    </li>
-                    <li>
-                    <a href="#">Women's Fashion</a>
-                    </li>
-                    <li>
-                    <a href="#">Men's Fashion</a>
-                    </li>
-                    <li>
-                    <a href="#">Fashion Accessories</a>
-                    </li>
-                    <li>
-                    <a href="#">Sports &amp; Travel</a>
-                    </li>
-                    <li>
-                    <a href="#">Automotive &amp; Motocycle</a>
-                    </li>
+                    {
+                        this.state.categoryList.map((value,key)=>{
+                            return (<li key={key}>
+                                        <Link  to ='/'>{value.name}</Link>
+                                    </li>)
+                        })
+                    } 
                 </ul>
             </div>
         </div>

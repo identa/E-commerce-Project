@@ -114,7 +114,10 @@ class SignInComponent extends Component {
             .then(data =>{
                 if(data.status === 'SUCCESS'){  
                     localStorage.setItem("token", "Bearer "+ data.data.token);   
-                    localStorage.setItem("name", data.data.firstName +  " " + data.data.lastName);   
+                    localStorage.setItem("id", data.data.id);
+                    localStorage.setItem("firstName", data.data.firstName);  
+                    localStorage.setItem("lastName", data.data.lastName);
+                    localStorage.setItem("role", data.data.role);
                     this.setState({isModalShow : false});      
                     this.props.onHideModal(this.state.isModalShow);
                     this.props.changeAuthenticated();
