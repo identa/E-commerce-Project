@@ -5,6 +5,7 @@ import Profile from '../User/Profile';
 import CustomerDashboard from '../User/CustomerDashboard';
 import CustomerCreate from '../User/CustomerCreate';
 import CustomerEdit from '../User/CustomerEdit';
+import ProductDashboard from '../Product/ProductDashboard';
 
 class RouteURL extends Component {
     render() {
@@ -15,6 +16,7 @@ class RouteURL extends Component {
                     <Route path="/manage/customer/dashboard" component={CustomerDashboard}></Route>
                     <Route path="/manage/customer/create" component={CustomerCreate}></Route>
                     <Route path="/manage/customer/edit" component={CustomerEdit}></Route>
+                    <Route path="/manage/product/dashboard" component={ProductDashboard}></Route>
                 </Switch>
         );
     }

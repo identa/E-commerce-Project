@@ -1,27 +1,23 @@
 import React, { Component } from 'react';
-import RowItem from './RowItem';
 import {Link} from 'react-router-dom';
 import {Modal,Button} from 'react-bootstrap';
+import RowItem from './RowItem';
 
-const urlGetListCustomer = 'https://dac-java.herokuapp.com/api/admin/getByPageAndSize';
-const urlDeleteCustomer = 'https://dac-java.herokuapp.com/api/admin/delete';
-class CustomerDashboard extends Component {
+const urlGetListProduct = 'https://dac-java.herokuapp.com/api/admin/paginateProduct';
+const urlDeleteProduct = 'https://dac-java.herokuapp.com/api/admin/deleteProduct';
+class ProductDashboard extends Component {
     constructor(props) {
         super(props);
         
         this.state = {
             itemPerPage : 5,
             totalPages : 0,
-            userResponseList : [],
-            activePage: 1,
-            activeClassName : 'page-item',
+            productList : [],
             isModalShowing : false,
-            customerId : 0,
+            productId : 0
         }
-
-        this.handleShowModal = this.handleShowModal.bind(this);
     }
-    
+
     handleShowModal = () => {
         this.setState({isModalShowing : true});
     }
@@ -30,17 +26,42 @@ class CustomerDashboard extends Component {
         this.setState({isModalShowing: false });
     }
 
-    getCustomerId = (customerId) =>{
-        this.setState({customerId : customerId});
+    getProductId = (productId) =>{
+        this.setState({productId : productId});
     }
-
 
     componentDidMount() {
         const dataGet = {
-            page : "1",
+            page : '1',
             size : this.state.itemPerPage
-        };
+        }
+
         this.fetchData(dataGet);
+    }
+    
+    fetchData = (data) =>{
+        const token = localStorage.token;
+
+        fetch(urlGetListProduct, {
+            method : 'POST',
+            body : JSON.stringify(data),
+            headers : {
+                "Content-Type" : "application/json",
+                "Authorization" : token
+            }
+        })
+        .then(res=> res.json())
+        .then(data =>{
+            if(data.status === 'SUCCESS'){
+                this.setState({
+                    totalPages : data.data.totalPages,
+                    productList : data.data.productList
+                });
+            }
+            else if (data.status === 'FAILED'){
+
+            }
+        })
     }
 
     createPageIndex = () =>{
@@ -62,52 +83,25 @@ class CustomerDashboard extends Component {
         };
         this.fetchData(dataSend);
     }
-
-    fetchData = (data) => {
-        const token = localStorage.getItem("token");
-
-        fetch(urlGetListCustomer ,{
-            method : 'POST',
-            body: JSON.stringify(data),
-            headers : {
-                "Content-Type" : "application/json",
-                "Authorization" : token
-            }    
-        })
-        .then(res => res.json())
-        .then(data =>{            
-            if(data.status === 'SUCCESS'){
-                this.setState({totalPages : data.data.totalPages});               
-                this.setState({userResponseList : data.data.userResponseList}); 
-            }
-            else if(data.status === 'FAILED'){
-
-            }
-        })
-        .catch(err => {
-
-        });
-    }
-
-    onDeleteCustomer = () =>{
-        
-        fetch(urlDeleteCustomer ,{
+    
+    onDeleteProduct = () =>{
+        fetch(urlDeleteProduct, {
             method : 'DELETE',
             headers : {
                 'Content-Type' : 'application/json',
                 'Authorization' : localStorage.token
             },
             body : JSON.stringify({
-                id : this.state.customerId
+                id : this.state.productId
             })
         })
         .then(res=>res.json())
         .then(data =>{
             if(data.status === 'SUCCESS'){
-                const list = this.state.userResponseList.filter(element => element.id !== this.state.customerId);
+                const list = this.state.productList.filter(element => element.id !== this.state.productId);
                 this.setState({
                     isModalShowing : false,
-                    userResponseList: list
+                    productList: list
                 });
             }
         })
@@ -117,13 +111,13 @@ class CustomerDashboard extends Component {
     }
 
     render() {
-        const userResponseList= this.state.userResponseList;
+        const productList= this.state.productList;
         return (
             <div className="main">
                 <div className="dashboard-container">
-                    <h2>User Management Dashboard</h2>
+                    <h2>Product Management Dashboard</h2>
                     <div className="row btn-create">
-                        <Link to="/manage/customer/create/">
+                        <Link to="/">
                             <button className="btn btn-success btn-action">
                                 <i className="fa fa-plus"></i>Create
                             </button>
@@ -140,26 +134,32 @@ class CustomerDashboard extends Component {
                             <tbody>
                                 <tr>
                                     <th>Id</th>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
-                                    <th>Email</th>
-                                    <th>Avatar</th>
-                                    <th>Role</th>
+                                    <th>Name</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Discount</th>
+                                    <th>View</th>
+                                    <th>Image</th>
                                     <th>Status</th>
+                                    <th>Description</th>
+                                    <th>Category</th>
                                     <th>&nbsp;</th>
                                 </tr>
                                 {
-                                    userResponseList.map((value,key) => {
+                                    productList.map((value,key) => {
                                         return <RowItem key={key} 
-                                                        uid={value.id} 
-                                                        firstName={value.firstName}
-                                                        lastName={value.lastName}
-                                                        email={value.email}
+                                                        pid={value.id} 
+                                                        name={value.name}
+                                                        description={value.description}
+                                                        quantity={value.quantity}
+                                                        originalPrice={value.originalPrice}
+                                                        discount={value.discount}
+                                                        view={value.view}
+                                                        productImageURL={value.productImageURL}
                                                         status={value.status}
-                                                        role={value.role}
-                                                        imageURL={value.imageURL}
+                                                        category={value.category}
                                                         handleShowModal={this.handleShowModal}
-                                                        getCustomerId={this.getCustomerId}/>
+                                                        getProductId={this.getProductId}/>
                                     })
                                 }
                             </tbody>
@@ -174,10 +174,10 @@ class CustomerDashboard extends Component {
                     <div className='modal-confirm'>
                         <Modal.Header closeButton />
                         <Modal.Body>
-                            <p>Do you want to delete this user ?</p>
+                            <p>Do you want to delete this product ?</p>
                         </Modal.Body>
                         <Modal.Footer>
-                            <Button variant='primary' onClick={this.onDeleteCustomer}>Yes</Button>
+                            <Button variant='primary' onClick={this.onDeleteProduct}>Yes</Button>
                             <Button variant='secondary' onClick={this.handleCloseModal}>No</Button>
                         </Modal.Footer>
                     </div>
@@ -187,4 +187,4 @@ class CustomerDashboard extends Component {
     }
 }
 
-export default CustomerDashboard;
+export default ProductDashboard;

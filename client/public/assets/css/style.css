@@ -594,6 +594,11 @@ a:hover{
     padding: 15px 0;
     background: #f5f5f5;
 }
+.dashboard-container {
+    max-width: 80%;
+    margin-right: auto;
+    margin-left: auto;
+}
 .profile-content{
     display: flex;
     flex-wrap: wrap;
