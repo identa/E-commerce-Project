@@ -2,7 +2,10 @@ package com.dac.spring.service;
 
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.req.AdminCreateProductRequest;
+import com.dac.spring.model.req.CustomerCreateOrderDetailRequest;
 import com.dac.spring.model.req.ShopUpdateProductRequest;
+
+import java.util.List;
 
 public interface AdminService {
     ServiceResult getAllCustomer();
@@ -20,4 +23,5 @@ public interface AdminService {
     ServiceResult createProduct(AdminCreateProductRequest request);
     ServiceResult updateProduct(ShopUpdateProductRequest request);
     ServiceResult deleteProduct(int id);
+    ServiceResult deleteOrderDetail(int id);
 }

@@ -11,4 +11,6 @@ public interface ShopService {
     ServiceResult createProduct(ShopCreateProductRequest request);
     ServiceResult updateProduct(ShopUpdateProductRequest request);
     ServiceResult deleteProduct(int id);
+    ServiceResult updateOrder(int id, String status);
+    ServiceResult updateOrderDetail(int id, int quantity, int productID);
 }

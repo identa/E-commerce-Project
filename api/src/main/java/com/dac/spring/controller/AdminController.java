@@ -3,6 +3,8 @@ package com.dac.spring.controller;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.req.*;
 import com.dac.spring.service.AdminService;
+import com.dac.spring.service.CustomerService;
+import com.dac.spring.service.ShopService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,12 @@ import javax.validation.Valid;
 public class AdminController {
     @Autowired
     AdminService adminService;
+
+    @Autowired
+    CustomerService customerService;
+
+    @Autowired
+    ShopService shopService;
 
     @GetMapping("/all")
     public ResponseEntity<ServiceResult> getAllEmployee() {
@@ -103,5 +111,28 @@ public class AdminController {
     public ResponseEntity<ServiceResult> paginateProduct(@Valid @RequestBody AdminPaginateProductRequest request) {
         return new ResponseEntity<>(adminService.paginateProduct(request.getPage(),
                 request.getSize()),HttpStatus.OK);
+    }
+
+    @PostMapping("/createOrder")
+    public ResponseEntity<ServiceResult> createOrder(@RequestBody CustomerCreateOrderRequest request){
+        return new ResponseEntity<>(customerService.createOrder(request.getCustomerID(),request.getOrderDetailRequests()),HttpStatus.OK);
+    }
+
+    @PutMapping("/updateOrder")
+    public ResponseEntity<ServiceResult> updateOrder(@Valid @RequestBody ShopUpdateOrderRequest request) {
+        return new ResponseEntity<>(shopService.updateOrder(request.getId(),
+                request.getStatus()),HttpStatus.OK);
+    }
+
+    @PutMapping("/updateOrderDetail")
+    public ResponseEntity<ServiceResult> updateOrderDetail(@Valid @RequestBody ShopUpdateOrderDetailRequest request) {
+        return new ResponseEntity<>(shopService.updateOrderDetail(request.getId(),
+                request.getQuantity(),
+                request.getProductID()),HttpStatus.OK);
+    }
+
+    @DeleteMapping("/deleteOrderDetail")
+    public ResponseEntity<ServiceResult> deleteOrderDetail(@Valid @RequestBody ShopDeleteProductRequest request) {
+        return new ResponseEntity<>(adminService.deleteOrderDetail(request.getId()),HttpStatus.OK);
     }
 }

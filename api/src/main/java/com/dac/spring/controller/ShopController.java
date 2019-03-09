@@ -55,4 +55,17 @@ public class ShopController {
     public ResponseEntity<ServiceResult> deleteProduct(@Valid @RequestBody ShopDeleteProductRequest request) {
         return new ResponseEntity<>(shopService.deleteProduct(request.getId()),HttpStatus.OK);
     }
+
+    @PutMapping("/updateOrder")
+    public ResponseEntity<ServiceResult> updateOrder(@Valid @RequestBody ShopUpdateOrderRequest request) {
+        return new ResponseEntity<>(shopService.updateOrder(request.getId(),
+                request.getStatus()),HttpStatus.OK);
+    }
+
+    @PutMapping("/updateOrderDetail")
+    public ResponseEntity<ServiceResult> updateOrderDetail(@Valid @RequestBody ShopUpdateOrderDetailRequest request) {
+        return new ResponseEntity<>(shopService.updateOrderDetail(request.getId(),
+                request.getQuantity(),
+                request.getProductID()),HttpStatus.OK);
+    }
 }

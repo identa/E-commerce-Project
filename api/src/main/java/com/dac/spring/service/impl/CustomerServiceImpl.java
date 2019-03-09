@@ -344,7 +344,7 @@ public class CustomerServiceImpl implements CustomerService {
         EmployeeEntity customer = employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(customerID,
                 false, StatusName.ACTIVE, RoleName.ROLE_CUSTOMER);
         if (customer != null) {
-            OrderEntity createdOrder = new OrderEntity(statusRepository.findByName(StatusName.ACTIVE), customer);
+            OrderEntity createdOrder = new OrderEntity(statusRepository.findByName(StatusName.PAUSE), customer);
             orderRepository.save(createdOrder);
             List<OrderDetailEntity> orderDetailEntityList = new ArrayList<>();
             double totalPrice =0;
@@ -391,6 +391,20 @@ public class CustomerServiceImpl implements CustomerService {
         }else {
             result.setStatus(ServiceResult.Status.FAILED);
             result.setMessage(CustomerConst.CUSTOMER_NOT_FOUND);
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceResult deleteOrder(int id) {
+        ServiceResult result = new ServiceResult();
+        OrderEntity order = orderRepository.findByIdAndDeletedAndStatusName(id, false, StatusName.ACTIVE);
+        if (order != null){
+            orderRepository.delete(order);
+            result.setMessage("Delete order successfully");
+        }else {
+            result.setMessage("Cannot delete this order");
+            result.setStatus(ServiceResult.Status.FAILED);
         }
         return result;
     }

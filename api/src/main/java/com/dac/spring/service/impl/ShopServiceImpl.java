@@ -1,9 +1,7 @@
 package com.dac.spring.service.impl;
 
 import com.dac.spring.constant.ShopConst;
-import com.dac.spring.entity.CategoryEntity;
-import com.dac.spring.entity.EmployeeEntity;
-import com.dac.spring.entity.ProductEntity;
+import com.dac.spring.entity.*;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
 import com.dac.spring.model.enums.StatusName;
@@ -43,6 +41,12 @@ public class ShopServiceImpl implements ShopService {
 
     @Autowired
     ProductPaginationRepository productPaginationRepository;
+
+    @Autowired
+    OrderRepository orderRepository;
+
+    @Autowired
+    OrderDetailRepository orderDetailRepository;
 
     @Autowired
     PasswordEncoder encoder;
@@ -272,5 +276,58 @@ public class ShopServiceImpl implements ShopService {
             result.setStatus(ServiceResult.Status.FAILED);
         }
         return result;
+    }
+
+    @Override
+    public ServiceResult updateOrder(int id, String status) {
+        ServiceResult result = new ServiceResult();
+        OrderEntity order = orderRepository.findByIdAndDeleted(id, false);
+        if (order != null) {
+            boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch(t -> t.name().equals(status));
+            if (isStatusExist) {
+                order.setStatus(statusRepository.findByName(StatusName.valueOf(status)));
+                result.setMessage("Update status successfully");
+            } else {
+                result.setMessage("Product not found");
+                result.setStatus(ServiceResult.Status.FAILED);
+            }
+        }else {
+            result.setMessage("Status not found");
+            result.setStatus(ServiceResult.Status.FAILED);
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceResult updateOrderDetail(int id, int quantity, int productID) {
+        ServiceResult result = new ServiceResult();
+        OrderDetailEntity orderDetail = orderDetailRepository.findById(id).orElse(null);
+        if (orderDetail != null) {
+            ProductEntity product = productRepository.findByIdAndDeletedAndStatusName(productID, false, StatusName.ACTIVE);
+            if (product != null) {
+                int count = product.getQuantity() + orderDetail.getQuantity() - quantity;
+                if (count >= 0) {
+                    orderDetail.setProduct(product);
+                    orderDetail.setQuantity(quantity);
+                    OrderEntity order = orderDetail.getOrder();
+                    double preTotalPrice = order.getTotalPrice() - orderDetail.getPrice();
+                    orderDetail.setPrice(calculatePrice(quantity, product.getOriginalPrice(), product.getDiscount()));
+                    order.setTotalPrice(preTotalPrice + orderDetail.getPrice());
+                    orderDetailRepository.save(orderDetail);
+                    orderRepository.save(order);
+                } else {
+                    result.setMessage("The quantity exceeded");
+                    result.setStatus(ServiceResult.Status.FAILED);
+                }
+            } else {
+                    result.setMessage("Product not found");
+                    result.setStatus(ServiceResult.Status.FAILED);
+            }
+        }
+        return result;
+    }
+
+    private double calculatePrice(int quantity, double price, double discount){
+        return (price - price*discount/100)*quantity;
     }
 }
