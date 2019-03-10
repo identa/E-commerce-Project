@@ -315,6 +315,7 @@ public class ShopServiceImpl implements ShopService {
                     order.setTotalPrice(preTotalPrice + orderDetail.getPrice());
                     orderDetailRepository.save(orderDetail);
                     orderRepository.save(order);
+                    result.setMessage("Update order detail successfully");
                 } else {
                     result.setMessage("The quantity exceeded");
                     result.setStatus(ServiceResult.Status.FAILED);

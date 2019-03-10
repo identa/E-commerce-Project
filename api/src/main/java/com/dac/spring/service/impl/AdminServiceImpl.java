@@ -699,6 +699,45 @@ public class AdminServiceImpl implements AdminService {
         return result;
     }
 
+    @Override
+    public ServiceResult createOrderDetail(int id, int quantity, int productID, int orderID) {
+        ServiceResult result = new ServiceResult();
+        OrderDetailEntity orderDetail = orderDetailRepository.findById(id).orElse(null);
+        if (orderDetail != null) {
+            ProductEntity product = productRepository.findByIdAndDeletedAndStatusName(productID, false, StatusName.ACTIVE);
+            if (product != null) {
+                OrderEntity order = orderRepository.findByIdAndDeleted(orderID, false);
+                if (order != null){
+                    int count = product.getQuantity() + orderDetail.getQuantity() - quantity;
+                    if (count >= 0) {
+                        orderDetail.setProduct(product);
+                        orderDetail.setQuantity(quantity);
+                        double preTotalPrice = order.getTotalPrice() - orderDetail.getPrice();
+                        orderDetail.setPrice(calculatePrice(quantity, product.getOriginalPrice(), product.getDiscount()));
+                        order.setTotalPrice(preTotalPrice + orderDetail.getPrice());
+                        orderDetailRepository.save(orderDetail);
+                        orderRepository.save(order);
+                        result.setMessage("Create order detail successfully");
+                    } else {
+                        result.setMessage("The quantity exceeded");
+                        result.setStatus(ServiceResult.Status.FAILED);
+                    }
+                }else {
+                    result.setStatus(ServiceResult.Status.FAILED);
+                    result.setMessage("Order not found");
+                }
+
+            } else {
+                result.setMessage("Product not found");
+                result.setStatus(ServiceResult.Status.FAILED);
+            }
+        }
+        return result;
+    }
+    private double calculatePrice(int quantity, double price, double discount){
+        return (price - price*discount/100)*quantity;
+    }
+
     private boolean isDiscountRight(int discount){
         return discount >= 0 && discount < 100;
     }

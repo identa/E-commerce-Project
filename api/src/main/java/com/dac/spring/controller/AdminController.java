@@ -141,6 +141,15 @@ public class AdminController {
                 request.getSize()),HttpStatus.OK);
     }
 
+
+    @PostMapping("/createOrderDetail")
+    public ResponseEntity<ServiceResult> createOrderDetail(@Valid @RequestBody AdminCreateOrderDetailRequest request) {
+        return new ResponseEntity<>(adminService.createOrderDetail(request.getId(),
+                request.getQuantity(),
+                request.getProductID(),
+                request.getOrderID()),HttpStatus.OK);
+    }
+
     @PutMapping("/updateOrderDetail")
     public ResponseEntity<ServiceResult> updateOrderDetail(@Valid @RequestBody ShopUpdateOrderDetailRequest request) {
         return new ResponseEntity<>(shopService.updateOrderDetail(request.getId(),
