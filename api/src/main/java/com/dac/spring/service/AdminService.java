@@ -24,4 +24,5 @@ public interface AdminService {
     ServiceResult updateProduct(ShopUpdateProductRequest request);
     ServiceResult deleteProduct(int id);
     ServiceResult deleteOrderDetail(int id);
+    ServiceResult deleteOrder(int id);
 }

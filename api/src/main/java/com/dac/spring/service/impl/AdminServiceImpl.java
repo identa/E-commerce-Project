@@ -611,9 +611,24 @@ public class AdminServiceImpl implements AdminService {
             order.setTotalPrice(order.getTotalPrice() - orderDetail.getPrice());
             orderDetailRepository.delete(orderDetail);
             orderRepository.save(order);
-            result.setMessage("Delete product successfully");
+            result.setMessage("Delete order detail successfully");
         }else {
-            result.setMessage("Cannot delete this product");
+            result.setMessage("Cannot delete this order detail");
+            result.setStatus(ServiceResult.Status.FAILED);
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceResult deleteOrder(int id) {
+        ServiceResult result = new ServiceResult();
+        OrderEntity order = orderRepository.findByIdAndDeleted(id, false);
+        if (order != null){
+            orderDetailRepository.deleteAll(orderDetailRepository.findByOrderId(id));
+            orderRepository.delete(order);
+            result.setMessage("Delete order successfully");
+        }else {
+            result.setMessage("Cannot delete this order");
             result.setStatus(ServiceResult.Status.FAILED);
         }
         return result;

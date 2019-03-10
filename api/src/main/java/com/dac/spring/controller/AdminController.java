@@ -124,6 +124,11 @@ public class AdminController {
                 request.getStatus()),HttpStatus.OK);
     }
 
+    @DeleteMapping("/deleteOrder")
+    public ResponseEntity<ServiceResult> deleteOrder(@Valid @RequestBody ShopDeleteProductRequest request) {
+        return new ResponseEntity<>(adminService.deleteOrder(request.getId()),HttpStatus.OK);
+    }
+
     @PutMapping("/updateOrderDetail")
     public ResponseEntity<ServiceResult> updateOrderDetail(@Valid @RequestBody ShopUpdateOrderDetailRequest request) {
         return new ResponseEntity<>(shopService.updateOrderDetail(request.getId(),
