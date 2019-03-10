@@ -13,5 +13,4 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity, Intege
     Optional<CategoryEntity> findByName(String name);
     boolean existsByName(String name);
     boolean existsByNameAndIdNot(String name,int id);
-    boolean existsById(int id);
 }

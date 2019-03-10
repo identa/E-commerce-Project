@@ -25,4 +25,6 @@ public interface AdminService {
     ServiceResult deleteProduct(int id);
     ServiceResult deleteOrderDetail(int id);
     ServiceResult deleteOrder(int id);
+    ServiceResult paginateOrder(int page, int size);
+    ServiceResult paginateOrderDetail(int id, int page, int size);
 }

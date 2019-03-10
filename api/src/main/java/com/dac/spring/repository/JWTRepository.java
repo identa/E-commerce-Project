@@ -9,5 +9,4 @@ import java.util.Optional;
 @Repository
 public interface JWTRepository extends JpaRepository<JWTEntity, Integer> {
     Optional<JWTEntity> findByToken(String code);
-    boolean existsByToken(String token);
 }

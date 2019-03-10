@@ -113,6 +113,11 @@ public class AdminController {
                 request.getSize()),HttpStatus.OK);
     }
 
+    @PostMapping("/paginateOrder")
+    public ResponseEntity<ServiceResult> paginateOrder(@RequestBody AdminPaginateProductRequest request){
+        return new ResponseEntity<>(adminService.paginateOrder(request.getPage(),request.getSize()),HttpStatus.OK);
+    }
+
     @PostMapping("/createOrder")
     public ResponseEntity<ServiceResult> createOrder(@RequestBody CustomerCreateOrderRequest request){
         return new ResponseEntity<>(customerService.createOrder(request.getCustomerID(),request.getOrderDetailRequests()),HttpStatus.OK);
@@ -127,6 +132,13 @@ public class AdminController {
     @DeleteMapping("/deleteOrder")
     public ResponseEntity<ServiceResult> deleteOrder(@Valid @RequestBody ShopDeleteProductRequest request) {
         return new ResponseEntity<>(adminService.deleteOrder(request.getId()),HttpStatus.OK);
+    }
+
+    @PostMapping("/paginateOrderDetail")
+    public ResponseEntity<ServiceResult> paginateOrderDetail(@RequestBody AdminPaginateOrderDetailRequest request){
+        return new ResponseEntity<>(adminService.paginateOrderDetail(request.getId(),
+                request.getPage(),
+                request.getSize()),HttpStatus.OK);
     }
 
     @PutMapping("/updateOrderDetail")

@@ -9,6 +9,7 @@ import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
 import com.dac.spring.model.enums.StatusName;
 import com.dac.spring.model.req.AdminCreateProductRequest;
+import com.dac.spring.model.resp.AdminGetOrderResponse;
 import com.dac.spring.model.req.ShopUpdateProductRequest;
 import com.dac.spring.model.resp.AdminPaginateCategoryResponse;
 import com.dac.spring.model.resp.*;
@@ -63,6 +64,12 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     ProductPaginationRepository productPaginationRepository;
+
+    @Autowired
+    OrderPaginationRepository orderPaginationRepository;
+
+    @Autowired
+    OrderDetailPaginationRepository orderDetailPaginationRepository;
 
     @Autowired
     JWTRepository jwtRepository;
@@ -629,6 +636,64 @@ public class AdminServiceImpl implements AdminService {
             result.setMessage("Delete order successfully");
         }else {
             result.setMessage("Cannot delete this order");
+            result.setStatus(ServiceResult.Status.FAILED);
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceResult paginateOrder(int page, int size) {
+        ServiceResult result = new ServiceResult();
+
+        Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
+        Page<OrderEntity> orderList = orderPaginationRepository.findAll(info);
+        boolean isOrderListEmpty = orderList.isEmpty();
+        if (!isOrderListEmpty) {
+            int totalPages = orderList.getTotalPages();
+            List<AdminGetOrderResponse> responses = new ArrayList<>();
+            for (OrderEntity entity : orderList) {
+
+                AdminGetOrderResponse response = new AdminGetOrderResponse(entity.getId(),
+                        entity.getStatus().getName().name(),
+                        entity.getTotalPrice(),
+                        entity.getEmployee().getId());
+                responses.add(response);
+
+            }
+            AdminPaginateOrderResponse response = new AdminPaginateOrderResponse(totalPages, responses);
+            result.setMessage("Orders are returned successfully");
+            result.setData(response);
+        } else {
+            result.setMessage("Orders list is empty");
+            result.setStatus(ServiceResult.Status.FAILED);
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceResult paginateOrderDetail(int id, int page, int size) {
+        ServiceResult result = new ServiceResult();
+
+        Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
+        Page<OrderDetailEntity> orderDetailList = orderDetailPaginationRepository.findAllByOrderId(info, id);
+        boolean isOrderDetailList = orderDetailList.isEmpty();
+        if (!isOrderDetailList) {
+            int totalPages = orderDetailList.getTotalPages();
+            List<AdminGetOrderDetailResponse> responses = new ArrayList<>();
+            for (OrderDetailEntity entity : orderDetailList) {
+
+                AdminGetOrderDetailResponse response = new AdminGetOrderDetailResponse(entity.getId(),
+                       entity.getPrice(),
+                        entity.getQuantity(),
+                        entity.getProduct().getId());
+                responses.add(response);
+
+            }
+            AdminPaginateOrderDetailResponse response = new AdminPaginateOrderDetailResponse(totalPages, responses);
+            result.setMessage("Order details are returned successfully");
+            result.setData(response);
+        } else {
+            result.setMessage("Order details list is empty");
             result.setStatus(ServiceResult.Status.FAILED);
         }
         return result;
