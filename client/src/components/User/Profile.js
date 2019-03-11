@@ -4,7 +4,9 @@ import {Link,Redirect} from 'react-router-dom';
 const clientId = '78bc0dc37ea9d00';
 const urlImgur = 'https://api.imgur.com/3/image';
 const urlGetProfile = 'https://dac-java.herokuapp.com/api/customer/getById';
+const urlGetShopProfile = 'https://dac-java.herokuapp.com/api/shop/getInfoById';
 const urlEditProfile = 'https://dac-java.herokuapp.com/api/customer/update';
+const urlEditShopProfile = 'https://dac-java.herokuapp.com/api/shop/update';
 class Profile extends Component {
 
     constructor(props) {
@@ -29,7 +31,14 @@ class Profile extends Component {
     }
 
     componentDidMount() {
-        fetch(urlGetProfile ,{
+        let url = '';
+        if(localStorage.role === 'ROLE_SHOP'){
+            url = urlGetShopProfile;
+        }
+        else if(localStorage.role === 'ROLE_CUSTOMER'){
+            url = urlGetProfile;
+        }
+        fetch(url ,{
             method : 'GET',
             headers : {
                 'Content-Type' : 'application/json',
@@ -213,7 +222,14 @@ class Profile extends Component {
                 imageURL : this.state.imageURL
             }
 
-            const response = await fetch(urlEditProfile ,{
+            let url = '';
+            if(localStorage.role === 'ROLE_SHOP'){
+                url = urlEditShopProfile;
+            }
+            else if(localStorage.role === 'ROLE_CUSTOMER'){
+                url = urlEditProfile;
+            }
+            const response = await fetch(url ,{
                 method : 'PUT',
                 headers :{ 
                     'Content-Type' : 'application/json',

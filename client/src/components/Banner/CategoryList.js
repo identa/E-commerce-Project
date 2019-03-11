@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import {Link} from 'react-router-dom';
+
 const urlGetCategories = 'https://dac-java.herokuapp.com/api/customer/getCategoryTree';
+
 class CategoryList extends Component {
     constructor(props) {
         super(props);
@@ -20,9 +22,7 @@ class CategoryList extends Component {
         .then(res=>res.json())
         .then(data =>{
             if(data.status === 'SUCCESS'){
-                this.setState({categoryList : data.data});
-                console.log(this.state.categoryList);
-                
+                this.setState({categoryList : data.data});                
             }
             else if(data.status === 'FAILED'){
                 console.log(data.message);

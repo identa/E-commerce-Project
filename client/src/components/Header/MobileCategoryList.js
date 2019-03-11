@@ -21,9 +21,7 @@ class MobileCategoryList extends Component {
         .then(res=>res.json())
         .then(data =>{
             if(data.status === 'SUCCESS'){
-                this.setState({categoryList : data.data});
-                console.log(this.state.categoryList);
-                
+                this.setState({categoryList : data.data});                
             }
             else if(data.status === 'FAILED'){
                 console.log(data.message);

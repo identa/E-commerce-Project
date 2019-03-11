@@ -117,7 +117,7 @@ class ProductDashboard extends Component {
                 <div className="dashboard-container">
                     <h2>Product Management Dashboard</h2>
                     <div className="row btn-create">
-                        <Link to="/">
+                        <Link to="/manage/product/create">
                             <button className="btn btn-success btn-action">
                                 <i className="fa fa-plus"></i>Create
                             </button>
