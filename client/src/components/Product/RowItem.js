@@ -48,7 +48,7 @@ class RowItem extends Component {
                 <td>{this.props.description}</td>
                 <td>{this.props.category}</td>
                 <td>
-                    <Link to={{pathname : "/", state : {data : data} }}>
+                    <Link to={{pathname : "/manage/product/edit", state : {data : data} }}>
                         <button className="btn btn-info btn-action">
                             <i className="fa fa-edit" />
                             Edit

@@ -7,6 +7,7 @@ import CustomerCreate from '../User/CustomerCreate';
 import CustomerEdit from '../User/CustomerEdit';
 import ProductDashboard from '../Product/ProductDashboard';
 import ProductCreate from '../Product/ProductCreate';
+import ProductEdit from '../Product/ProductEdit';
 class RouteURL extends Component {
     render() {
         return (
@@ -18,6 +19,7 @@ class RouteURL extends Component {
                     <Route path="/manage/customer/edit" component={CustomerEdit}></Route>
                     <Route path="/manage/product/dashboard" component={ProductDashboard}></Route>
                     <Route path="/manage/product/create" component={ProductCreate}></Route>
+                    <Route path="/manage/product/edit" component={ProductEdit}></Route>
                 </Switch>
         );
     }
