@@ -48,7 +48,7 @@ class UserLink extends Component {
                         <li>
                             <Link to="/customer/profile">User Information</Link>
                         </li>                    
-                        {                            
+                        {                          
                             role === 'ROLE_ADMIN' ? (
                                 <>
                                     <li><Link to="/manage/customer/dashboard">Management User</Link></li>

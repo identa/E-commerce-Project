@@ -5,6 +5,7 @@ const clientId = '78bc0dc37ea9d00';
 const urlImgur = 'https://api.imgur.com/3/image';
 const urlCreateProduct = 'https://dac-java.herokuapp.com/api/admin/createProduct';
 const urlGetCategories = 'https://dac-java.herokuapp.com/api/customer/getCategoryTree';
+const urlGetShop = 'https://dac-java.herokuapp.com/api/admin/getShop';
 
 class ProductCreate extends Component {
     constructor(props) {
@@ -17,8 +18,10 @@ class ProductCreate extends Component {
             discount : 0,
             status : 'PAUSE',
             description : '',
-            category : '',
+            category : '1',
+            shop : '0',
             categoryList : [],
+            shopList : [],
             productImageUrl : 'https://i.imgur.com/YYJJRJh.jpg',
             messageShowingStyle : 'message',
             isRedirect : false,
@@ -48,6 +51,23 @@ class ProductCreate extends Component {
                 console.log(data.message);
             }
         })
+
+        fetch(urlGetShop, {
+            method : 'GET',
+            headers : {
+                'Content-Type' : 'application/json',
+                'Authorization' : localStorage.token
+            }
+        })
+        .then(res=>res.json())
+        .then(data =>{
+            if(data.status === 'SUCCESS'){
+                this.setState({shopList : data.data});                
+            }
+            else if(data.status === 'FAILED'){
+                console.log(data.message);
+            }
+        })
     }
     
     onChange = (event) =>{
@@ -68,6 +88,14 @@ class ProductCreate extends Component {
                 error: {
                     ...prevState.error,
                     name: ''
+                }
+            }));
+        }
+        if(name ==='originalPrice'){
+            this.setState(prevState => ({
+                error: {
+                    ...prevState.error,
+                    price: ''
                 }
             }));
         }
@@ -103,10 +131,52 @@ class ProductCreate extends Component {
         return link;
     }
 
-    formSubmit = (event) =>{
+    formSubmit = async (event) =>{
         event.preventDefault();
+        if(this.validateName() && this.validatePrice() && this.validateMessage()){
+            const imgURL = await this.getImageUrl();
+            this.setState({productImageUrl : imgURL});
+
+            const data = {
+                name : this.state.name,
+                status : 'PAUSE',
+                description : this.state.description,
+                quantity : this.state.quantity,
+                originalPrice : this.state.originalPrice,
+                discount : this.state.discount,
+                productImageURL : this.state.productImageUrl,
+                categoryID : this.state.category,
+                shopID : this.state.shop
+            }
+
+            console.log(data);
+            const response = await fetch(urlCreateProduct,{
+                method : 'POST',
+                headers :{
+                    'Content-Type' : 'application/json',
+                    'Authorization' : localStorage.token
+                },
+                body : JSON.stringify(data)
+            })
+            let result = await response.json();
+            if(result.status === 'SUCCESS'){
+                this.setState({isRedirect : true});
+            }
+            else if(result.status === 'FAILED'){
+                this.setState(prevState =>({
+                    error :{
+                        ...prevState.error,
+                        message : result.message
+                    }
+                }));
+            }
+        }
     }
 
+    validateMessage = () =>{
+        const message = this.state.error.message;
+        return message.length === 0;
+    }
     validateName = () =>{
         const name = this.state.name;
         this.setState({messageShowingStyle : 'message'});
@@ -114,7 +184,7 @@ class ProductCreate extends Component {
             this.setState(prevState =>({
                 error :{
                     ...prevState.error,
-                    name : 'First name can not be empty!'
+                    name : 'Product name can not be empty!'
                 }
             }));
             return false;
@@ -130,12 +200,27 @@ class ProductCreate extends Component {
         }
     }
 
-    validateQuantity = () =>{
-
-    }
-
     validatePrice = () =>{
-
+        const originalPrice = this.state.originalPrice;
+        this.setState({messageShowingStyle : 'message'});
+        if(originalPrice === 0){
+            this.setState(prevState =>({
+                error :{
+                    ...prevState.error,
+                    price : 'Price must be greater than 0'
+                }
+            }));
+            return false;
+        }
+        else{
+            this.setState(prevState =>({
+                error :{
+                    ...prevState.error,
+                    price : ''
+                }
+            }));
+            return true;
+        }   
     }
 
     render() {
@@ -167,7 +252,14 @@ class ProductCreate extends Component {
                                                 <div className="form-group row">
                                                     <label className="col-4 col-form-label">Name *</label> 
                                                     <div className="col-8">
-                                                        <input type="text" name="name" placeholder="Name" className="form-control" required="required" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.validateName}/>
+                                                        <input type="text" 
+                                                               name="name" 
+                                                               placeholder="Name" 
+                                                               className="form-control" 
+                                                               required="required" 
+                                                               onChange={this.onChange} 
+                                                               onFocus={this.onFocus} 
+                                                               onBlur={this.validateName}/>
                                                         <div className="message">
                                                             {this.state.error.name}
                                                         </div>
@@ -177,10 +269,16 @@ class ProductCreate extends Component {
                                                 <div className="form-group row">
                                                     <label className="col-4 col-form-label">Quantity *</label> 
                                                     <div className="col-8">
-                                                        <input type="number" name="quantity" placeholder="Quantity" className="form-control" value={this.state.quantity} min="1" required="required" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.validateQuantity}/>
-                                                        <div className="message">
-                                                            {this.state.error.quantity}
-                                                        </div>
+                                                        <input type="number" 
+                                                               name="quantity" 
+                                                               placeholder="Quantity" 
+                                                               className="form-control" 
+                                                               value={this.state.quantity} 
+                                                               min="1" 
+                                                               required="required" 
+                                                               onChange={this.onChange} 
+                                                               onFocus={this.onFocus}/>
+                                                       
                                                     </div>
                                                     
                                                 </div>                                           
@@ -188,7 +286,17 @@ class ProductCreate extends Component {
                                                 <div className="form-group row">
                                                     <label className="col-4 col-form-label">Price *</label> 
                                                     <div className="col-8">
-                                                        <input type="number" name="originalPrice" placeholder="Price" value={this.state.originalPrice} min="0" className="form-control" step="0.01" required="required" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.validatePrice}/>
+                                                        <input type="number" 
+                                                               name="originalPrice" 
+                                                               placeholder="Price" 
+                                                               value={this.state.originalPrice}
+                                                               min="0" 
+                                                               className="form-control" 
+                                                               step="0.01" 
+                                                               required="required" 
+                                                               onChange={this.onChange} 
+                                                               onFocus={this.onFocus} 
+                                                               onBlur={this.validatePrice}/>
                                                         <div className="message">
                                                             {this.state.error.price}
                                                         </div>
@@ -198,10 +306,17 @@ class ProductCreate extends Component {
                                                 <div className="form-group row">
                                                     <label className="col-4 col-form-label">Discount</label> 
                                                     <div className="col-8">
-                                                        <input type="number" name="discount" placeholder="Discount" value={this.state.discount} min="0" max="100" className="form-control" step="0.01" required="required" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.validatePrice}/>
-                                                        <div className="message">
-                                                            {this.state.error.price}
-                                                        </div>
+                                                        <input type="number" 
+                                                               name="discount" 
+                                                               placeholder="Discount" 
+                                                               value={this.state.discount} 
+                                                               min="0" 
+                                                               max="100" 
+                                                               className="form-control" 
+                                                               step="0.01" 
+                                                               required="required" 
+                                                               onChange={this.onChange} 
+                                                               onFocus={this.onFocus}/>                                                       
                                                     </div>
                                                 </div>                                                                                           
 
@@ -218,16 +333,34 @@ class ProductCreate extends Component {
                                                 <div className="form-group row">
                                                     <label className="col-4 col-form-label">Description </label> 
                                                     <div className="col-8">
-                                                        <textarea name="description" placeholder="Description" rows="4" className="form-control" onChange={this.onChange}></textarea>
+                                                        <textarea name="description" 
+                                                                  placeholder="Description" 
+                                                                  rows="4" 
+                                                                  className="form-control" 
+                                                                  onChange={this.onChange}>
+                                                        </textarea>
                                                     </div>
                                                 </div>
 
                                                 <div className="form-group row">
                                                     <label className="col-4 col-form-label">Category *</label> 
                                                     <div className="col-8">
-                                                        <select name="category" className="custom-select" value={this.state.category} onChange={this.onChange}>
+                                                        <select name="category" className="custom-select" onChange={this.onChange}>
                                                         {
                                                             this.state.categoryList.map((value,key)=>{
+                                                                return (<option key={key} value={value.id}>{value.name}</option>)
+                                                            })
+                                                        } 
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div className="form-group row">
+                                                    <label className="col-4 col-form-label">Shop *</label> 
+                                                    <div className="col-8">
+                                                        <select name="shop" className="custom-select" onChange={this.onChange}>
+                                                        {
+                                                            this.state.shopList.map((value,key)=>{
                                                                 return (<option key={key} value={value.id}>{value.name}</option>)
                                                             })
                                                         } 

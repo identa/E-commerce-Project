@@ -42,7 +42,7 @@ class RowItem extends Component {
                 <td>{this.props.discount}</td>
                 <td>{this.props.view}</td>
                 <td>
-                    <img src={this.props.imageURL} alt=''/>
+                    <img src={this.props.productImageURL} alt=''/>
                 </td>
                 <td>{this.props.status}</td>
                 <td>{this.props.description}</td>

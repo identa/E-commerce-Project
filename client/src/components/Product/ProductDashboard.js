@@ -41,7 +41,7 @@ class ProductDashboard extends Component {
     
     fetchData = (data) =>{
         const token = localStorage.token;
-
+        
         fetch(urlGetListProduct, {
             method : 'POST',
             body : JSON.stringify(data),
@@ -69,7 +69,7 @@ class ProductDashboard extends Component {
         let ul = [];
         for (let i = 0; i < totalPages; i++){
             ul.push(<li className={this.state.activeClassName} key={i}>
-                <a className="page-link" id={'page-'+`${i + 1}`} href="javascript:void(0)" onClick={this.handlePaging}>{`${i + 1}`}</a>
+                <a className="page-link" id={'page-'+`${i + 1}`} href="javascript:void(0)" onClick={(e) => this.handlePaging(e)}>{`${i + 1}`}</a>
             </li>);
         }
         return ul;
@@ -81,6 +81,7 @@ class ProductDashboard extends Component {
             page : pageId,
             size : this.state.itemPerPage
         };
+        console.log(dataSend);
         this.fetchData(dataSend);
     }
     
