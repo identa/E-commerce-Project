@@ -17,6 +17,8 @@ public class AdminCreateProductRequest {
 
     private int categoryID;
 
+    private int shopID;
+
     public String getName() {
         return name;
     }
@@ -79,5 +81,13 @@ public class AdminCreateProductRequest {
 
     public void setCategoryID(int categoryID) {
         this.categoryID = categoryID;
+    }
+
+    public int getShopID() {
+        return shopID;
+    }
+
+    public void setShopID(int shopID) {
+        this.shopID = shopID;
     }
 }

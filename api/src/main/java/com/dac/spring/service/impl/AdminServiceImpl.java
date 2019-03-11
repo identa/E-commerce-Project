@@ -496,7 +496,7 @@ public class AdminServiceImpl implements AdminService {
                                     request.getOriginalPrice(),
                                     request.getDiscount(),
                                     categoryRepository.findById(request.getCategoryID()).orElse(null),
-                                    employeeRepository.findById(0).orElse(null));
+                                    employeeRepository.findById(request.getShopID()).orElse(null));
                             if (request.getProductImageURL()==null) product.setProductImageURL(ShopConst.DEFAULT_AVATAR);
                             else product.setProductImageURL(request.getProductImageURL());
                             productRepository.save(product);
