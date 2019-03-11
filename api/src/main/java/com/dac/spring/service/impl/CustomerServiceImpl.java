@@ -205,7 +205,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult signOut(HttpServletRequest request) {
         ServiceResult result = new ServiceResult();
-        String token = request.getHeader("Authorization").split(" ")[1];
+        String token = request.getHeader(CustomerConst.AUTH).split(" ")[1];
         JWTEntity jwt = jwtRepository.findByToken(token).orElse(null);
         if (jwt != null){
             jwtRepository.delete(jwt);
@@ -220,9 +220,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult getInfo(HttpServletRequest request) {
         ServiceResult result = new ServiceResult();
-//        EmployeeEntity customer = employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(id, false,
-//               StatusName.ACTIVE, RoleName.ROLE_CUSTOMER);
-        String authHeader = request.getHeader("Authorization").split(" ")[1];
+        String authHeader = request.getHeader(CustomerConst.AUTH).split(" ")[1];
         EmployeeEntity customer = employeeRepository.findByEmail(getUserNameFromJwtToken(authHeader)).orElse(null);
         if (customer != null) {
             CustomerGetInfoResponse response = new CustomerGetInfoResponse(
@@ -317,7 +315,7 @@ public class CustomerServiceImpl implements CustomerService {
                 }
             }
             CustomerPaginateProductByCatResponse response = new CustomerPaginateProductByCatResponse(totalPages, responses);
-            result.setMessage("Products are returned successfully");
+            result.setMessage(CustomerConst.PRODUCT_SUCCESS);
             result.setData(response);
         } else {
             result.setMessage("Product list is empty");
@@ -329,7 +327,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult returnRole(HttpServletRequest request) {
         ServiceResult result = new ServiceResult();
-        String authHeader = request.getHeader("Authorization").split(" ")[1];
+        String authHeader = request.getHeader(CustomerConst.AUTH).split(" ")[1];
         EmployeeEntity employee = employeeRepository.findByEmail(getUserNameFromJwtToken(authHeader)).orElse(null);
         if (employee != null) {
             result.setData(employee.getRole().getName().name());
@@ -438,7 +436,7 @@ public class CustomerServiceImpl implements CustomerService {
                 responses.add(response);
             }
             result.setData(responses);
-            result.setMessage("Products are returned successfully");
+            result.setMessage(CustomerConst.PRODUCT_SUCCESS);
         }
         else{
             result.setStatus(ServiceResult.Status.FAILED);
@@ -466,7 +464,7 @@ public class CustomerServiceImpl implements CustomerService {
                     responses.add(response);
                 }
                 CustomerPaginateProductListResponse response = new CustomerPaginateProductListResponse(totalPages, responses);
-                result.setMessage("Products are returned successfully");
+                result.setMessage(CustomerConst.PRODUCT_SUCCESS);
                 result.setData(response);
             } else {
                 result.setMessage("Product list is empty");
