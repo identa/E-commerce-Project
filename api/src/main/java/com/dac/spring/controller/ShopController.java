@@ -25,7 +25,7 @@ public class ShopController {
     @Autowired
     CustomerService customerService;
 
-    @PostMapping("/getInfoById")
+    @GetMapping("/getInfoById")
     public ResponseEntity<ServiceResult> getInfoById(HttpServletRequest request) {
         return new ResponseEntity<>(customerService.getInfo(request), HttpStatus.OK);
     }
