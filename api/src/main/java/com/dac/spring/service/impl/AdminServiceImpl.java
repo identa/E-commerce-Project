@@ -734,6 +734,22 @@ public class AdminServiceImpl implements AdminService {
         }
         return result;
     }
+
+    @Override
+    public ServiceResult getAllShop() {
+        ServiceResult result = new ServiceResult();
+        List<EmployeeEntity> shopList = employeeRepository.findByDeletedAndRoleName(false, RoleName.ROLE_SHOP);
+        List<AdminGetAllShopResponse> responses = new ArrayList<>();
+        for (EmployeeEntity entity : shopList){
+            AdminGetAllShopResponse response = new AdminGetAllShopResponse(entity.getId(),
+                    entity.getFirstName()+" "+ entity.getLastName());
+            responses.add(response);
+        }
+        result.setData(responses);
+        result.setMessage("Get shops successfully");
+        return result;
+    }
+
     private double calculatePrice(int quantity, double price, double discount){
         return (price - price*discount/100)*quantity;
     }

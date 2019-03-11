@@ -161,4 +161,9 @@ public class AdminController {
     public ResponseEntity<ServiceResult> deleteOrderDetail(@Valid @RequestBody ShopDeleteProductRequest request) {
         return new ResponseEntity<>(adminService.deleteOrderDetail(request.getId()),HttpStatus.OK);
     }
+
+    @GetMapping("/getShop")
+    public ResponseEntity<ServiceResult> getShop() {
+        return new ResponseEntity<>(adminService.getAllShop(),HttpStatus.OK);
+    }
 }
