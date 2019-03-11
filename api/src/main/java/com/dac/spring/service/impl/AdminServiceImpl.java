@@ -470,7 +470,6 @@ public class AdminServiceImpl implements AdminService {
                                 entity.getProductImageURL(),
                                 entity.getCategory().getName());
                         responses.add(response);
-
                 }
                 ShopPaginateProductByIdResponse response = new ShopPaginateProductByIdResponse(totalPages, responses);
                 result.setMessage("Products are returned successfully");
@@ -510,7 +509,6 @@ public class AdminServiceImpl implements AdminService {
                                     product.getProductImageURL(),
                                     product.getCategory().getName(),
                                     product.getShop().getFirstName());
-
                             result.setMessage("Create product successfully");
                             result.setData(response);
                         }else {
