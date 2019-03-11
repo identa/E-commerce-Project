@@ -114,17 +114,17 @@ public class ShopServiceImpl implements ShopService {
                 int totalPages = productList.getTotalPages();
                 List<ShopGetProductResponse> responses = new ArrayList<>();
                 for (ProductEntity entity : productList) {
-                        ShopGetProductResponse response = new ShopGetProductResponse(entity.getId(),
-                                entity.getName(),
-                                entity.getStatus().getName().name(),
-                                entity.getDescription(),
-                                entity.getQuantity(),
-                                entity.getOriginalPrice(),
-                                entity.getDiscount(),
-                                entity.getView(),
-                                entity.getProductImageURL(),
-                                entity.getCategory().getName());
-                        responses.add(response);
+                    ShopGetProductResponse response = new ShopGetProductResponse(entity.getId(),
+                            entity.getName(),
+                            entity.getStatus().getName().name(),
+                            entity.getDescription(),
+                            entity.getQuantity(),
+                            entity.getOriginalPrice(),
+                            entity.getDiscount(),
+                            entity.getView(),
+                            entity.getProductImageURL(),
+                            entity.getCategory().getName());
+                    responses.add(response);
                 }
                 ShopPaginateProductByIdResponse response = new ShopPaginateProductByIdResponse(totalPages, responses);
                 result.setMessage("Products are returned successfully");
@@ -146,48 +146,35 @@ public class ShopServiceImpl implements ShopService {
         if (request.getName() != null && request.getStatus() != null) {
             boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch(t -> t.name().equals(request.getStatus()));
             if (isStatusExist) {
-                    CategoryEntity category = categoryRepository.findById(request.getCategoryID()).orElse(null);
-                    if (category != null){
-                        EmployeeEntity shop = employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(
-                                request.getShopID(), false, StatusName.ACTIVE, RoleName.ROLE_SHOP);
-                        if (shop != null){
-                            if (isDiscountRight(request.getDiscount())){
-                                ProductEntity product = new ProductEntity(request.getName(),
-                                        statusRepository.findByName(StatusName.valueOf(request.getStatus())),
-                                        request.getDescription(),
-                                        request.getQuantity(),
-                                        request.getOriginalPrice(),
-                                        request.getDiscount(),
-                                        categoryRepository.findById(request.getCategoryID()).orElse(null),
-                                        employeeRepository.findById(request.getShopID()).orElse(null));
-                                if (request.getProductImageURL()==null) product.setProductImageURL(ShopConst.DEFAULT_AVATAR);
-                                else product.setProductImageURL(request.getProductImageURL());
-                                productRepository.save(product);
-                                ShopCreateProductResponse response = new ShopCreateProductResponse(product.getId(),
-                                        product.getName(),
-                                        product.getStatus().getName().name(),
-                                        product.getDescription(),
-                                        product.getQuantity(),
-                                        product.getOriginalPrice(),
-                                        product.getDiscount(),
-                                        product.getProductImageURL(),
-                                        product.getCategory().getName(),
-                                        product.getShop().getFirstName() + " " + product.getShop().getLastName());
+                if (isDiscountRight(request.getDiscount())) {
+                    ProductEntity product = new ProductEntity(request.getName(),
+                            statusRepository.findByName(StatusName.valueOf(request.getStatus())),
+                            request.getDescription(),
+                            request.getQuantity(),
+                            request.getOriginalPrice(),
+                            request.getDiscount(),
+                            categoryRepository.findById(request.getCategoryID()).orElse(null),
+                            employeeRepository.findById(request.getShopID()).orElse(null));
+                    if (request.getProductImageURL() == null) product.setProductImageURL(ShopConst.DEFAULT_AVATAR);
+                    else product.setProductImageURL(request.getProductImageURL());
+                    productRepository.save(product);
+                    ShopCreateProductResponse response = new ShopCreateProductResponse(product.getId(),
+                            product.getName(),
+                            product.getStatus().getName().name(),
+                            product.getDescription(),
+                            product.getQuantity(),
+                            product.getOriginalPrice(),
+                            product.getDiscount(),
+                            product.getProductImageURL(),
+                            product.getCategory().getName(),
+                            product.getShop().getFirstName() + " " + product.getShop().getLastName());
 
-                                result.setMessage("Create product successfully");
-                                result.setData(response);
-                            }else {
-                                result.setMessage("Discount is less than 100");
-                                result.setStatus(ServiceResult.Status.FAILED);
-                            }
-                        }else {
-                            result.setMessage(ShopConst.SHOP_NOT_FOUND);
-                            result.setStatus(ServiceResult.Status.FAILED);
-                        }
-                    }else {
-                        result.setMessage("Category not found");
-                        result.setStatus(ServiceResult.Status.FAILED);
-                    }
+                    result.setMessage("Create product successfully");
+                    result.setData(response);
+                } else {
+                    result.setMessage("Discount is less than 100");
+                    result.setStatus(ServiceResult.Status.FAILED);
+                }
             } else {
                 result.setMessage("Status is not existed");
                 result.setStatus(ServiceResult.Status.FAILED);
@@ -206,10 +193,8 @@ public class ShopServiceImpl implements ShopService {
             boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch(t -> t.name().equals(request.getStatus()));
             if (isStatusExist) {
                 CategoryEntity category = categoryRepository.findById(request.getCategoryID()).orElse(null);
-                if (category != null){
                     ProductEntity product = productRepository.findByIdAndDeleted(
                             request.getId(), false);
-                    if (product != null){
                         if (isDiscountRight(request.getDiscount())) {
                             product.setName(request.getName());
                             product.setDescription(request.getDescription());
@@ -217,7 +202,8 @@ public class ShopServiceImpl implements ShopService {
                             product.setDiscount(request.getDiscount());
                             product.setStatus(statusRepository.findByName(StatusName.valueOf(request.getStatus())));
                             product.setQuantity(request.getQuantity());
-                            if (request.getProductImageURL()==null) product.setProductImageURL(ShopConst.DEFAULT_AVATAR);
+                            if (request.getProductImageURL() == null)
+                                product.setProductImageURL(ShopConst.DEFAULT_AVATAR);
                             else product.setProductImageURL(request.getProductImageURL());
                             product.setCategory(category);
 
@@ -235,19 +221,10 @@ public class ShopServiceImpl implements ShopService {
 
                             result.setMessage("Create product successfully");
                             result.setData(response);
-                        }
-                        else {
+                        } else {
                             result.setMessage("Discount is less than 100");
                             result.setStatus(ServiceResult.Status.FAILED);
                         }
-                    }else {
-                        result.setMessage(ShopConst.SHOP_NOT_FOUND);
-                        result.setStatus(ServiceResult.Status.FAILED);
-                    }
-                }else {
-                    result.setMessage("Category not found");
-                    result.setStatus(ServiceResult.Status.FAILED);
-                }
             } else {
                 result.setMessage("Status is not existed");
                 result.setStatus(ServiceResult.Status.FAILED);
@@ -259,7 +236,7 @@ public class ShopServiceImpl implements ShopService {
         return result;
     }
 
-    private boolean isDiscountRight(int discount){
+    private boolean isDiscountRight(int discount) {
         return discount >= 0 && discount < 100;
     }
 
@@ -267,11 +244,11 @@ public class ShopServiceImpl implements ShopService {
     public ServiceResult deleteProduct(int id) {
         ServiceResult result = new ServiceResult();
         ProductEntity product = productRepository.findByIdAndDeleted(id, false);
-        if (product != null){
+        if (product != null) {
             product.setDeleted(true);
             productRepository.delete(product);
             result.setMessage("Delete product successfully");
-        }else {
+        } else {
             result.setMessage("Cannot delete this product");
             result.setStatus(ServiceResult.Status.FAILED);
         }
@@ -291,7 +268,7 @@ public class ShopServiceImpl implements ShopService {
                 result.setMessage("Product not found");
                 result.setStatus(ServiceResult.Status.FAILED);
             }
-        }else {
+        } else {
             result.setMessage("Status not found");
             result.setStatus(ServiceResult.Status.FAILED);
         }
@@ -321,14 +298,14 @@ public class ShopServiceImpl implements ShopService {
                     result.setStatus(ServiceResult.Status.FAILED);
                 }
             } else {
-                    result.setMessage("Product not found");
-                    result.setStatus(ServiceResult.Status.FAILED);
+                result.setMessage("Product not found");
+                result.setStatus(ServiceResult.Status.FAILED);
             }
         }
         return result;
     }
 
-    private double calculatePrice(int quantity, double price, double discount){
-        return (price - price*discount/100)*quantity;
+    private double calculatePrice(int quantity, double price, double discount) {
+        return (price - price * discount / 100) * quantity;
     }
 }

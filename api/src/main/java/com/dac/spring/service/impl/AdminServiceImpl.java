@@ -488,8 +488,6 @@ public class AdminServiceImpl implements AdminService {
         if (request.getName() != null && request.getStatus() != null) {
             boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch(t -> t.name().equals(request.getStatus()));
             if (isStatusExist) {
-                CategoryEntity category = categoryRepository.findById(request.getCategoryID()).orElse(null);
-                if (category != null){
                         if (isDiscountRight(request.getDiscount())){
                             ProductEntity product = new ProductEntity(request.getName(),
                                     statusRepository.findByName(StatusName.valueOf(request.getStatus())),
@@ -519,10 +517,6 @@ public class AdminServiceImpl implements AdminService {
                             result.setMessage("Discount is less than 100");
                             result.setStatus(ServiceResult.Status.FAILED);
                         }
-                }else {
-                    result.setMessage(AdminConst.CATEGORY_NOT_FOUND);
-                    result.setStatus(ServiceResult.Status.FAILED);
-                }
             } else {
                 result.setMessage("Status is not existed");
                 result.setStatus(ServiceResult.Status.FAILED);
@@ -542,10 +536,7 @@ public class AdminServiceImpl implements AdminService {
             if (isStatusExist) {
                 CategoryEntity category = categoryRepository.findById(request.getCategoryID()).orElse(null);
                 if (category != null){
-                    ProductEntity product = productRepository.findByIdAndDeleted(
-                            request.getId(), false);
-                    if (product != null){
-                        if (isDiscountRight(request.getDiscount())) {
+                    ProductEntity product = productRepository.findByIdAndDeleted(request.getId(), false);
                             product.setName(request.getName());
                             product.setDescription(request.getDescription());
                             product.setOriginalPrice(request.getOriginalPrice());
@@ -574,14 +565,6 @@ public class AdminServiceImpl implements AdminService {
                             result.setMessage("Discount is less than 100");
                             result.setStatus(ServiceResult.Status.FAILED);
                         }
-                    }else {
-                        result.setMessage(ShopConst.SHOP_NOT_FOUND);
-                        result.setStatus(ServiceResult.Status.FAILED);
-                    }
-                }else {
-                    result.setMessage(AdminConst.CATEGORY_NOT_FOUND);
-                    result.setStatus(ServiceResult.Status.FAILED);
-                }
             } else {
                 result.setMessage("Status is not existed");
                 result.setStatus(ServiceResult.Status.FAILED);
