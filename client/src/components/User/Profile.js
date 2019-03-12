@@ -323,9 +323,10 @@ class Profile extends Component {
                                                 </div>
                                                 <div className="form-group row">
                                                     <div className="offset-4 col-8">
+                                                        <Link className="btn" to="/">Back to Home</Link>
                                                         <button name="submit" type="submit" className="btn btn-primary">Update</button>
                                                         <div className="message">
-                                                            {this.state.error.firstName}
+                                                            {this.state.error.message}
                                                         </div>
                                                     </div>
                                                 </div>

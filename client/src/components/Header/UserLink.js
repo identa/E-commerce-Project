@@ -59,16 +59,12 @@ class UserLink extends Component {
     }
 
     render() {
-        const role = localStorage.role;
         const name = localStorage.firstName + ' ' +  localStorage.lastName;
-
-        
+        const imageURL = localStorage.imageURL;
         return (
             <div className="links-bar">
                 <Button variant="link" className="menu-action-link">
-                    
-                        <img src={process.env.PUBLIC_URL + '/assets/images/user.png'} className="img-avatar" alt=""/> 
-  
+                        <img src={imageURL} className="img-avatar" alt=""/> 
                     Hello {name}
                 </Button>
                 <div className="menu-action">

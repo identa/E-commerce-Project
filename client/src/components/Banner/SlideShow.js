@@ -7,19 +7,19 @@ class SlideShow extends Component {
             <div className="slide-show">
                 <Carousel>
                     <Carousel.Item>
-                        <img src="./assets/images/slider/1.jpg" alt="First slide"/>
+                        <img src={process.env.PUBLIC_URL + "/assets/images/slider/1.jpg"} alt="First slide"/>
                     </Carousel.Item>
 
                     <Carousel.Item>
-                        <img src="./assets/images/slider/2.jpg" alt="Second slide"/>
+                        <img src={process.env.PUBLIC_URL + "/assets/images/slider/2.jpg"} alt="Second slide"/>
                     </Carousel.Item>
 
                     <Carousel.Item>
-                        <img src="./assets/images/slider/3.jpg" alt="Third slide"/>
+                        <img src={process.env.PUBLIC_URL + "/assets/images/slider/3.jpg"} alt="Third slide"/>
                     </Carousel.Item>
 
                     <Carousel.Item>
-                        <img src="./assets/images/slider/4.jpg" alt="Fourth slide"/>
+                        <img src={process.env.PUBLIC_URL + "/assets/images/slider/4.jpg"} alt="Fourth slide"/>
                     </Carousel.Item>
                 </Carousel>
             </div>

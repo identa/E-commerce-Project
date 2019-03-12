@@ -118,6 +118,7 @@ class SignInComponent extends Component {
                     localStorage.setItem("firstName", data.data.firstName);  
                     localStorage.setItem("lastName", data.data.lastName);
                     localStorage.setItem("role", data.data.role);
+                    localStorage.setItem("imageURL",data.data.imageURL);
                     this.setState({isModalShow : false});      
                     this.props.onHideModal(this.state.isModalShow);
                     this.props.changeAuthenticated();
