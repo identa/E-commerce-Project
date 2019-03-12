@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Link} from 'react-router-dom';
 import {Modal,Button} from 'react-bootstrap';
 import RowItem from './RowItem';
+import {Redirect} from 'react-router-dom';
 
 const urlGetListProduct = 'https://dac-java.herokuapp.com/api/admin/paginateProduct';
 const urlDeleteProduct = 'https://dac-java.herokuapp.com/api/admin/deleteProduct';
@@ -58,8 +59,7 @@ class ProductDashboard extends Component {
                     productList : data.data.productList
                 });
             }
-            else if (data.status === 'FAILED'){
-
+            else if (data.status === 403){
             }
         })
     }
@@ -130,7 +130,7 @@ class ProductDashboard extends Component {
                             </form>
                         </div>
                     </div>
-                    <div className="row">
+                    <div className="row table-responsive">
                         <table className="table table-bordered table-hover">
                             <tbody>
                                 <tr>
@@ -144,6 +144,7 @@ class ProductDashboard extends Component {
                                     <th>Status</th>
                                     <th>Description</th>
                                     <th>Category</th>
+                                    <th>Shop</th>
                                     <th>&nbsp;</th>
                                 </tr>
                                 {
@@ -158,14 +159,16 @@ class ProductDashboard extends Component {
                                                         view={value.view}
                                                         productImageURL={value.productImageURL}
                                                         status={value.status}
-                                                        category={value.category}
+                                                        categoryID={value.categoryID}
+                                                        categoryName={value.categoryName}
+                                                        shopID={value.shopID}
+                                                        shopName={value.shopName}
                                                         handleShowModal={this.handleShowModal}
                                                         getProductId={this.getProductId}/>
                                     })
                                 }
                             </tbody>
-                        </table>
-                                                
+                        </table>    
                         <ul className="pagination">
                             {this.createPageIndex()} 
                         </ul>

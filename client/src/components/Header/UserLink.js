@@ -31,10 +31,38 @@ class UserLink extends Component {
         }
     }
 
+    renderLi = () =>{
+        const role = localStorage.role;
+        switch(role){
+            case 'ROLE_ADMIN':
+                return (<>
+                            <li><Link to="/customer/profile">User Information</Link></li>
+                            <li><Link to="/manage/customer/dashboard">Management User</Link></li>
+                            <li><Link to="/manage/product/dashboard">Management Campaign</Link></li>
+                            <li><Link to="/manage/product/dashboard">Management Product</Link></li>
+                            <li><Link to="/" onClick={this.logout}>Logout</Link></li>
+                        </>)
+            case 'ROLE_SHOP':
+                return (<>
+                    <li><Link to="/customer/profile">User Information</Link></li>
+                    <li><Link to="/manage/product/dashboard">Management Campaign</Link></li>
+                    <li><Link to="/manage/product/dashboard">Management Product</Link></li>
+                    <li><Link to="/" onClick={this.logout}>Logout</Link></li>
+                </>)
+            default :
+                return (<>
+                    <li><Link to="/customer/profile">User Information</Link></li>                    
+                    <li><Link to="/" onClick={this.logout}>Logout</Link></li>
+                </>)
+
+        }
+    }
+
     render() {
         const role = localStorage.role;
         const name = localStorage.firstName + ' ' +  localStorage.lastName;
 
+        
         return (
             <div className="links-bar">
                 <Button variant="link" className="menu-action-link">
@@ -45,20 +73,7 @@ class UserLink extends Component {
                 </Button>
                 <div className="menu-action">
                     <ul>
-                        <li>
-                            <Link to="/customer/profile">User Information</Link>
-                        </li>                    
-                        {                          
-                            role === 'ROLE_ADMIN' ? (
-                                <>
-                                    <li><Link to="/manage/customer/dashboard">Management User</Link></li>
-                                    <li><Link to="/manage/product/dashboard">Management Product</Link></li>
-                                </>
-                            ) : null
-                        }
-                        <li>
-                            <Link to="/" onClick={this.logout}>Logout</Link>
-                        </li>
+                        {this.renderLi()}
                     </ul>
                 </div>
             </div>

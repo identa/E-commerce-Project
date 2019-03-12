@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {Link} from 'react-router-dom';
 
-const urlGetListProduct = 'https://dac-java.herokuapp.com/api/admin/getByPageAndSize';
 class RowItem extends Component {
     constructor(props) {
         super(props);
@@ -30,7 +29,8 @@ class RowItem extends Component {
             view : this.props.view,
             status : this.props.status,
             productImageURL : this.props.productImageURL,
-            category : this.props.category
+            categoryID : this.props.categoryID,
+            shopID : this.props.shopID
         }
 
         return (
@@ -45,8 +45,9 @@ class RowItem extends Component {
                     <img src={this.props.productImageURL} alt=''/>
                 </td>
                 <td>{this.props.status}</td>
-                <td>{this.props.description}</td>
-                <td>{this.props.category}</td>
+                <td className="td-description">{this.props.description}</td>
+                <td>{this.props.categoryName}</td>
+                <td>{this.props.shopName}</td>
                 <td>
                     <Link to={{pathname : "/manage/product/edit", state : {data : data} }}>
                         <button className="btn btn-info btn-action">

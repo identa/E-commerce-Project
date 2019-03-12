@@ -652,3 +652,9 @@ table tr td img {
     width: 100px;
     border-radius: 0;
 }
+table .td-description {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 200px;
+}

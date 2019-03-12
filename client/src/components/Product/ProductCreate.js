@@ -28,8 +28,6 @@ class ProductCreate extends Component {
             error : {
                 name : '',
                 price : '',
-                quantity : '',
-                price : '',
                 message : ''               
             }
         }
@@ -149,7 +147,6 @@ class ProductCreate extends Component {
                 shopID : this.state.shop
             }
 
-            console.log(data);
             const response = await fetch(urlCreateProduct,{
                 method : 'POST',
                 headers :{
@@ -177,6 +174,7 @@ class ProductCreate extends Component {
         const message = this.state.error.message;
         return message.length === 0;
     }
+
     validateName = () =>{
         const name = this.state.name;
         this.setState({messageShowingStyle : 'message'});

@@ -135,7 +135,7 @@ class CustomerDashboard extends Component {
                             </form>
                         </div>
                     </div>
-                    <div className="row">
+                    <div className="row table-responsive">
                         <table className="table table-bordered table-hover">
                             <tbody>
                                 <tr>
