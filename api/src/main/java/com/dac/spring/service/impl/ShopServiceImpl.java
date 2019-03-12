@@ -124,7 +124,9 @@ public class ShopServiceImpl implements ShopService {
                             entity.getView(),
                             entity.getProductImageURL(),
                             entity.getCategory().getId(),
-                            entity.getShop().getId());
+                            entity.getShop().getId(),
+                            entity.getCategory().getName(),
+                            entity.getShop().getFirstName()+ " " + entity.getShop().getLastName());
                     responses.add(response);
                 }
                 ShopPaginateProductByIdResponse response = new ShopPaginateProductByIdResponse(totalPages, responses);

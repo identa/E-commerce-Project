@@ -459,18 +459,20 @@ public class AdminServiceImpl implements AdminService {
                 List<ShopGetProductResponse> responses = new ArrayList<>();
                 for (ProductEntity entity : productList) {
 
-                        ShopGetProductResponse response = new ShopGetProductResponse(entity.getId(),
-                                entity.getName(),
-                                entity.getStatus().getName().name(),
-                                entity.getDescription(),
-                                entity.getQuantity(),
-                                entity.getOriginalPrice(),
-                                entity.getDiscount(),
-                                entity.getView(),
-                                entity.getProductImageURL(),
-                                entity.getCategory().getId(),
-                                entity.getShop().getId());
-                        responses.add(response);
+                    ShopGetProductResponse response = new ShopGetProductResponse(entity.getId(),
+                            entity.getName(),
+                            entity.getStatus().getName().name(),
+                            entity.getDescription(),
+                            entity.getQuantity(),
+                            entity.getOriginalPrice(),
+                            entity.getDiscount(),
+                            entity.getView(),
+                            entity.getProductImageURL(),
+                            entity.getCategory().getId(),
+                            entity.getShop().getId(),
+                            entity.getCategory().getName(),
+                            entity.getShop().getFirstName()+ " " + entity.getShop().getLastName());
+                    responses.add(response);
                 }
                 ShopPaginateProductByIdResponse response = new ShopPaginateProductByIdResponse(totalPages, responses);
                 result.setMessage("Products are returned successfully");

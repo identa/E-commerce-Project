@@ -22,9 +22,13 @@ public class ShopGetProductResponse {
 
     private int categoryID;
 
+    private String categoryName;
+
     private int shopID;
 
-    public ShopGetProductResponse(int id, String name, String status, String description, int quantity, double originalPrice, int discount, int view, String productImageURL, int categoryID, int shopID) {
+    private String shopName;
+
+    public ShopGetProductResponse(int id, String name, String status, String description, int quantity, double originalPrice, int discount, int view, String productImageURL, int categoryID, int shopID, String categoryName, String shopName) {
         this.id = id;
         this.name = name;
         this.status = status;
@@ -36,6 +40,8 @@ public class ShopGetProductResponse {
         this.productImageURL = productImageURL;
         this.categoryID = categoryID;
         this.shopID = shopID;
+        this.categoryName = categoryName;
+        this.shopName = shopName;
     }
 
     public int getId() {
@@ -124,5 +130,21 @@ public class ShopGetProductResponse {
 
     public void setShopID(int shopID) {
         this.shopID = shopID;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public String getShopName() {
+        return shopName;
+    }
+
+    public void setShopName(String shopName) {
+        this.shopName = shopName;
     }
 }
