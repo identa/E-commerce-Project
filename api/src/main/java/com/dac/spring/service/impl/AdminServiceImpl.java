@@ -10,6 +10,7 @@ import com.dac.spring.model.enums.RoleName;
 import com.dac.spring.model.enums.StatusName;
 import com.dac.spring.model.req.AdminCreateCampaignRequest;
 import com.dac.spring.model.req.AdminCreateProductRequest;
+import com.dac.spring.model.req.AdminUpdateCampaignRequest;
 import com.dac.spring.model.resp.AdminGetOrderResponse;
 import com.dac.spring.model.req.ShopUpdateProductRequest;
 import com.dac.spring.model.resp.AdminPaginateCategoryResponse;
@@ -741,20 +742,14 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public ServiceResult createCampaign(AdminCreateCampaignRequest request) {
         ServiceResult result = new ServiceResult();
-
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-        String startDateString = request.getStartDate();
-        String endDateString = request.getEndDate();
-
-        System.out.println(new SimpleDateFormat("yyyy/MM/dd HH:mm").format(Calendar.getInstance().getTime()));
-
         try {
-            Date startDate = formatter.parse(startDateString);
-            Date endDate = formatter.parse(endDateString);
+            Date startDate = formatter.parse(request.getStartDate());
+            Date endDate = formatter.parse(request.getEndDate());
 
             CampaignEntity campaignEntity = new CampaignEntity(request.getName(),
                     statusRepository.findByName(StatusName.valueOf(request.getStatus())),
-                   startDate,
+                    startDate,
                     endDate,
                     request.getBudget(),
                     request.getBid(),
@@ -766,7 +761,46 @@ public class AdminServiceImpl implements AdminService {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        return result;
+    }
 
+    @Override
+    public ServiceResult updateCampaign(AdminUpdateCampaignRequest request) {
+        ServiceResult result = new ServiceResult();
+        CampaignEntity campaign = campaignRepository.findById(request.getId()).orElse(null);
+        if (campaign != null){
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+            try {
+                Date startDate = formatter.parse(request.getStartDate());
+                Date endDate = formatter.parse(request.getEndDate());
+                campaign.setBid(request.getBid());
+                campaign.setBudget(request.getBudget());
+                campaign.setName(request.getName());
+                campaign.setStartDate(startDate);
+                campaign.setEndDate(endDate);
+                campaign.setDescription(request.getDescription());
+                campaign.setStatus(statusRepository.findByName(StatusName.valueOf(request.getStatus())));
+                campaign.setImageURL(request.getImageURL());
+                campaign.setProductURL(request.getProductURL());
+                campaignRepository.save(campaign);
+
+                result.setMessage("Update campaign successfully");
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceResult deleteCampaign(int id) {
+        ServiceResult result = new ServiceResult();
+        CampaignEntity campaign = campaignRepository.findById(id).orElse(null);
+            if (campaign != null){
+                campaignRepository.delete(campaign);
+
+                result.setMessage("Delete campaign successfully");
+            }
         return result;
     }
 
