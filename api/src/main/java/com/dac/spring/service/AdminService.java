@@ -1,6 +1,7 @@
 package com.dac.spring.service;
 
 import com.dac.spring.model.ServiceResult;
+import com.dac.spring.model.req.AdminCreateCampaignRequest;
 import com.dac.spring.model.req.AdminCreateProductRequest;
 import com.dac.spring.model.req.CustomerCreateOrderDetailRequest;
 import com.dac.spring.model.req.ShopUpdateProductRequest;
@@ -29,4 +30,5 @@ public interface AdminService {
     ServiceResult paginateOrderDetail(int id, int page, int size);
     ServiceResult createOrderDetail(int id, int quantity, int productID, int orderID);
     ServiceResult getAllShop();
+    ServiceResult createCampaign(AdminCreateCampaignRequest request);
 }

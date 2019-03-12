@@ -8,6 +8,7 @@ import com.dac.spring.entity.*;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
 import com.dac.spring.model.enums.StatusName;
+import com.dac.spring.model.req.AdminCreateCampaignRequest;
 import com.dac.spring.model.req.AdminCreateProductRequest;
 import com.dac.spring.model.resp.AdminGetOrderResponse;
 import com.dac.spring.model.req.ShopUpdateProductRequest;
@@ -28,9 +29,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -731,6 +732,38 @@ public class AdminServiceImpl implements AdminService {
         }
         result.setData(responses);
         result.setMessage("Get shops successfully");
+        return result;
+    }
+
+    @Override
+    public ServiceResult createCampaign(AdminCreateCampaignRequest request) {
+        ServiceResult result = new ServiceResult();
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        String dateInString = "2014-10-05T15:23:01";
+
+        try {
+
+            Date date = formatter.parse(dateInString);
+            System.out.println(date);
+
+            System.out.println("time zone : " + TimeZone.getDefault().getID());
+            System.out.println(formatter.format(date));
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+//        CampaignEntity campaignEntity = new CampaignEntity(request.getName(),
+//                statusRepository.findByName(StatusName.valueOf(request.getName())),
+//                      request.getStartDate(),
+//                request.getEndDate(),
+//                request.getBudget(),
+//                request.getBid(),
+//                request.getImageURL(),
+//                request.getTitle(),
+//                request.getDescription(),
+//                request.getProductURL());
+
         return result;
     }
 

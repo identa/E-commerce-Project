@@ -166,4 +166,9 @@ public class AdminController {
     public ResponseEntity<ServiceResult> getShop() {
         return new ResponseEntity<>(adminService.getAllShop(),HttpStatus.OK);
     }
+
+    @PutMapping("/createCampaign")
+    public ResponseEntity<ServiceResult> createCampaign(@RequestBody AdminCreateCampaignRequest request){
+        return new ResponseEntity<>(adminService.createCampaign(request),HttpStatus.OK);
+    }
 }
