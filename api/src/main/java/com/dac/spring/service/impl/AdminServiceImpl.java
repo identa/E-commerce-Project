@@ -468,7 +468,8 @@ public class AdminServiceImpl implements AdminService {
                                 entity.getDiscount(),
                                 entity.getView(),
                                 entity.getProductImageURL(),
-                                entity.getCategory().getName());
+                                entity.getCategory().getId(),
+                                entity.getShop().getId());
                         responses.add(response);
                 }
                 ShopPaginateProductByIdResponse response = new ShopPaginateProductByIdResponse(totalPages, responses);

@@ -1,6 +1,5 @@
 package com.dac.spring.model.resp;
 
-import com.dac.spring.model.enums.StatusName;
 
 public class ShopGetProductResponse {
     private int id;
@@ -21,9 +20,11 @@ public class ShopGetProductResponse {
 
     private String productImageURL;
 
-    private String category;
+    private int categoryID;
 
-    public ShopGetProductResponse(int id, String name, String status, String description, int quantity, double originalPrice, int discount, int view, String productImageURL, String category) {
+    private int shopID;
+
+    public ShopGetProductResponse(int id, String name, String status, String description, int quantity, double originalPrice, int discount, int view, String productImageURL, int categoryID, int shopID) {
         this.id = id;
         this.name = name;
         this.status = status;
@@ -33,7 +34,8 @@ public class ShopGetProductResponse {
         this.discount = discount;
         this.view = view;
         this.productImageURL = productImageURL;
-        this.category = category;
+        this.categoryID = categoryID;
+        this.shopID = shopID;
     }
 
     public int getId() {
@@ -108,11 +110,19 @@ public class ShopGetProductResponse {
         this.productImageURL = productImageURL;
     }
 
-    public String getCategory() {
-        return category;
+    public int getCategoryID() {
+        return categoryID;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategoryID(int categoryID) {
+        this.categoryID = categoryID;
+    }
+
+    public int getShopID() {
+        return shopID;
+    }
+
+    public void setShopID(int shopID) {
+        this.shopID = shopID;
     }
 }
