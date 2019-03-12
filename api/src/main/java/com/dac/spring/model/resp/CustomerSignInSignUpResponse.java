@@ -9,6 +9,8 @@ public class CustomerSignInSignUpResponse {
 
     private String role;
 
+    private String imageURL;
+
     private String token;
 
     public CustomerSignInSignUpResponse(int id, String firstName, String lastName, String role, String token) {
@@ -16,6 +18,15 @@ public class CustomerSignInSignUpResponse {
         this.firstName = firstName;
         this.lastName = lastName;
         this.role = role;
+        this.token = token;
+    }
+
+    public CustomerSignInSignUpResponse(int id, String firstName, String lastName, String role, String imageURL, String token) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.role = role;
+        this.imageURL = imageURL;
         this.token = token;
     }
 
@@ -57,5 +68,13 @@ public class CustomerSignInSignUpResponse {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
     }
 }

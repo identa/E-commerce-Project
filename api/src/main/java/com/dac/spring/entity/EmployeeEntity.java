@@ -37,9 +37,6 @@ public class EmployeeEntity {
     @OneToMany(mappedBy = "shop")
     private List<ProductEntity> productEntityList;
 
-    @OneToMany(mappedBy = "shop")
-    private List<CampaignEntity> campaignEntityList;
-
     public EmployeeEntity() {
     }
 
@@ -147,13 +144,5 @@ public class EmployeeEntity {
 
     public void setProductEntityList(List<ProductEntity> productEntityList) {
         this.productEntityList = productEntityList;
-    }
-
-    public List<CampaignEntity> getCampaignEntityList() {
-        return campaignEntityList;
-    }
-
-    public void setCampaignEntityList(List<CampaignEntity> campaignEntityList) {
-        this.campaignEntityList = campaignEntityList;
     }
 }

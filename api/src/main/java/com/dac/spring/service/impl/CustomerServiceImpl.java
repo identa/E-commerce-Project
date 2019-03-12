@@ -147,12 +147,14 @@ public class CustomerServiceImpl implements CustomerService {
                         encoder.encode(password),
                         activeStatus);
                 employee.setRole(roleRepository.findByName(RoleName.ROLE_CUSTOMER));
+                employee.setImageURL(ShopConst.DEFAULT_AVATAR);
                 employeeRepository.save(employee);
                 String jwt = authenticationWithJwt(email, password);
                 CustomerSignInSignUpResponse response = new CustomerSignInSignUpResponse(employee.getId(),
                         employee.getFirstName(),
                         employee.getLastName(),
                         employee.getRole().getName().name(),
+                        employee.getImageURL(),
                         jwt);
 
                 saveJwt(jwt);
@@ -180,6 +182,7 @@ public class CustomerServiceImpl implements CustomerService {
                             customer.getFirstName(),
                             customer.getLastName(),
                             customer.getRole().getName().name(),
+                            customer.getImageURL(),
                             jwt);
 
                     saveJwt(jwt);

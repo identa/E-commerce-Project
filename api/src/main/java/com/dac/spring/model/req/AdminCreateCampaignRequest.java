@@ -1,28 +1,13 @@
-package com.dac.spring.entity;
+package com.dac.spring.model.req;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
-import javax.persistence.*;
-import java.util.Date;
-
-@Entity
-@Table(name = "campaign")
-public class CampaignEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-
+public class AdminCreateCampaignRequest {
     private String name;
-    @ManyToOne
-    @JoinColumn(name = "statusID")
-    private StatusEntity status;
 
-    @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm")
-    private Date startDate;
+    private String status;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    private Date endDate;
+    private String startDate;
+
+    private String endDate;
 
     private double budget;
 
@@ -36,30 +21,6 @@ public class CampaignEntity {
 
     private String productURL;
 
-    public CampaignEntity() {
-    }
-
-    public CampaignEntity(String name, StatusEntity status, Date startDate, Date endDate, double budget, double bid, String imageURL, String title, String description, String productURL) {
-        this.name = name;
-        this.status = status;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.budget = budget;
-        this.bid = bid;
-        this.imageURL = imageURL;
-        this.title = title;
-        this.description = description;
-        this.productURL = productURL;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
@@ -68,27 +29,27 @@ public class CampaignEntity {
         this.name = name;
     }
 
-    public StatusEntity getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(StatusEntity status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    public Date getStartDate() {
+    public String getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public String getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
 

@@ -8,6 +8,7 @@ import com.dac.spring.entity.*;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
 import com.dac.spring.model.enums.StatusName;
+import com.dac.spring.model.req.AdminCreateCampaignRequest;
 import com.dac.spring.model.req.AdminCreateProductRequest;
 import com.dac.spring.model.resp.AdminGetOrderResponse;
 import com.dac.spring.model.req.ShopUpdateProductRequest;
@@ -28,9 +29,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -70,6 +71,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     OrderDetailPaginationRepository orderDetailPaginationRepository;
+
+    @Autowired
+    CampaignRepository campaignRepository;
 
     @Autowired
     JWTRepository jwtRepository;
@@ -731,6 +735,38 @@ public class AdminServiceImpl implements AdminService {
         }
         result.setData(responses);
         result.setMessage("Get shops successfully");
+        return result;
+    }
+
+    @Override
+    public ServiceResult createCampaign(AdminCreateCampaignRequest request) {
+        ServiceResult result = new ServiceResult();
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+        String startDateString = request.getStartDate();
+        String endDateString = request.getEndDate();
+
+        System.out.println(new SimpleDateFormat("yyyy/MM/dd HH:mm").format(Calendar.getInstance().getTime()));
+
+        try {
+            Date startDate = formatter.parse(startDateString);
+            Date endDate = formatter.parse(endDateString);
+
+            CampaignEntity campaignEntity = new CampaignEntity(request.getName(),
+                    statusRepository.findByName(StatusName.valueOf(request.getStatus())),
+                   startDate,
+                    endDate,
+                    request.getBudget(),
+                    request.getBid(),
+                    request.getImageURL(),
+                    request.getTitle(),
+                    request.getDescription(),
+                    request.getProductURL());
+            campaignRepository.save(campaignEntity);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         return result;
     }
 
