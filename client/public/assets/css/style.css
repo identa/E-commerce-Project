@@ -658,3 +658,56 @@ table .td-description {
     overflow: hidden;
     max-width: 200px;
 }
+/*-----------------------------------campaign management--------------------------*/
+.campaign-container{
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    justify-content: center;
+    padding: 20px;
+    background: white;
+}
+.card{
+    margin-bottom: 20px;
+}
+.custom-card-header{
+    display: inline-flex;
+    justify-content: space-between;
+}
+.custom-card-header h5 {
+    cursor: pointer;
+}
+.pull-right button {
+    background: none;
+    border: none;
+}
+.pull-right button i {
+    font-size: 26px;
+}
+.custom-form-row{
+    text-align: right;
+}
+.custom-style{
+    display: inherit
+}
+.custom-style select{
+    display: block;
+    width: 30%;
+}
+.custom-style input[type="text"]{
+    width: 40%
+}
+.input-left{
+    width: 40%;
+}
+.input-group {
+    width: 40%;
+}
+.form-contain-button{
+    display: flex;
+    justify-content: flex-end;
+}
+.img-preview img{
+    width: 100%;
+    height: auto;
+}

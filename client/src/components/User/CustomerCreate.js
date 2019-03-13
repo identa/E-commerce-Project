@@ -343,6 +343,7 @@ class CustomerCreate extends Component {
                                                     </div>
                                                     
                                                 </div>
+                                                
                                                 <div className="form-group row">
                                                     <div className="offset-4 col-4 img-preview">
                                                         <img src='' id='preview' alt=''/>
