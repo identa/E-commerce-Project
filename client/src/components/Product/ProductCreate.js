@@ -25,6 +25,8 @@ class ProductCreate extends Component {
             shopList : [],
             productImageUrl : 'https://i.imgur.com/YYJJRJh.jpg',
             messageShowingStyle : 'message',
+            showLoading : 'collapse',
+            isButtonEnable : false,
             isRedirect : false,
             error : {
                 name : '',
@@ -135,6 +137,10 @@ class ProductCreate extends Component {
     formSubmit = async (event) =>{
         event.preventDefault();
         if(this.validateName() && this.validatePrice() && this.validateMessage()){
+            this.setState({
+                showLoading : 'show',
+                isButtonEnable : true
+            });
             const imgURL = await this.getImageUrl();
             this.setState({productImageUrl : imgURL});
 
@@ -169,10 +175,13 @@ class ProductCreate extends Component {
             })
             let result = await response.json();
             if(result.status === 'SUCCESS'){
+                this.setState({showLoading : 'collapse'});
                 this.setState({isRedirect : true});
             }
             else if(result.status === 'FAILED'){
                 this.setState(prevState =>({
+                    showLoading : 'collapse',
+                    isButtonEnable : false,
                     error :{
                         ...prevState.error,
                         message : result.message
@@ -401,7 +410,7 @@ class ProductCreate extends Component {
                                                             </Link>
                                                         </button>
 
-                                                        <button name="submit" type="submit" className="btn btn-success">Create</button>
+                                                        <button name="submit" type="submit" className="btn btn-success" disabled={this.state.isButtonEnable}>Create</button>
                                                     </div>                                               
                                                 </div>
 
@@ -409,6 +418,13 @@ class ProductCreate extends Component {
                                                     <div className="offset-4 col-8">
                                                         <div className={this.state.messageShowingStyle}>
                                                             {this.state.error.message}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="form-group row">
+                                                    <div className="offset-4 col-8">
+                                                        <div className={this.state.showLoading}>
+                                                            <i className="fa fa-spinner fa-spin"/>Loading....
                                                         </div>
                                                     </div>
                                                 </div>

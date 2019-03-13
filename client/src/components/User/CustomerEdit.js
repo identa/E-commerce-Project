@@ -18,6 +18,8 @@ class CustomerEdit extends Component {
             status : this.props.location.state.data.status,
             imageURL : this.props.location.state.data.imageURL,
             messageShowingStyle : 'message',
+            showLoading : 'collapse',
+            isButtonEnable : false,
             isRedirect : false,
             error : {
                 firstName : '',
@@ -185,6 +187,10 @@ class CustomerEdit extends Component {
     formSubmit = async (event) =>{
         event.preventDefault();
         if(this.validateFirstName() && this.validateLastName() && this.validatePassword() && this.validateMessage()){
+            this.setState({
+                showLoading : 'show',
+                isButtonEnable : true
+            });
             const imgURL = await this.getImageUrl();
             if(imgURL !== ''){
                 this.setState({imageURL : imgURL});
@@ -209,10 +215,13 @@ class CustomerEdit extends Component {
             });
             const result = await response.json();
             if(result.status === 'SUCCESS'){
+                this.setState({showLoading : 'collapse'});
                 this.setState({isRedirect : true});
             }
             else if (result.status === 'FAILED'){
                 this.setState(prevState =>({
+                    showLoading : 'collapse',
+                    isButtonEnable : false,
                     error :{
                         ...prevState.error,
                         message : result.message
@@ -327,7 +336,7 @@ class CustomerEdit extends Component {
                                                             </Link>
                                                         </button>
 
-                                                        <button name="submit" type="submit" className="btn btn-info">Edit</button>
+                                                        <button name="submit" type="submit" className="btn btn-info" disabled={this.state.isButtonEnable}>Edit</button>
                                                     </div>                                               
                                                 </div>
 
@@ -335,6 +344,14 @@ class CustomerEdit extends Component {
                                                     <div className="offset-4 col-8">
                                                         <div className={this.state.messageShowingStyle}>
                                                             {this.state.error.message}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="form-group row">
+                                                    <div className="offset-4 col-8">
+                                                        <div className={this.state.showLoading}>
+                                                            <i className="fa fa-spinner fa-spin"/>Loading....
                                                         </div>
                                                     </div>
                                                 </div>

@@ -18,6 +18,8 @@ class CustomerCreate extends Component {
             role : 'ROLE_CUSTOMER',
             imageURL : 'https://i.imgur.com/2G9UXB2.png',
             messageShowingStyle : 'message',
+            showLoading : 'collapse',
+            isButtonEnable : false,
             isRedirect : false,
             error : {
                 firstName : '',
@@ -224,7 +226,10 @@ class CustomerCreate extends Component {
     formSubmit = async (event) =>{
         event.preventDefault();
         if(this.validateFirstName() && this.validateLastName() && this.validateEmail() && this.validatePassword() && this.validateMessage()){
-
+            this.setState({
+                showLoading : 'show',
+                isButtonEnable : true
+            });
             const imgURL = await this.getImageUrl();
             this.setState({imageURL : imgURL});
             const data = {
@@ -247,10 +252,13 @@ class CustomerCreate extends Component {
                                 });
             let result = await response.json();
             if(result.status === 'SUCCESS'){
+                this.setState({showLoading : 'collapse'});
                 this.setState({isRedirect : true});
             }
             else if(result.status === 'FAILED'){
                 this.setState(prevState =>({
+                    showLoading : 'collapse',
+                    isButtonEnable : false,
                     error :{
                         ...prevState.error,
                         message : result.message
@@ -358,7 +366,7 @@ class CustomerCreate extends Component {
                                                             </Link>
                                                         </button>
 
-                                                        <button name="submit" type="submit" className="btn btn-success">Create</button>
+                                                        <button name="submit" type="submit" className="btn btn-success" disabled={this.state.isButtonEnable}>Create</button>
                                                     </div>                                               
                                                 </div>
 
@@ -366,6 +374,13 @@ class CustomerCreate extends Component {
                                                     <div className="offset-4 col-8">
                                                         <div className={this.state.messageShowingStyle}>
                                                             {this.state.error.message}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="form-group row">
+                                                    <div className="offset-4 col-8">
+                                                        <div className={this.state.showLoading}>
+                                                            <i className="fa fa-spinner fa-spin"/>Loading....
                                                         </div>
                                                     </div>
                                                 </div>
