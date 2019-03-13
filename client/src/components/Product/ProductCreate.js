@@ -3,9 +3,10 @@ import {Link,Redirect} from 'react-router-dom';
 
 const clientId = '78bc0dc37ea9d00';
 const urlImgur = 'https://api.imgur.com/3/image';
-const urlCreateProduct = 'https://dac-java.herokuapp.com/api/admin/createProduct';
-const urlGetCategories = 'https://dac-java.herokuapp.com/api/customer/getCategoryTree';
-const urlGetShop = 'https://dac-java.herokuapp.com/api/admin/getShop';
+const urlCreateProductByAdmin = 'https://dac-project.herokuapp.com/api/admin/createProduct';
+const urlCreateProductByShop = 'https://dac-project.herokuapp.com/api/shop/createProduct';
+const urlGetCategories = 'https://dac-project.herokuapp.com/api/customer/getCategoryTree';
+const urlGetShop = 'https://dac-project.herokuapp.com/api/admin/getShop';
 
 class ProductCreate extends Component {
     constructor(props) {
@@ -50,22 +51,24 @@ class ProductCreate extends Component {
             }
         })
 
-        fetch(urlGetShop, {
-            method : 'GET',
-            headers : {
-                'Content-Type' : 'application/json',
-                'Authorization' : localStorage.token
-            }
-        })
-        .then(res=>res.json())
-        .then(data =>{
-            if(data.status === 'SUCCESS'){
-                this.setState({shopList : data.data});                
-            }
-            else if(data.status === 'FAILED'){
-                console.log(data.message);
-            }
-        })
+        if (localStorage.role === 'ROLE_ADMIN'){
+            fetch(urlGetShop, {
+                method : 'GET',
+                headers : {
+                    'Content-Type' : 'application/json',
+                    'Authorization' : localStorage.token
+                }
+            })
+            .then(res=>res.json())
+            .then(data =>{
+                if(data.status === 'SUCCESS'){
+                    this.setState({shopList : data.data});                
+                }
+                else if(data.status === 'FAILED'){
+                    console.log(data.message);
+                }
+            })
+        }
     }
     
     onChange = (event) =>{
@@ -144,10 +147,19 @@ class ProductCreate extends Component {
                 discount : this.state.discount,
                 productImageURL : this.state.productImageUrl,
                 categoryID : this.state.category,
-                shopID : this.state.shop
+                shopID : ''
             }
 
-            const response = await fetch(urlCreateProduct,{
+            let url = '';
+            if(localStorage.role === 'ROLE_ADMIN'){
+                url = urlCreateProductByAdmin;
+                data.shopID = this.state.shop;
+            }
+            else if (localStorage.role === 'ROLE_SHOP'){
+                url = urlCreateProductByShop;
+                data.shopID = localStorage.id;
+            }
+            const response = await fetch(url,{
                 method : 'POST',
                 headers :{
                     'Content-Type' : 'application/json',
@@ -223,6 +235,7 @@ class ProductCreate extends Component {
 
     render() {
         const isRedirect = this.state.isRedirect;
+        const role = localStorage.role;
 
         if(isRedirect){
             return(
@@ -276,9 +289,7 @@ class ProductCreate extends Component {
                                                                required="required" 
                                                                onChange={this.onChange} 
                                                                onFocus={this.onFocus}/>
-                                                       
                                                     </div>
-                                                    
                                                 </div>                                           
                                                 
                                                 <div className="form-group row">
@@ -353,19 +364,22 @@ class ProductCreate extends Component {
                                                     </div>
                                                 </div>
 
-                                                <div className="form-group row">
-                                                    <label className="col-4 col-form-label">Shop *</label> 
-                                                    <div className="col-8">
-                                                        <select name="shop" className="custom-select" onChange={this.onChange}>
-                                                        {
-                                                            this.state.shopList.map((value,key)=>{
-                                                                return (<option key={key} value={value.id}>{value.name}</option>)
-                                                            })
-                                                        } 
-                                                        </select>
-                                                    </div>
-                                                </div>
-
+                                                {
+                                                    role === 'ROLE_ADMIN' ? (<div className="form-group row">
+                                                                                <label className="col-4 col-form-label">Shop *</label> 
+                                                                                <div className="col-8">
+                                                                                    <select name="shop" className="custom-select" onChange={this.onChange}>
+                                                                                    {
+                                                                                        this.state.shopList.map((value,key)=>{
+                                                                                            return (<option key={key} value={value.id}>{value.name}</option>)
+                                                                                        })
+                                                                                    } 
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>)
+                                                                            : null
+                                                }
+                                                
                                                 <div className="form-group row">
                                                     <label className="col-4 col-form-label">Avatar</label> 
                                                     <div className="col-4">

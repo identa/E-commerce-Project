@@ -3,9 +3,10 @@ import {Link,Redirect} from 'react-router-dom';
 
 const clientId = '78bc0dc37ea9d00';
 const urlImgur = 'https://api.imgur.com/3/image';
-const urlEditProduct = 'https://dac-java.herokuapp.com/api/admin/updateProduct';
-const urlGetCategories = 'https://dac-java.herokuapp.com/api/customer/getCategoryTree';
-const urlGetShop = 'https://dac-java.herokuapp.com/api/admin/getShop';
+const urlEditProductByAdmin = 'https://dac-project.herokuapp.com/api/admin/updateProduct';
+const urlEditProductByShop = 'https://dac-project.herokuapp.com/api/shop/updateProduct';
+const urlGetCategories = 'https://dac-project.herokuapp.com/api/customer/getCategoryTree';
+const urlGetShop = 'https://dac-project.herokuapp.com/api/admin/getShop';
 
 class ProductEdit extends Component {
 
@@ -53,23 +54,25 @@ class ProductEdit extends Component {
             }
         })
 
-        //get list shop
-        fetch(urlGetShop, {
-            method : 'GET',
-            headers : {
-                'Content-Type' : 'application/json',
-                'Authorization' : localStorage.token
-            }
-        })
-        .then(res=>res.json())
-        .then(data =>{
-            if(data.status === 'SUCCESS'){
-                this.setState({shopList : data.data});                
-            }
-            else if(data.status === 'FAILED'){
-                console.log(data.message);
-            }
-        })
+        if(localStorage.role === 'ROLE_ADMIN'){
+            //get list shop
+            fetch(urlGetShop, {
+                method : 'GET',
+                headers : {
+                    'Content-Type' : 'application/json',
+                    'Authorization' : localStorage.token
+                }
+            })
+            .then(res=>res.json())
+            .then(data =>{
+                if(data.status === 'SUCCESS'){
+                    this.setState({shopList : data.data});                
+                }
+                else if(data.status === 'FAILED'){
+                    console.log(data.message);
+                }
+            })
+        }
     }
     
     onChange = (event)=>{
@@ -203,8 +206,16 @@ class ProductEdit extends Component {
                 categoryID : this.state.categoryID,
                 shopID : this.state.shopID
             }
-
-            const response = await fetch(urlEditProduct,{
+            let url = '';
+            if(localStorage.role === 'ROLE_ADMIN'){
+                url = urlEditProductByAdmin;
+                data.shopID = this.state.shop;
+            }
+            else if (localStorage.role === 'ROLE_SHOP'){
+                url = urlEditProductByShop;
+                data.shopID = localStorage.id;
+            }
+            const response = await fetch(url,{
                 method : 'PUT',
                 headers :{
                     'Content-Type' : 'application/json',
@@ -229,7 +240,7 @@ class ProductEdit extends Component {
 
     render() {
         const isRedirect = this.state.isRedirect;
-
+        const role = localStorage.role;
         if(isRedirect){
             return (
                 <Redirect to='/manage/product/dashboard'/>
@@ -357,18 +368,21 @@ class ProductEdit extends Component {
                                                     </div>
                                                 </div>
 
-                                                <div className="form-group row">
-                                                    <label className="col-4 col-form-label">Shop *</label> 
-                                                    <div className="col-8">
-                                                        <select name="shop" className="custom-select" value={this.state.shopID} onChange={this.onChange}>
-                                                        {
-                                                            this.state.shopList.map((value,key)=>{
-                                                                return (<option key={key} value={value.id}>{value.name}</option>)
-                                                            })
-                                                        } 
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                                {
+                                                    role === 'ROLE_ADMIN' ? (<div className="form-group row">
+                                                                                <label className="col-4 col-form-label">Shop *</label> 
+                                                                                <div className="col-8">
+                                                                                    <select name="shop" className="custom-select" onChange={this.onChange}>
+                                                                                    {
+                                                                                        this.state.shopList.map((value,key)=>{
+                                                                                            return (<option key={key} value={value.id}>{value.name}</option>)
+                                                                                        })
+                                                                                    } 
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>) 
+                                                                            : null
+                                                }
 
                                                 <div className="form-group row">
                                                     <label className="col-4 col-form-label">Avatar</label> 

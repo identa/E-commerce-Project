@@ -3,10 +3,10 @@ import {Link,Redirect} from 'react-router-dom';
 
 const clientId = '78bc0dc37ea9d00';
 const urlImgur = 'https://api.imgur.com/3/image';
-const urlGetProfile = 'https://dac-java.herokuapp.com/api/customer/getById';
-const urlGetShopProfile = 'https://dac-java.herokuapp.com/api/shop/getInfoById';
-const urlEditProfile = 'https://dac-java.herokuapp.com/api/customer/update';
-const urlEditShopProfile = 'https://dac-java.herokuapp.com/api/shop/update';
+const urlGetProfile = 'https://dac-project.herokuapp.com/api/customer/getById';
+const urlGetShopProfile = 'https://dac-project.herokuapp.com/api/shop/getInfoById';
+const urlEditProfile = 'https://dac-project.herokuapp.com/api/customer/update';
+const urlEditShopProfile = 'https://dac-project.herokuapp.com/api/shop/update';
 class Profile extends Component {
 
     constructor(props) {

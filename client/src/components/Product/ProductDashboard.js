@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import {Link} from 'react-router-dom';
 import {Modal,Button} from 'react-bootstrap';
 import RowItem from './RowItem';
-import {Redirect} from 'react-router-dom';
 
-const urlGetListProduct = 'https://dac-java.herokuapp.com/api/admin/paginateProduct';
-const urlDeleteProduct = 'https://dac-java.herokuapp.com/api/admin/deleteProduct';
+const urlGetListProductByRoleAdmin = 'https://dac-project.herokuapp.com/api/admin/paginateProduct';
+const urlDeleteProduct = 'https://dac-project.herokuapp.com/api/admin/deleteProduct';
+const urlGetListProductByRoleShop = 'https://dac-project.herokuapp.com/api/shop/paginateProduct';
 class ProductDashboard extends Component {
     constructor(props) {
         super(props);
@@ -33,8 +33,9 @@ class ProductDashboard extends Component {
 
     componentDidMount() {
         const dataGet = {
+            id : localStorage.id,
             page : '1',
-            size : this.state.itemPerPage
+            size : this.state.itemPerPage,
         }
 
         this.fetchData(dataGet);
@@ -42,8 +43,14 @@ class ProductDashboard extends Component {
     
     fetchData = (data) =>{
         const token = localStorage.token;
-        
-        fetch(urlGetListProduct, {
+        let url = '';
+        if(localStorage.role === 'ROLE_ADMIN'){
+            url = urlGetListProductByRoleAdmin;
+        }
+        else if (localStorage.role === 'ROLE_SHOP'){
+            url = urlGetListProductByRoleShop;
+        }
+        fetch(url, {
             method : 'POST',
             body : JSON.stringify(data),
             headers : {
@@ -78,10 +85,10 @@ class ProductDashboard extends Component {
     handlePaging = (event) => {
         const pageId = Number(event.target.id.replace('page-',''));
         const dataSend = {
+            id: localStorage.id,
             page : pageId,
             size : this.state.itemPerPage
         };
-        console.log(dataSend);
         this.fetchData(dataSend);
     }
     
@@ -113,6 +120,7 @@ class ProductDashboard extends Component {
 
     render() {
         const productList= this.state.productList;
+        const role = localStorage.role;
         return (
             <div className="main">
                 <div className="dashboard-container">
@@ -144,7 +152,9 @@ class ProductDashboard extends Component {
                                     <th>Status</th>
                                     <th>Description</th>
                                     <th>Category</th>
-                                    <th>Shop</th>
+                                    {
+                                        role !== 'ROLE_SHOP' ? (<th>Shop</th>) : null
+                                    }
                                     <th>&nbsp;</th>
                                 </tr>
                                 {

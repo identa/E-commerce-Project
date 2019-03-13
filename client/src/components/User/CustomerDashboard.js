@@ -3,8 +3,8 @@ import RowItem from './RowItem';
 import {Link} from 'react-router-dom';
 import {Modal,Button} from 'react-bootstrap';
 
-const urlGetListCustomer = 'https://dac-java.herokuapp.com/api/admin/getByPageAndSize';
-const urlDeleteCustomer = 'https://dac-java.herokuapp.com/api/admin/delete';
+const urlGetListCustomer = 'https://dac-project.herokuapp.com/api/admin/getByPageAndSize';
+const urlDeleteCustomer = 'https://dac-project.herokuapp.com/api/admin/delete';
 class CustomerDashboard extends Component {
     constructor(props) {
         super(props);

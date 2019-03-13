@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import {Link} from 'react-router-dom';
-const urlGetCategories = 'https://dac-java.herokuapp.com/api/customer/getCategoryTree';
+const urlGetCategories = 'https://dac-project.herokuapp.com/api/customer/getCategoryTree';
 
 class MobileCategoryList extends Component {
     constructor(props) {

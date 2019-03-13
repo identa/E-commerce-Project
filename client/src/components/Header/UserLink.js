@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {Button} from 'react-bootstrap';
 import {Link,Redirect} from 'react-router-dom';
-const url = 'https://dac-java.herokuapp.com/api/customer/signout';
+const url = 'https://dac-project.herokuapp.com/api/customer/signout';
 class UserLink extends Component {
     constructor(props) {
         super(props);

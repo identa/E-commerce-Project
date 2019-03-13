@@ -19,6 +19,7 @@ class RowItem extends Component {
     }
     
     render() {
+        const role = localStorage.role;
         const data = {
             pid : this.props.pid,
             name : this.props.name,
@@ -47,7 +48,9 @@ class RowItem extends Component {
                 <td>{this.props.status}</td>
                 <td className="td-description">{this.props.description}</td>
                 <td>{this.props.categoryName}</td>
-                <td>{this.props.shopName}</td>
+                {
+                    role !== 'ROLE_SHOP' ? (<td>{this.props.shopName}</td>) : null
+                }
                 <td>
                     <Link to={{pathname : "/manage/product/edit", state : {data : data} }}>
                         <button className="btn btn-info btn-action">
@@ -55,10 +58,13 @@ class RowItem extends Component {
                             Edit
                         </button>
                     </Link>
-                    <button className="btn btn-danger btn-action" onClick={this.handleShowModal}>
-                        <i className="fa fa-remove" />
-                        Delete
-                    </button>
+                    {
+                        role === 'ROLE_ADMIN' ? (<button className="btn btn-danger btn-action" onClick={this.handleShowModal}>
+                                                    <i className="fa fa-remove" />
+                                                    Delete
+                                                </button>) 
+                                               : null
+                    }
                 </td>
             </tr>
         );

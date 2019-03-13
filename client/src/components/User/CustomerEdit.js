@@ -3,7 +3,7 @@ import {Link,Redirect} from 'react-router-dom';
 
 const clientId = '78bc0dc37ea9d00';
 const urlImgur = 'https://api.imgur.com/3/image';
-const urlEditCustomer = 'https://dac-java.herokuapp.com/api/admin/update';
+const urlEditCustomer = 'https://dac-project.herokuapp.com/api/admin/update';
 class CustomerEdit extends Component {
     constructor(props) {
         super(props);
