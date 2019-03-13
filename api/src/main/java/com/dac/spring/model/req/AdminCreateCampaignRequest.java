@@ -1,6 +1,8 @@
 package com.dac.spring.model.req;
 
 public class AdminCreateCampaignRequest {
+    private int shopID;
+
     private String name;
 
     private String status;
@@ -20,6 +22,14 @@ public class AdminCreateCampaignRequest {
     private String description;
 
     private String productURL;
+
+    public int getShopID() {
+        return shopID;
+    }
+
+    public void setShopID(int shopID) {
+        this.shopID = shopID;
+    }
 
     public String getName() {
         return name;

@@ -77,6 +77,9 @@ public class AdminServiceImpl implements AdminService {
     CampaignRepository campaignRepository;
 
     @Autowired
+    CampaignPaginationRepository campaignPaginationRepository;
+
+    @Autowired
     JWTRepository jwtRepository;
 
     @Autowired
@@ -740,9 +743,46 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    public ServiceResult paginateCampaign(int page, int size) {
+        ServiceResult result = new ServiceResult();
+
+        Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
+        Page<CampaignEntity> campaignList = campaignPaginationRepository.findAllByStatusName(info, StatusName.ACTIVE);
+        boolean isCampaignListEmpty = campaignList.isEmpty();
+        if (!isCampaignListEmpty) {
+            int totalPages = campaignList.getTotalPages();
+            List<AdminGetCampaignResponse> responses = new ArrayList<>();
+            for (CampaignEntity entity : campaignList) {
+
+
+                AdminGetCampaignResponse response = new AdminGetCampaignResponse(entity.getShop().getId(),
+                        entity.getName(),
+                       entity.getStatus().getName().name(),
+                        entity.getStartDate().toString().replaceAll("-", "/"),
+                        entity.getEndDate().toString().replaceAll("-", "/"),
+                        entity.getBudget(),
+                        entity.getBid());
+                response.setImageURL(entity.getImageURL());
+                response.setTitle(entity.getTitle());
+                response.setDescription(entity.getDescription());
+                response.setProductURL(entity.getProductURL());
+                responses.add(response);
+
+            }
+            AdminPaginateCampaignResponse response = new AdminPaginateCampaignResponse(totalPages, responses);
+            result.setMessage("Campaigns are returned successfully");
+            result.setData(response);
+        } else {
+            result.setMessage("Campaigns list is empty");
+            result.setStatus(ServiceResult.Status.FAILED);
+        }
+        return result;
+    }
+
+    @Override
     public ServiceResult createCampaign(AdminCreateCampaignRequest request) {
         ServiceResult result = new ServiceResult();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
         try {
             Date startDate = formatter.parse(request.getStartDate());
             Date endDate = formatter.parse(request.getEndDate());
@@ -753,10 +793,19 @@ public class AdminServiceImpl implements AdminService {
                     endDate,
                     request.getBudget(),
                     request.getBid(),
-                    request.getImageURL(),
-                    request.getTitle(),
-                    request.getDescription(),
-                    request.getProductURL());
+                    request.getImageURL());
+            campaignEntity.setShop(employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(request.getShopID(),
+                    false,
+                    StatusName.ACTIVE,
+                    RoleName.ROLE_SHOP));
+            campaignEntity.setTitle(request.getTitle());
+            campaignEntity.setDescription(request.getDescription());
+            campaignEntity.setProductURL(request.getProductURL());
+            campaignEntity.setShop(employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(request.getShopID(),
+                    false,
+                    StatusName.ACTIVE,
+                    RoleName.ROLE_SHOP));
+
             campaignRepository.save(campaignEntity);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -769,7 +818,7 @@ public class AdminServiceImpl implements AdminService {
         ServiceResult result = new ServiceResult();
         CampaignEntity campaign = campaignRepository.findById(request.getId()).orElse(null);
         if (campaign != null){
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
             try {
                 Date startDate = formatter.parse(request.getStartDate());
                 Date endDate = formatter.parse(request.getEndDate());

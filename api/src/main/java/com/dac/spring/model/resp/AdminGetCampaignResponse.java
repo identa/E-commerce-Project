@@ -1,28 +1,15 @@
-package com.dac.spring.entity;
+package com.dac.spring.model.resp;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
-import javax.persistence.*;
-import java.util.Date;
-
-@Entity
-@Table(name = "campaign")
-public class CampaignEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+public class AdminGetCampaignResponse {
+    private int shopID;
 
     private String name;
-    @ManyToOne
-    @JoinColumn(name = "statusID")
-    private StatusEntity status;
 
-    @Temporal(TemporalType.DATE)
-    private Date startDate;
+    private String status;
 
-    @Temporal(TemporalType.DATE)
-    private Date endDate;
+    private String startDate;
+
+    private String endDate;
 
     private double budget;
 
@@ -36,29 +23,22 @@ public class CampaignEntity {
 
     private String productURL;
 
-    @ManyToOne
-    @JoinColumn(name = "shopID")
-    private EmployeeEntity shop;
-
-    public CampaignEntity() {
-    }
-
-    public CampaignEntity(String name, StatusEntity status, Date startDate, Date endDate, double budget, double bid, String imageURL) {
+    public AdminGetCampaignResponse(int shopID, String name, String status, String startDate, String endDate, double budget, double bid) {
+        this.shopID = shopID;
         this.name = name;
         this.status = status;
         this.startDate = startDate;
         this.endDate = endDate;
         this.budget = budget;
         this.bid = bid;
-        this.imageURL = imageURL;
     }
 
-    public int getId() {
-        return id;
+    public int getShopID() {
+        return shopID;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setShopID(int shopID) {
+        this.shopID = shopID;
     }
 
     public String getName() {
@@ -69,27 +49,27 @@ public class CampaignEntity {
         this.name = name;
     }
 
-    public StatusEntity getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(StatusEntity status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    public Date getStartDate() {
+    public String getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public String getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
 
@@ -139,13 +119,5 @@ public class CampaignEntity {
 
     public void setProductURL(String productURL) {
         this.productURL = productURL;
-    }
-
-    public EmployeeEntity getShop() {
-        return shop;
-    }
-
-    public void setShop(EmployeeEntity shop) {
-        this.shop = shop;
     }
 }

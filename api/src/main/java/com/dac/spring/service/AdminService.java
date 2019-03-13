@@ -28,6 +28,7 @@ public interface AdminService {
     ServiceResult paginateOrderDetail(int id, int page, int size);
     ServiceResult createOrderDetail(int id, int quantity, int productID, int orderID);
     ServiceResult getAllShop();
+    ServiceResult paginateCampaign(int page, int size);
     ServiceResult createCampaign(AdminCreateCampaignRequest request);
     ServiceResult updateCampaign(AdminUpdateCampaignRequest request);
     ServiceResult deleteCampaign(int id);

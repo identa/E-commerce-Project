@@ -167,8 +167,24 @@ public class AdminController {
         return new ResponseEntity<>(adminService.getAllShop(),HttpStatus.OK);
     }
 
+    @PostMapping("/paginateCampaign")
+    public ResponseEntity<ServiceResult> paginateCampaign(@RequestBody AdminPaginateUserRequest request){
+        return new ResponseEntity<>(adminService.paginateCampaign(request.getPage(),
+                request.getSize()),HttpStatus.OK);
+    }
+
     @PostMapping("/createCampaign")
     public ResponseEntity<ServiceResult> createCampaign(@RequestBody AdminCreateCampaignRequest request){
         return new ResponseEntity<>(adminService.createCampaign(request),HttpStatus.OK);
+    }
+
+    @PutMapping("/updateCampaign")
+    public ResponseEntity<ServiceResult> updateCampaign(@RequestBody AdminUpdateCampaignRequest request){
+        return new ResponseEntity<>(adminService.updateCampaign(request),HttpStatus.OK);
+    }
+
+    @DeleteMapping("/deleteCampaign")
+    public ResponseEntity<ServiceResult> deleteCampaign(@RequestBody AdminDeleteCategoryRequest request){
+        return new ResponseEntity<>(adminService.deleteCampaign(request.getId()),HttpStatus.OK);
     }
 }
