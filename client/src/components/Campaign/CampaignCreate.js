@@ -283,7 +283,7 @@ class CampaignCreate extends Component {
                                     </div>
                                     
                                     <div className="form-group form-contain-button">
-                                        <button className="btn"><Link to="/">Back to list</Link></button>
+                                        <button className="btn"><Link to="/manage/campaign/dashboard">Back to list</Link></button>
                                         <button type="submit" className="btn btn-info">Save</button>
                                     </div>
                                 </form>

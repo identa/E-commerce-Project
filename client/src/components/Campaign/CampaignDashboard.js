@@ -2,8 +2,118 @@ import React, { Component } from 'react';
 import RowItem from './RowItem';
 import {Modal,Button} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
+
+const urlGetListCampaignByAdmin = "https://dac-project.herokuapp.com/api/admin/paginateCampaign";
+const urlGetListCampaignByShop = "https://dac-project.herokuapp.com/api/shop/paginateCampaign";
+const urlDeleteCampaign= 'https://dac-project.herokuapp.com/api/admin/deleteCampaign';
 class CampaignDashboard extends Component {
+    constructor(props) {
+        super(props);
+        
+        this.state = {
+            itemPerPage : 5,
+            totalPages : 0,
+            campaignResponseList : [],
+            isModalShowing : false,
+            campaignId : 0
+        }
+    }
+
+    componentDidMount() {
+        const dataGet = {
+            id : localStorage.id,
+            page : '1',
+            size : this.state.itemPerPage
+        }
+        this.fetchData(dataGet);
+    }
+    
+    fetchData = (data) =>{
+        const token = localStorage.token;
+        let url = '';
+        if(localStorage.role === 'ROLE_ADMIN'){
+            url = urlGetListCampaignByAdmin;
+        }
+        else if (localStorage.role ==='ROLE_SHOP'){
+            url = urlGetListCampaignByShop;
+        }
+
+        fetch(url, {
+            method : 'POST',
+            headers : {
+                'Content-Type' : 'application/json',
+                'Authorization' : token
+            }, 
+            body : JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(result =>{
+            if(result.status === 'SUCCESS'){
+                this.setState({
+                    totalPages : result.data.totalPages,
+                    campaignResponseList : result.data.campaignResponseList
+                });
+            }
+        })
+    }
+
+    handleShowModal = () => {
+        this.setState({isModalShowing : true});
+    }
+
+    handleCloseModal = () => {
+        this.setState({isModalShowing: false });
+    }
+
+    getCampaignId = (campaignId) =>{
+        this.setState({campaignId : campaignId});
+    }
+    
+    createPageIndex = () =>{
+        const totalPages = this.state.totalPages;
+        let ul = [];
+        for (let i = 0; i < totalPages; i++){
+            ul.push(<li key={i}>
+                <a className="page-link" id={'page-'+`${i + 1}`} href="javascript:void(0)" onClick={(e) => this.handlePaging(e)}>{`${i + 1}`}</a>
+            </li>);
+        }
+        return ul;
+    }
+
+    handlePaging = (event) => {
+        const pageId = Number(event.target.id.replace('page-',''));
+        const dataSend = {
+            id: localStorage.id,
+            page : pageId,
+            size : this.state.itemPerPage
+        };
+        this.fetchData(dataSend);
+    }
+
+    onDeleteCampaign = () =>{
+        fetch(urlDeleteCampaign, {
+            method : 'DELETE',
+            headers :{
+                'Content-Type' : 'application/json',
+                'Authorization' : localStorage.token
+            },
+            body : JSON.stringify({
+                id : this.state.campaignId
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.status === 'SUCCESS') {
+                const list = this.state.campaignResponseList.filter(element => element.id !== this.state.campaignId);
+                this.setState({
+                    isModalShowing : false,
+                    campaignResponseList : list
+                });
+            }
+        })
+    }
     render() {
+        const campaignResponseList = this.state.campaignResponseList;
         return (
             <div className="main">
                 <div className="dashboard-container">
@@ -26,48 +136,54 @@ class CampaignDashboard extends Component {
                             <tbody>
                                 <tr>
                                     <th>Id</th>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
-                                    <th>Email</th>
-                                    <th>Avatar</th>
-                                    <th>Role</th>
+                                    <th>Campaign Name</th>
                                     <th>Status</th>
+                                    <th>Start date</th>
+                                    <th>End date</th>
+                                    <th>Budget</th>
+                                    <th>Bid Amount</th>
+                                    <th>Creative preview</th>
+                                    <th>Title</th>
+                                    <th>Description</th>
                                     <th>&nbsp;</th>
                                 </tr>
-                                {/* {
-                                    userResponseList.map((value,key) => {
+                                {
+                                    campaignResponseList.map((value,key) => {
                                         return <RowItem key={key} 
-                                                        uid={value.id} 
-                                                        firstName={value.firstName}
-                                                        lastName={value.lastName}
-                                                        email={value.email}
+                                                        campaignId={value.id} 
+                                                        campaignName={value.name}
                                                         status={value.status}
-                                                        role={value.role}
-                                                        imageURL={value.imageURL}
+                                                        startDate={value.startDate}
+                                                        endDate={value.endDate}
+                                                        budget={value.budget}
+                                                        bidAmount={value.bid}
+                                                        creativePreview={value.imageURL}
+                                                        title={value.title}
+                                                        description={value.description}
                                                         handleShowModal={this.handleShowModal}
-                                                        getCustomerId={this.getCustomerId}/>
+                                                        getCampaignId={this.getCampaignId}/>
                                     })
-                                } */}
+                                }
                             </tbody>
                         </table>
                                                 
                         <ul className="pagination">
-                            {/* {this.createPageIndex()}  */}
+                            {this.createPageIndex()} 
                         </ul>
                     </div>
                 </div>
-                {/* <Modal show={this.state.isModalShowing} onHide={this.handleCloseModal}>
+                <Modal show={this.state.isModalShowing} onHide={this.handleCloseModal}>
                     <div className='modal-confirm'>
                         <Modal.Header closeButton />
                         <Modal.Body>
                             <p>Do you want to delete this campaign ?</p>
                         </Modal.Body>
                         <Modal.Footer>
-                            <Button variant='primary' onClick={this.onDeleteCustomer}>Yes</Button> 
+                            <Button variant='primary' onClick={this.onDeleteCampaign}>Yes</Button> 
                             <Button variant='secondary' onClick={this.handleCloseModal}>No</Button>
                         </Modal.Footer>
                     </div>
-                </Modal> */}
+                </Modal>
             </div>
         );
     }

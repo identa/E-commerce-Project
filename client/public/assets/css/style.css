@@ -711,3 +711,11 @@ table .td-description {
     width: 100%;
     height: auto;
 }
+.td-creative {
+    max-width: 100px;
+}
+.img-creative{
+    width: 100%;
+    height: auto;
+    border-radius: 0;
+}
