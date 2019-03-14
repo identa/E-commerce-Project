@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CampaignPaginationRepository extends PagingAndSortingRepository<CampaignEntity, Integer> {
     Page<CampaignEntity> findAllByStatusName(Pageable pageable,StatusName statusName);
+    Page<CampaignEntity> findAllByShopIdAndStatusName(Pageable pageable,int id, StatusName statusName);
 }

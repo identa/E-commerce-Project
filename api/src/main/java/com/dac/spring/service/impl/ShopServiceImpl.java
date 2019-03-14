@@ -49,6 +49,8 @@ public class ShopServiceImpl implements ShopService {
     OrderDetailRepository orderDetailRepository;
 
     @Autowired
+    CampaignPaginationRepository campaignPaginationRepository;
+    @Autowired
     PasswordEncoder encoder;
 
     @Override
@@ -304,6 +306,44 @@ public class ShopServiceImpl implements ShopService {
                 result.setMessage("Product not found");
                 result.setStatus(ServiceResult.Status.FAILED);
             }
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceResult paginateCampaign(int id, int page, int size) {
+        ServiceResult result = new ServiceResult();
+        Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
+        Page<CampaignEntity> campaignList = campaignPaginationRepository.findAllByShopIdAndStatusName(info, id, StatusName.ACTIVE);
+        boolean isCampaignListEmpty = campaignList.isEmpty();
+        if (!isCampaignListEmpty) {
+            int totalPages = campaignList.getTotalPages();
+            List<AdminGetCampaignResponse> responses = new ArrayList<>();
+            for (CampaignEntity entity : campaignList) {
+
+
+                AdminGetCampaignResponse response = new AdminGetCampaignResponse(
+                        entity.getId(),
+                        entity.getShop().getId(),
+                        entity.getName(),
+                        entity.getStatus().getName().name(),
+                        entity.getStartDate().toString().replaceAll("-", "/"),
+                        entity.getEndDate().toString().replaceAll("-", "/"),
+                        entity.getBudget());
+                response.setBid(entity.getBid());
+                response.setImageURL(entity.getImageURL());
+                response.setTitle(entity.getTitle());
+                response.setDescription(entity.getDescription());
+                response.setProductURL(entity.getProductURL());
+                responses.add(response);
+
+            }
+            AdminPaginateCampaignResponse response = new AdminPaginateCampaignResponse(totalPages, responses);
+            result.setMessage("Campaigns are returned successfully");
+            result.setData(response);
+        } else {
+            result.setMessage("Campaigns list is empty");
+            result.setStatus(ServiceResult.Status.FAILED);
         }
         return result;
     }

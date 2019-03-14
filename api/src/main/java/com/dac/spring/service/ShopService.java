@@ -13,4 +13,5 @@ public interface ShopService {
     ServiceResult deleteProduct(int id);
     ServiceResult updateOrder(int id, String status);
     ServiceResult updateOrderDetail(int id, int quantity, int productID);
+    ServiceResult paginateCampaign(int id, int page, int size);
 }

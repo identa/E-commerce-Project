@@ -2,6 +2,7 @@ package com.dac.spring.controller;
 
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.req.*;
+import com.dac.spring.model.resp.ShopPaginateProductByIdResponse;
 import com.dac.spring.service.CustomerService;
 import com.dac.spring.service.ShopService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,5 +73,12 @@ public class ShopController {
         return new ResponseEntity<>(shopService.updateOrderDetail(request.getId(),
                 request.getQuantity(),
                 request.getProductID()),HttpStatus.OK);
+    }
+
+    @PostMapping("/paginateCampaign")
+    public ResponseEntity<ServiceResult> paginateCampaign(@RequestBody ShopPaginateCampaignRequest request){
+        return new ResponseEntity<>(shopService.paginateCampaign(request.getId(),
+                request.getPage(),
+                request.getSize()),HttpStatus.OK);
     }
 }
