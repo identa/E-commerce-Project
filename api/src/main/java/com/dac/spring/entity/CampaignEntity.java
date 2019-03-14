@@ -53,6 +53,15 @@ public class CampaignEntity {
         this.imageURL = imageURL;
     }
 
+    public CampaignEntity(String name, StatusEntity status, Date startDate, Date endDate, double budget, double bid) {
+        this.name = name;
+        this.status = status;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.budget = budget;
+        this.bid = bid;
+    }
+
     public int getId() {
         return id;
     }

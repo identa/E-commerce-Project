@@ -755,13 +755,15 @@ public class AdminServiceImpl implements AdminService {
             for (CampaignEntity entity : campaignList) {
 
 
-                AdminGetCampaignResponse response = new AdminGetCampaignResponse(entity.getShop().getId(),
+                AdminGetCampaignResponse response = new AdminGetCampaignResponse(
+                        entity.getId(),
+                        entity.getShop().getId(),
                         entity.getName(),
                        entity.getStatus().getName().name(),
                         entity.getStartDate().toString().replaceAll("-", "/"),
                         entity.getEndDate().toString().replaceAll("-", "/"),
-                        entity.getBudget(),
-                        entity.getBid());
+                        entity.getBudget());
+                response.setBid(entity.getBid());
                 response.setImageURL(entity.getImageURL());
                 response.setTitle(entity.getTitle());
                 response.setDescription(entity.getDescription());
@@ -792,8 +794,10 @@ public class AdminServiceImpl implements AdminService {
                     startDate,
                     endDate,
                     request.getBudget(),
-                    request.getBid(),
-                    request.getImageURL());
+                    request.getBid());
+            if (request.getImageURL().equals("")) {
+                campaignEntity.setImageURL(ShopConst.DEFAULT_AVATAR);
+            }else campaignEntity.setImageURL(request.getImageURL());
             campaignEntity.setShop(employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(request.getShopID(),
                     false,
                     StatusName.ACTIVE,
@@ -807,6 +811,23 @@ public class AdminServiceImpl implements AdminService {
                     RoleName.ROLE_SHOP));
 
             campaignRepository.save(campaignEntity);
+
+            AdminGetCampaignResponse response = new AdminGetCampaignResponse(
+                    campaignEntity.getId(),
+                    campaignEntity.getShop().getId(),
+                    campaignEntity.getName(),
+                    campaignEntity.getStatus().getName().name(),
+                    campaignEntity.getStartDate().toString().replaceAll("-", "/"),
+                    campaignEntity.getEndDate().toString().replaceAll("-", "/"),
+                    campaignEntity.getBudget());
+            response.setBid(campaignEntity.getBid());
+            response.setImageURL(campaignEntity.getImageURL());
+            response.setTitle(campaignEntity.getTitle());
+            response.setDescription(campaignEntity.getDescription());
+            response.setProductURL(campaignEntity.getProductURL());
+
+            result.setMessage("Successfully");
+            result.setData(response);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -833,7 +854,21 @@ public class AdminServiceImpl implements AdminService {
                 campaign.setProductURL(request.getProductURL());
                 campaignRepository.save(campaign);
 
+                AdminGetCampaignResponse response = new AdminGetCampaignResponse(campaign.getId(),
+                        campaign.getShop().getId(),
+                        campaign.getName(),
+                        campaign.getStatus().getName().name(),
+                        campaign.getStartDate().toString().replaceAll("-", "/"),
+                        campaign.getEndDate().toString().replaceAll("-", "/"),
+                        campaign.getBudget());
+                response.setBid(campaign.getBid());
+                response.setImageURL(campaign.getImageURL());
+                response.setTitle(campaign.getTitle());
+                response.setDescription(campaign.getDescription());
+                response.setProductURL(campaign.getProductURL());
+
                 result.setMessage("Update campaign successfully");
+                result.setData(response);
             } catch (ParseException e) {
                 e.printStackTrace();
             }

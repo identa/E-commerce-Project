@@ -1,6 +1,8 @@
 package com.dac.spring.model.resp;
 
 public class AdminGetCampaignResponse {
+    private int id;
+
     private int shopID;
 
     private String name;
@@ -31,6 +33,16 @@ public class AdminGetCampaignResponse {
         this.endDate = endDate;
         this.budget = budget;
         this.bid = bid;
+    }
+
+    public AdminGetCampaignResponse(int id, int shopID, String name, String status, String startDate, String endDate, double budget) {
+        this.id = id;
+        this.shopID = shopID;
+        this.name = name;
+        this.status = status;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.budget = budget;
     }
 
     public int getShopID() {
@@ -119,5 +131,13 @@ public class AdminGetCampaignResponse {
 
     public void setProductURL(String productURL) {
         this.productURL = productURL;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
