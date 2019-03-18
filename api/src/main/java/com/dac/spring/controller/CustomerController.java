@@ -111,4 +111,9 @@ public class CustomerController extends HttpServlet {
         return new ResponseEntity<>(customerService.paginateProduct(request.getPage(),
                 request.getSize()),HttpStatus.OK);
     }
+
+    @GetMapping("/getCampaign")
+    public ResponseEntity<ServiceResult> getCampaign(){
+        return new ResponseEntity<>(customerService.getCampaign(),HttpStatus.OK);
+    }
 }

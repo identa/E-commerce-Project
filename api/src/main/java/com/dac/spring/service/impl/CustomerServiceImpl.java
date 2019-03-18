@@ -26,7 +26,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -58,6 +61,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     JWTRepository jwtRepository;
+
+    @Autowired
+    CampaignRepository campaignRepository;
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -108,8 +114,7 @@ public class CustomerServiceImpl implements CustomerService {
         CategoryEntity category = categoryRepository.findById(categoryEntity.getParentID()).orElse(null);
         if (category != null) {
             response.setParentCategory(category.getName());
-        }
-        else response.setParentCategory(null);
+        } else response.setParentCategory(null);
 
         return response;
     }
@@ -122,7 +127,7 @@ public class CustomerServiceImpl implements CustomerService {
         return responseList;
     }
 
-    private JWTEntity saveJwt(String token){
+    private JWTEntity saveJwt(String token) {
         JWTEntity jwtEntity = new JWTEntity();
         jwtEntity.setToken(token);
         return jwtRepository.save(jwtEntity);
@@ -174,7 +179,7 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult result = new ServiceResult();
         EmployeeEntity customer = employeeRepository.findByEmail(email).orElse(null);
         if (customer != null) {
-            if (!customer.isDeleted()){
+            if (!customer.isDeleted()) {
                 boolean isPasswordChecked = encoder.matches(password, customer.getPassword());
                 if (isPasswordChecked) {
                     String jwt = authenticationWithJwt(email, password);
@@ -192,7 +197,7 @@ public class CustomerServiceImpl implements CustomerService {
                     result.setStatus(ServiceResult.Status.FAILED);
                     result.setMessage(CustomerSignInConst.EMAIL_PASSWORD_WRONG_FORMAT);
                 }
-            }else {
+            } else {
                 result.setStatus(ServiceResult.Status.FAILED);
                 result.setMessage("Cannot sign in with this account");
             }
@@ -210,10 +215,10 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult result = new ServiceResult();
         String token = request.getHeader(CustomerConst.AUTH).split(" ")[1];
         JWTEntity jwt = jwtRepository.findByToken(token).orElse(null);
-        if (jwt != null){
+        if (jwt != null) {
             jwtRepository.delete(jwt);
             result.setMessage("Sign out successfully");
-        }else {
+        } else {
             result.setStatus(ServiceResult.Status.FAILED);
             result.setMessage("Cannot sign out");
         }
@@ -250,10 +255,10 @@ public class CustomerServiceImpl implements CustomerService {
             if (firstName != null && lastName != null && password != null) {
                 customer.setFirstName(firstName);
                 customer.setLastName(lastName);
-                if (!password.equals("")){
+                if (!password.equals("")) {
                     customer.setPassword(encoder.encode(password));
                 }
-                if (imageURL.equals("")){
+                if (imageURL.equals("")) {
                     customer.setImageURL(ShopConst.DEFAULT_AVATAR);
                 }
                 customer.setImageURL(imageURL);
@@ -279,8 +284,8 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult getCategoryTree() {
         ServiceResult result = new ServiceResult();
         List<CustomerGetCategoryTreeResponse> categoryResponses = getCategoryTreeResponseList(categoryRepository.findAllByParentID(0));
-            result.setMessage("Get category tree successfully");
-            result.setData(categoryResponses);
+        result.setMessage("Get category tree successfully");
+        result.setData(categoryResponses);
         return result;
     }
 
@@ -288,8 +293,8 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult getAllCategory() {
         ServiceResult result = new ServiceResult();
         List<CustomerGetAllCategoryResponse> categoryResponses = getAllCategoryResponseList(categoryRepository.findAll());
-            result.setMessage("Get category successfully");
-            result.setData(categoryResponses);
+        result.setMessage("Get category successfully");
+        result.setData(categoryResponses);
         return result;
     }
 
@@ -299,14 +304,14 @@ public class CustomerServiceImpl implements CustomerService {
         Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
         Page<ProductEntity> productList = productPaginationRepository.
                 findAllByDeletedAndStatusNameAndCategoryIdAndQuantityGreaterThan(
-                info, false, StatusName.ACTIVE, id, 0);
+                        info, false, StatusName.ACTIVE, id, 0);
         boolean isProductListEmpty = productList.isEmpty();
         if (!isProductListEmpty) {
             int totalPages = productList.getTotalPages();
             List<CustomerGetProductByCatResponse> responses = new ArrayList<>();
             for (ProductEntity entity : productList) {
                 CategoryEntity category = categoryRepository.findById(id).orElse(null);
-                if (category != null){
+                if (category != null) {
                     CustomerGetProductByCatResponse response = new CustomerGetProductByCatResponse(entity.getId(),
                             entity.getName(),
                             entity.getDescription(),
@@ -334,8 +339,7 @@ public class CustomerServiceImpl implements CustomerService {
         EmployeeEntity employee = employeeRepository.findByEmail(getUserNameFromJwtToken(authHeader)).orElse(null);
         if (employee != null) {
             result.setData(employee.getRole().getName().name());
-        }
-        else result.setStatus(ServiceResult.Status.FAILED);
+        } else result.setStatus(ServiceResult.Status.FAILED);
         return result;
     }
 
@@ -348,26 +352,26 @@ public class CustomerServiceImpl implements CustomerService {
             OrderEntity createdOrder = new OrderEntity(statusRepository.findByName(StatusName.PAUSE), customer);
             orderRepository.save(createdOrder);
             List<OrderDetailEntity> orderDetailEntityList = new ArrayList<>();
-            double totalPrice =0;
-            for (CustomerCreateOrderDetailRequest detailRequest : orderDetailRequests){
+            double totalPrice = 0;
+            for (CustomerCreateOrderDetailRequest detailRequest : orderDetailRequests) {
                 ProductEntity product = productRepository.findByIdAndDeletedAndStatusName(detailRequest.getProductID(),
                         false, StatusName.ACTIVE);
-                if (product != null){
-                    if (product.getQuantity() >= detailRequest.getQuantity()){
+                if (product != null) {
+                    if (product.getQuantity() >= detailRequest.getQuantity()) {
                         OrderDetailEntity orderDetail = new OrderDetailEntity(
-                                calculatePrice(detailRequest.getQuantity(),product.getOriginalPrice(),product.getDiscount()),
+                                calculatePrice(detailRequest.getQuantity(), product.getOriginalPrice(), product.getDiscount()),
                                 detailRequest.getQuantity(),
                                 product,
                                 createdOrder);
                         orderDetailEntityList.add(orderDetail);
-                        product.setQuantity(product.getQuantity()-detailRequest.getQuantity());
-                        totalPrice+= calculatePrice(detailRequest.getQuantity(),product.getOriginalPrice(),product.getDiscount());
-                    }else {
+                        product.setQuantity(product.getQuantity() - detailRequest.getQuantity());
+                        totalPrice += calculatePrice(detailRequest.getQuantity(), product.getOriginalPrice(), product.getDiscount());
+                    } else {
                         result.setStatus(ServiceResult.Status.FAILED);
-                        result.setMessage("The quantity of " + product.getName() +" is exceeded");
+                        result.setMessage("The quantity of " + product.getName() + " is exceeded");
                         return result;
                     }
-                }else {
+                } else {
                     result.setStatus(ServiceResult.Status.FAILED);
                     result.setMessage("Product not found");
                     return result;
@@ -376,7 +380,7 @@ public class CustomerServiceImpl implements CustomerService {
             orderRepository.save(createdOrder);
             orderDetailRepository.saveAll(orderDetailEntityList);
             List<CustomerCreateOrderDetailResponse> orderDetailResponses = new ArrayList<>();
-            for (OrderDetailEntity orderDetail : orderDetailEntityList){
+            for (OrderDetailEntity orderDetail : orderDetailEntityList) {
                 CustomerCreateOrderDetailResponse response = new CustomerCreateOrderDetailResponse(orderDetail.getId(),
                         orderDetail.getPrice(),
                         orderDetail.getQuantity(),
@@ -389,7 +393,7 @@ public class CustomerServiceImpl implements CustomerService {
                     orderDetailResponses);
             result.setMessage("You ordered successfully");
             result.setData(orderResponse);
-        }else {
+        } else {
             result.setStatus(ServiceResult.Status.FAILED);
             result.setMessage(CustomerConst.CUSTOMER_NOT_FOUND);
         }
@@ -400,10 +404,10 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult deleteOrder(int id) {
         ServiceResult result = new ServiceResult();
         OrderEntity order = orderRepository.findByIdAndDeletedAndStatusName(id, false, StatusName.ACTIVE);
-        if (order != null){
+        if (order != null) {
             orderRepository.delete(order);
             result.setMessage("Delete order successfully");
-        }else {
+        } else {
             result.setMessage("Cannot delete this order");
             result.setStatus(ServiceResult.Status.FAILED);
         }
@@ -414,19 +418,19 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult searchProduct(String name, int page, int size) {
         ServiceResult result = new ServiceResult();
 
-        PageRequest pageRequest = new PageRequest(page-1, size);
+        PageRequest pageRequest = new PageRequest(page - 1, size);
         List<ProductEntity> list = productRepository.findAll();
         List<ProductEntity> useList = new ArrayList<>();
-        for (ProductEntity productEntity :list){
+        for (ProductEntity productEntity : list) {
             String subName = productEntity.getName().replaceAll("\\s+", "");
-            if (StringUtils.containsIgnoreCase(subName,name.replaceAll("\\s+", ""))){
+            if (StringUtils.containsIgnoreCase(subName, name.replaceAll("\\s+", ""))) {
                 useList.add(productEntity);
             }
         }
         int start = (int) pageRequest.getOffset();
-        int end = (start + size) > useList.size() ? useList.size() : (start + size );
-        if (start<end){
-        Page<ProductEntity> productList = new PageImpl<>(useList.subList(start,end), pageRequest, useList.size());
+        int end = (start + size) > useList.size() ? useList.size() : (start + size);
+        if (start < end) {
+            Page<ProductEntity> productList = new PageImpl<>(useList.subList(start, end), pageRequest, useList.size());
             List<CustomerGetProductByCatResponse> responses = new ArrayList<>();
             for (ProductEntity product : productList) {
                 CustomerGetProductByCatResponse response = new CustomerGetProductByCatResponse(product.getId(),
@@ -440,8 +444,7 @@ public class CustomerServiceImpl implements CustomerService {
             }
             result.setData(responses);
             result.setMessage(CustomerConst.PRODUCT_SUCCESS);
-        }
-        else{
+        } else {
             result.setStatus(ServiceResult.Status.FAILED);
             result.setMessage("This page is empty");
         }
@@ -451,33 +454,49 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult paginateProduct(int page, int size) {
         ServiceResult result = new ServiceResult();
-            Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
-            Page<ProductEntity> productList = productPaginationRepository.
-                    findAllByDeletedAndStatusNameAndQuantityGreaterThan(info, false, StatusName.ACTIVE, 0);
-            boolean isProductListEmpty = productList.isEmpty();
-            if (!isProductListEmpty) {
-                int totalPages = productList.getTotalPages();
-                List<CustomerPaginateProductResponse> responses = new ArrayList<>();
-                for (ProductEntity entity : productList) {
-                    CustomerPaginateProductResponse response = new CustomerPaginateProductResponse(entity.getId(),
-                            entity.getName(),
-                            entity.getOriginalPrice(),
-                            entity.getDiscount(),
-                            entity.getProductImageURL());
-                    responses.add(response);
-                }
-                CustomerPaginateProductListResponse response = new CustomerPaginateProductListResponse(totalPages, responses);
-                result.setMessage(CustomerConst.PRODUCT_SUCCESS);
-                result.setData(response);
-            } else {
-                result.setMessage("Product list is empty");
-                result.setStatus(ServiceResult.Status.FAILED);
+        Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
+        Page<ProductEntity> productList = productPaginationRepository.
+                findAllByDeletedAndStatusNameAndQuantityGreaterThan(info, false, StatusName.ACTIVE, 0);
+        boolean isProductListEmpty = productList.isEmpty();
+        if (!isProductListEmpty) {
+            int totalPages = productList.getTotalPages();
+            List<CustomerPaginateProductResponse> responses = new ArrayList<>();
+            for (ProductEntity entity : productList) {
+                CustomerPaginateProductResponse response = new CustomerPaginateProductResponse(entity.getId(),
+                        entity.getName(),
+                        entity.getOriginalPrice(),
+                        entity.getDiscount(),
+                        entity.getProductImageURL());
+                responses.add(response);
             }
+            CustomerPaginateProductListResponse response = new CustomerPaginateProductListResponse(totalPages, responses);
+            result.setMessage(CustomerConst.PRODUCT_SUCCESS);
+            result.setData(response);
+        } else {
+            result.setMessage("Product list is empty");
+            result.setStatus(ServiceResult.Status.FAILED);
+        }
         return result;
     }
 
-    private double calculatePrice(int quantity, double price, double discount){
-        return (price - price*discount/100)*quantity;
+    @Override
+    public ServiceResult getCampaign() {
+        ServiceResult result = new ServiceResult();
+        Date currentDate = new Date();
+        List<CampaignEntity> list = getCampaignList(currentDate, currentDate);
+        List<CustomerGetCampaignResponse> responses = new ArrayList<>();
+        for (CampaignEntity campaign : list) {
+            CustomerGetCampaignResponse response = new CustomerGetCampaignResponse(campaign.getTitle(),
+                    campaign.getImageURL(),
+                    campaign.getProductURL());
+            responses.add(response);
+        }
+        result.setData(responses);
+        return result;
+    }
+
+    private double calculatePrice(int quantity, double price, double discount) {
+        return (price - price * discount / 100) * quantity;
     }
 
     private String getUserNameFromJwtToken(String token) {
@@ -485,5 +504,9 @@ public class CustomerServiceImpl implements CustomerService {
                 .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)
                 .getBody().getSubject();
+    }
+
+    private List<CampaignEntity> getCampaignList(Date startDate, Date endDate) {
+        return campaignRepository.getCampaign(startDate, endDate, StatusName.ACTIVE);
     }
 }
