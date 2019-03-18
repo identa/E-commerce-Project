@@ -3,6 +3,7 @@ package com.dac.spring.controller;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.req.*;
 import com.dac.spring.model.resp.ShopPaginateProductByIdResponse;
+import com.dac.spring.service.AdminService;
 import com.dac.spring.service.CustomerService;
 import com.dac.spring.service.ShopService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,9 @@ public class ShopController {
 
     @Autowired
     CustomerService customerService;
+
+    @Autowired
+    AdminService adminService;
 
     @GetMapping("/getInfoById")
     public ResponseEntity<ServiceResult> getInfoById(HttpServletRequest request) {
@@ -80,5 +84,20 @@ public class ShopController {
         return new ResponseEntity<>(shopService.paginateCampaign(request.getId(),
                 request.getPage(),
                 request.getSize()),HttpStatus.OK);
+    }
+
+    @PostMapping("/createCampaign")
+    public ResponseEntity<ServiceResult> createCampaign(@RequestBody AdminCreateCampaignRequest request){
+        return new ResponseEntity<>(adminService.createCampaign(request),HttpStatus.OK);
+    }
+
+    @PutMapping("/updateCampaign")
+    public ResponseEntity<ServiceResult> updateCampaign(@RequestBody AdminUpdateCampaignRequest request){
+        return new ResponseEntity<>(adminService.updateCampaign(request),HttpStatus.OK);
+    }
+
+    @DeleteMapping("/deleteCampaign")
+    public ResponseEntity<ServiceResult> deleteCampaign(@RequestBody AdminDeleteCategoryRequest request){
+        return new ResponseEntity<>(adminService.deleteCampaign(request.getId()),HttpStatus.OK);
     }
 }
