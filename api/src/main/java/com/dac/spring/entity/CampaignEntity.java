@@ -37,7 +37,7 @@ public class CampaignEntity {
     private String productURL;
 
     @ManyToOne
-    @JoinColumn(name = "shopID")
+    @JoinColumn(name = "shopID", nullable = false)
     private EmployeeEntity shop;
 
     public CampaignEntity() {

@@ -753,8 +753,6 @@ public class AdminServiceImpl implements AdminService {
             int totalPages = campaignList.getTotalPages();
             List<AdminGetCampaignResponse> responses = new ArrayList<>();
             for (CampaignEntity entity : campaignList) {
-
-
                 AdminGetCampaignResponse response = new AdminGetCampaignResponse(
                         entity.getId(),
                         entity.getShop().getId(),
@@ -817,8 +815,8 @@ public class AdminServiceImpl implements AdminService {
                     campaignEntity.getShop().getId(),
                     campaignEntity.getName(),
                     campaignEntity.getStatus().getName().name(),
-                    campaignEntity.getStartDate().toString(),
-                    campaignEntity.getEndDate().toString(),
+                    formatter.format(campaignEntity.getStartDate()),
+                    formatter.format(campaignEntity.getEndDate()),
                     campaignEntity.getBudget());
             response.setBid(campaignEntity.getBid());
             response.setImageURL(campaignEntity.getImageURL());
@@ -858,8 +856,8 @@ public class AdminServiceImpl implements AdminService {
                         campaign.getShop().getId(),
                         campaign.getName(),
                         campaign.getStatus().getName().name(),
-                        campaign.getStartDate().toString(),
-                        campaign.getEndDate().toString(),
+                        formatter.format(campaign.getStartDate()),
+                        formatter.format(campaign.getEndDate()),
                         campaign.getBudget());
                 response.setBid(campaign.getBid());
                 response.setImageURL(campaign.getImageURL());
