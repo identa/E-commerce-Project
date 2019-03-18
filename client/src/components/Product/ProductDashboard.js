@@ -125,19 +125,22 @@ class ProductDashboard extends Component {
             <div className="main">
                 <div className="dashboard-container">
                     <h2>Product Management Dashboard</h2>
-                    <div className="row btn-create">
-                        <Link to="/manage/product/create">
-                            <button className="btn btn-success btn-action">
-                                <i className="fa fa-plus"></i>Create
-                            </button>
-                        </Link>
-                        <div className="form-search">
-                            <form>
-                                <label>Search : </label>
-                                <input type="text" name="keyword"/>
-                            </form>
-                        </div>
-                    </div>
+                    {
+                        role === 'ROLE_SHOP' ? (<div className="row btn-create">
+                                                    <Link to="/manage/product/create">
+                                                        <button className="btn btn-success btn-action">
+                                                            <i className="fa fa-plus"></i>Create
+                                                        </button>
+                                                    </Link>
+                                                    <div className="form-search">
+                                                        <form>
+                                                            <label>Search : </label>
+                                                            <input type="text" name="keyword"/>
+                                                        </form>
+                                                    </div>
+                                                </div>) : null
+                    }
+                    
                     <div className="row table-responsive">
                         <table className="table table-bordered table-hover">
                             <tbody>

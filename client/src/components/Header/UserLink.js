@@ -38,15 +38,15 @@ class UserLink extends Component {
                 return (<>
                             <li><Link to="/customer/profile">User Information</Link></li>
                             <li><Link to="/manage/customer/dashboard">Management User</Link></li>
-                            <li><Link to="/manage/campaign/dashboard">Management Campaign</Link></li>
                             <li><Link to="/manage/product/dashboard">Management Product</Link></li>
+                            <li><Link to="/manage/campaign/dashboard">Management Campaign</Link></li>
                             <li><Link to="/" onClick={this.logout}>Logout</Link></li>
                         </>)
             case 'ROLE_SHOP':
                 return (<>
                     <li><Link to="/customer/profile">User Information</Link></li>
-                    <li><Link to="/manage/campaign/dashboard">Management Campaign</Link></li>
                     <li><Link to="/manage/product/dashboard">Management Product</Link></li>
+                    <li><Link to="/manage/campaign/dashboard">Management Campaign</Link></li>
                     <li><Link to="/" onClick={this.logout}>Logout</Link></li>
                 </>)
             default :

@@ -121,32 +121,6 @@ class Profile extends Component {
         }
     }
 
-    validatePassword = () =>{
-        const password = this.state.password;
-        this.setState({messageShowingStyle : 'message'});
-        if(password === null){
-            return true;
-        }
-        else if(password.length > 0 && password.length < 6){
-            this.setState(prevState =>({
-                error :{
-                    ...prevState.error,
-                    password : 'Password at least 6 characters!'
-                }
-            }));
-            return false;
-        }
-        else {
-            this.setState(prevState =>({
-                error :{
-                    ...prevState.error,
-                    password : ''
-                }
-            }));
-            return true;
-        }
-    }
-
     onFocus = (event) =>{
         let name = event.target.name;
         this.setState({messageShowingStyle : 'message-hidden'});
@@ -209,7 +183,7 @@ class Profile extends Component {
     formSubmit = async (event) =>{
         event.preventDefault();
 
-        if(this.validateFirstName() && this.validateLastName() && this.validatePassword() && this.validateMessage()){
+        if(this.validateFirstName() && this.validateLastName() && this.validateMessage()){
             const imgURL = await this.getImageUrl();
             if(imgURL !== ''){
                 this.setState({imageURL : imgURL});
@@ -301,15 +275,7 @@ class Profile extends Component {
                                                         <input id="email" value={this.state.email} className="form-control" readOnly />                             
                                                     </div>
                                                 </div>
-                                                <div className="form-group row">
-                                                    <label htmlFor="username" className="col-4 col-form-label">Password*</label> 
-                                                    <div className="col-8">
-                                                        <input id="password" name="password" placeholder="Password" className="form-control" type="password" onChange={this.onChange} onFocus={this.onFocus}/>
-                                                        <div className="message">
-                                                            {this.state.error.password}
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                               
                                                 <div className="form-group row">
                                                     <label className="col-4 col-form-label">Avatar</label> 
                                                     <div className="col-4">

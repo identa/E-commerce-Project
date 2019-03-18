@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import RowItem from './RowItem';
 import {Modal,Button} from 'react-bootstrap';
-import {Link} from 'react-router-dom';
+import {Link,Redirect} from 'react-router-dom';
 
 const urlGetListCampaignByAdmin = "https://dac-project.herokuapp.com/api/admin/paginateCampaign";
 const urlGetListCampaignByShop = "https://dac-project.herokuapp.com/api/shop/paginateCampaign";
@@ -15,7 +15,8 @@ class CampaignDashboard extends Component {
             totalPages : 0,
             campaignResponseList : [],
             isModalShowing : false,
-            campaignId : 0
+            campaignId : 0,
+            isRedirect : false
         }
     }
 
@@ -114,6 +115,11 @@ class CampaignDashboard extends Component {
     }
     render() {
         const campaignResponseList = this.state.campaignResponseList;
+        const isRedirect = this.state.isRedirect;
+
+        if(isRedirect) {
+            return <Redirect to='/'/>
+        }
         return (
             <div className="main">
                 <div className="dashboard-container">

@@ -19,61 +19,68 @@ class CampaignCreate extends Component {
             imageURL : '',
             finalURL : '',
             dropdownArrowStyle : {
-                detail : 'fa fa-angle-down',
-                schedule : 'fa fa-angle-down',
-                budget: 'fa fa-angle-down',
-                bidding : 'fa fa-angle-down',
-                creative : 'fa fa-angle-down'
+                detail : 'fa fa-angle-up',
+                schedule : 'fa fa-angle-up',
+                budget: 'fa fa-angle-up',
+                bidding : 'fa fa-angle-up',
+                creative : 'fa fa-angle-up'
+            },
+            error : {
+                name : '',
+                message : '',
             }
         }
     }
     
+    onChange = (event) =>{
+        this.setState({[event.target.name] : event.target.value});
+    }
     onOpenComponent = (event) =>{
         let ariaControls = event.target.getAttribute("aria-controls").replace("collapse","");
         let coppyState = JSON.parse(JSON.stringify(this.state.dropdownArrowStyle));
         switch(ariaControls) {
             case 'Detail' :
-                if(coppyState.detail === 'fa fa-angle-down'){
-                    coppyState.detail = 'fa fa-angle-up';
+                if(coppyState.detail === 'fa fa-angle-up'){
+                    coppyState.detail = 'fa fa-angle-down';
                 }
                 else {
-                    coppyState.detail = 'fa fa-angle-down';
+                    coppyState.detail = 'fa fa-angle-up';
                 }
                 this.setState({dropdownArrowStyle : coppyState});
                 break;
             case 'Schedule' :
-                if(coppyState.schedule === 'fa fa-angle-down'){
-                    coppyState.schedule = 'fa fa-angle-up';
+                if(coppyState.schedule === 'fa fa-angle-up'){
+                    coppyState.schedule = 'fa fa-angle-down';
                 }
                 else {
-                    coppyState.schedule = 'fa fa-angle-down';
+                    coppyState.schedule = 'fa fa-angle-up';
                 }
                 this.setState({dropdownArrowStyle : coppyState});
                 break;
             case 'Budget' :
-                if(coppyState.budget === 'fa fa-angle-down'){
-                    coppyState.budget = 'fa fa-angle-up';
+                if(coppyState.budget === 'fa fa-angle-up'){
+                    coppyState.budget = 'fa fa-angle-down';
                 }
                 else {
-                    coppyState.budget = 'fa fa-angle-down';
+                    coppyState.budget = 'fa fa-angle-up';
                 }
                 this.setState({dropdownArrowStyle : coppyState});
                 break;
             case 'Bidding' :
-                if(coppyState.bidding === 'fa fa-angle-down'){
-                    coppyState.bidding = 'fa fa-angle-up';
+                if(coppyState.bidding === 'fa fa-angle-up'){
+                    coppyState.bidding = 'fa fa-angle-down';
                 }
                 else {
-                    coppyState.bidding = 'fa fa-angle-down';
+                    coppyState.bidding = 'fa fa-angle-up';
                 }
                 this.setState({dropdownArrowStyle : coppyState});
                 break;
             case 'Creative' :
-                if(coppyState.creative === 'fa fa-angle-down'){
-                    coppyState.creative = 'fa fa-angle-up';
+                if(coppyState.creative === 'fa fa-angle-up'){
+                    coppyState.creative = 'fa fa-angle-down';
                 }
                 else {
-                    coppyState.creative = 'fa fa-angle-down';
+                    coppyState.creative = 'fa fa-angle-up';
                 }
                 this.setState({dropdownArrowStyle : coppyState});
                 break;
@@ -113,6 +120,7 @@ class CampaignCreate extends Component {
     formSubmit = async (event) => {
         event.preventDefault();
     }
+    
     render() {
         return (
             <div className="main">
@@ -124,7 +132,7 @@ class CampaignCreate extends Component {
                             <div className="campaign-content">
                                 <form onSubmit={this.formSubmit}>
                                     <div className="card">
-                                        <div className="card-header custom-card-header" onClick={this.onOpenComponent} data-toggle="collapse" data-target="#collapseDetail" aria-expanded="false" aria-controls="collapseDetail">
+                                        <div className="card-header custom-card-header" onClick={this.onOpenComponent} data-toggle="collapse" data-target="#collapseDetail" aria-expanded="true" aria-controls="collapseDetail">
                                             <h5 aria-controls="collapseDetail">Detail</h5>
                                             <div className="pull-right">
                                                 <button type="button" aria-controls="collapseDetail">
@@ -132,7 +140,7 @@ class CampaignCreate extends Component {
                                                 </button>
                                             </div>
                                         </div>
-                                        <div className="collapse" id="collapseDetail">
+                                        <div className="collapse show" id="collapseDetail">
                                             <div className="card-body">
                                                 <div className="form-group row custom-form-row">
                                                     <label className="col-4 col-form-label">Name :</label>
@@ -154,7 +162,7 @@ class CampaignCreate extends Component {
                                     </div>
                                     
                                     <div className="card">
-                                        <div className="card-header custom-card-header" onClick={this.onOpenComponent} data-toggle="collapse" data-target="#collapseSchedule" aria-expanded="false" aria-controls="collapseSchedule">
+                                        <div className="card-header custom-card-header" onClick={this.onOpenComponent} data-toggle="collapse" data-target="#collapseSchedule" aria-expanded="true" aria-controls="collapseSchedule">
                                             <h5 aria-controls="collapseSchedule">Schedule</h5>
                                             <div className="pull-right">
                                                 <button type="button" aria-controls="collapseSchedule">
@@ -162,7 +170,7 @@ class CampaignCreate extends Component {
                                                 </button>
                                             </div>
                                         </div>
-                                        <div className="collapse" id="collapseSchedule">
+                                        <div className="collapse show" id="collapseSchedule">
                                             <div className="card-body">
                                                 <div className="form-group row custom-form-row">
                                                     <label className="col-4 col-form-label">Start date :</label>
@@ -185,7 +193,7 @@ class CampaignCreate extends Component {
                                     </div>
                                    
                                     <div className="card">
-                                        <div className="card-header custom-card-header" onClick={this.onOpenComponent} data-toggle="collapse" data-target="#collapseBudget" aria-expanded="false" aria-controls="collapseBudget">
+                                        <div className="card-header custom-card-header" onClick={this.onOpenComponent} data-toggle="collapse" data-target="#collapseBudget" aria-expanded="true" aria-controls="collapseBudget">
                                             <h5 aria-controls="collapseBudget">Budget</h5>
                                             <div className="pull-right">
                                                 <button type="button" aria-controls="collapseBudget">
@@ -193,7 +201,7 @@ class CampaignCreate extends Component {
                                                 </button>
                                             </div>
                                         </div>
-                                        <div className="collapse" id="collapseBudget">
+                                        <div className="collapse show" id="collapseBudget">
                                             <div className="card-body">
                                                 <div className="form-group row custom-form-row">
                                                     <label className="col-4 col-form-label">Budget :</label>
@@ -213,7 +221,7 @@ class CampaignCreate extends Component {
                                     </div>
                                     
                                     <div className="card">
-                                        <div className="card-header custom-card-header" onClick={this.onOpenComponent} data-toggle="collapse" data-target="#collapseBidding" aria-expanded="false" aria-controls="collapseBidding">
+                                        <div className="card-header custom-card-header" onClick={this.onOpenComponent} data-toggle="collapse" data-target="#collapseBidding" aria-expanded="true" aria-controls="collapseBidding">
                                             <h5 aria-controls="collapseBidding">Bidding</h5>
                                             <div className="pull-right">
                                                 <button type="button" aria-controls="collapseBidding">
@@ -221,7 +229,7 @@ class CampaignCreate extends Component {
                                                 </button>
                                             </div>
                                         </div>
-                                        <div className="collapse" id="collapseBidding">
+                                        <div className="collapse show" id="collapseBidding">
                                             <div className="card-body">
                                                 <div className="form-group row custom-form-row">
                                                     <label className="col-4 col-form-label">Bid Amount :</label>
@@ -241,7 +249,7 @@ class CampaignCreate extends Component {
                                     </div>
                                     
                                     <div className="card">
-                                        <div className="card-header custom-card-header" onClick={this.onOpenComponent} data-toggle="collapse" data-target="#collapseCreative" aria-expanded="false" aria-controls="collapseCreative">
+                                        <div className="card-header custom-card-header" onClick={this.onOpenComponent} data-toggle="collapse" data-target="#collapseCreative" aria-expanded="true" aria-controls="collapseCreative">
                                             <h5 aria-controls="collapseCreative">Creative</h5>
                                             <div className="pull-right">
                                                 <button type="button" aria-controls="collapseCreative">
@@ -249,7 +257,7 @@ class CampaignCreate extends Component {
                                                 </button>
                                             </div>
                                         </div>
-                                        <div className="collapse" id="collapseCreative">
+                                        <div className="collapse show" id="collapseCreative">
                                             <div className="card-body">
                                                 <div className="form-group row custom-form-row">
                                                     <label className="col-4 col-form-label">Title :</label>
@@ -260,7 +268,7 @@ class CampaignCreate extends Component {
                                                 <div className="form-group row custom-form-row">
                                                     <label className="col-4 col-form-label">Description :</label>
                                                     <div className="col-8">
-                                                        <textarea name="description" placeholder="Description" className="form-control" rows={4} defaultValue={""} />
+                                                        <textarea name="description" placeholder="Description" className="form-control" rows="4" />
                                                     </div>
                                                 </div>
                                                 <div className="form-group row custom-form-row">
