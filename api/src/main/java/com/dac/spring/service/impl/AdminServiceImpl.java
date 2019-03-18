@@ -760,8 +760,8 @@ public class AdminServiceImpl implements AdminService {
                         entity.getShop().getId(),
                         entity.getName(),
                        entity.getStatus().getName().name(),
-                        entity.getStartDate().toString().replaceAll("-", "/"),
-                        entity.getEndDate().toString().replaceAll("-", "/"),
+                        entity.getStartDate().toString(),
+                        entity.getEndDate().toString(),
                         entity.getBudget());
                 response.setBid(entity.getBid());
                 response.setImageURL(entity.getImageURL());
@@ -784,7 +784,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public ServiceResult createCampaign(AdminCreateCampaignRequest request) {
         ServiceResult result = new ServiceResult();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         try {
             Date startDate = formatter.parse(request.getStartDate());
             Date endDate = formatter.parse(request.getEndDate());
@@ -817,8 +817,8 @@ public class AdminServiceImpl implements AdminService {
                     campaignEntity.getShop().getId(),
                     campaignEntity.getName(),
                     campaignEntity.getStatus().getName().name(),
-                    campaignEntity.getStartDate().toString().replaceAll("-", "/"),
-                    campaignEntity.getEndDate().toString().replaceAll("-", "/"),
+                    campaignEntity.getStartDate().toString(),
+                    campaignEntity.getEndDate().toString(),
                     campaignEntity.getBudget());
             response.setBid(campaignEntity.getBid());
             response.setImageURL(campaignEntity.getImageURL());
@@ -839,7 +839,7 @@ public class AdminServiceImpl implements AdminService {
         ServiceResult result = new ServiceResult();
         CampaignEntity campaign = campaignRepository.findById(request.getId()).orElse(null);
         if (campaign != null){
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             try {
                 Date startDate = formatter.parse(request.getStartDate());
                 Date endDate = formatter.parse(request.getEndDate());
@@ -858,8 +858,8 @@ public class AdminServiceImpl implements AdminService {
                         campaign.getShop().getId(),
                         campaign.getName(),
                         campaign.getStatus().getName().name(),
-                        campaign.getStartDate().toString().replaceAll("-", "/"),
-                        campaign.getEndDate().toString().replaceAll("-", "/"),
+                        campaign.getStartDate().toString(),
+                        campaign.getEndDate().toString(),
                         campaign.getBudget());
                 response.setBid(campaign.getBid());
                 response.setImageURL(campaign.getImageURL());
