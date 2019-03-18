@@ -314,7 +314,7 @@ public class ShopServiceImpl implements ShopService {
     public ServiceResult paginateCampaign(int id, int page, int size) {
         ServiceResult result = new ServiceResult();
         Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
-        Page<CampaignEntity> campaignList = campaignPaginationRepository.findAllByShopIdAndStatusName(info, id, StatusName.ACTIVE);
+        Page<CampaignEntity> campaignList = campaignPaginationRepository.findAllByShopId(info, id);
         boolean isCampaignListEmpty = campaignList.isEmpty();
         if (!isCampaignListEmpty) {
             int totalPages = campaignList.getTotalPages();

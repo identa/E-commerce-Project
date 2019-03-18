@@ -747,7 +747,7 @@ public class AdminServiceImpl implements AdminService {
         ServiceResult result = new ServiceResult();
 
         Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
-        Page<CampaignEntity> campaignList = campaignPaginationRepository.findAllByStatusName(info, StatusName.ACTIVE);
+        Page<CampaignEntity> campaignList = campaignPaginationRepository.findAll(info);
         boolean isCampaignListEmpty = campaignList.isEmpty();
         if (!isCampaignListEmpty) {
             int totalPages = campaignList.getTotalPages();
