@@ -92,11 +92,6 @@ public class AdminController {
         return new ResponseEntity<>(adminService.deleteCategory(request.getId()),HttpStatus.OK);
     }
 
-    @PostMapping("/createProduct")
-    public ResponseEntity<ServiceResult> createProduct(@Valid @RequestBody AdminCreateProductRequest request) {
-        return new ResponseEntity<>(adminService.createProduct(request),HttpStatus.OK);
-    }
-
     @PutMapping("/updateProduct")
     public ResponseEntity<ServiceResult> updateProduct(@Valid @RequestBody ShopUpdateProductRequest request) {
         return new ResponseEntity<>(adminService.updateProduct(request),HttpStatus.OK);
