@@ -33,6 +33,9 @@ class Profile extends Component {
     }
 
     componentDidMount() {
+        if(localStorage.token === undefined){
+            this.setState({isRedirect : true});
+        }
         let url = '';
         if(localStorage.role === 'ROLE_SHOP'){
             url = urlGetShopProfile;
