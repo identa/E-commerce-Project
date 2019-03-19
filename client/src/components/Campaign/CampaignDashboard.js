@@ -5,7 +5,8 @@ import {Link,Redirect} from 'react-router-dom';
 
 const urlGetListCampaignByAdmin = "https://dac-project.herokuapp.com/api/admin/paginateCampaign";
 const urlGetListCampaignByShop = "https://dac-project.herokuapp.com/api/shop/paginateCampaign";
-const urlDeleteCampaign= 'https://dac-project.herokuapp.com/api/admin/deleteCampaign';
+const urlDeleteCampaignByAdmin= 'https://dac-project.herokuapp.com/api/admin/deleteCampaign';
+const urlDeleteCampaignByShop= 'https://dac-project.herokuapp.com/api/shop/deleteCampaign';
 class CampaignDashboard extends Component {
     constructor(props) {
         super(props);
@@ -92,7 +93,14 @@ class CampaignDashboard extends Component {
     }
 
     onDeleteCampaign = () =>{
-        fetch(urlDeleteCampaign, {
+        let url = '';
+        if(localStorage.role === 'ROLE_ADMIN'){
+            url = urlDeleteCampaignByAdmin;
+        }
+        else if(localStorage.role === 'ROLE_SHOP'){
+            url = urlDeleteCampaignByShop
+        }
+        fetch(url, {
             method : 'DELETE',
             headers :{
                 'Content-Type' : 'application/json',
@@ -116,6 +124,7 @@ class CampaignDashboard extends Component {
     render() {
         const campaignResponseList = this.state.campaignResponseList;
         const isRedirect = this.state.isRedirect;
+        const role = localStorage.role;
 
         if(isRedirect) {
             return <Redirect to='/'/>
@@ -124,19 +133,23 @@ class CampaignDashboard extends Component {
             <div className="main">
                 <div className="dashboard-container">
                     <h2>Campaign Management Dashboard</h2>
+
                     <div className="row btn-create">
-                        <Link to="/manage/campaign/create">
-                            <button className="btn btn-success btn-action">
-                                <i className="fa fa-plus"></i>Create
-                            </button>
-                        </Link>
+                    {
+                        role === 'ROLE_SHOP' ? (<Link to="/manage/campaign/create">
+                                                    <button className="btn btn-success btn-action">
+                                                        <i className="fa fa-plus"></i>Create
+                                                    </button>
+                                                </Link>) : null
+                    }
                         <div className="form-search">
                             <form>
                                 <label>Search : </label>
-                                <input type="text" name="keyword"/>
+                                    <input type="text" name="keyword"/>
                             </form>
                         </div>
                     </div>
+                   
                     <div className="row table-responsive">
                         <table className="table table-bordered table-hover">
                             <tbody>

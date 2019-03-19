@@ -14,7 +14,7 @@ class CampaignCreate extends Component {
             startDate: '',
             endDate: '',
             budget: 1,
-            bid: 10,
+            bid: 1,
             title: '',
             description: '',
             imageURL: '',
@@ -79,7 +79,30 @@ class CampaignCreate extends Component {
                     }
                 }));
                 break;
-
+            case 'finalURL':
+                this.setState(prevState => ({
+                    error: {
+                        ...prevState.error,
+                        finalURL: ''
+                    }
+                }));
+                break;
+            case 'startDate':
+                this.setState(prevState => ({
+                    error: {
+                        ...prevState.error,
+                        startDate: ''
+                    }
+                }));
+                break;
+            case 'endDate':
+                this.setState(prevState => ({
+                    error: {
+                        ...prevState.error,
+                        endDate: ''
+                    }
+                }));
+                break;
         }
     }
 
@@ -214,13 +237,14 @@ class CampaignCreate extends Component {
     }
 
     validateStartDate = () => {
-        const startDate = this.state.startDate;
+        const startDate = new Date(this.state.startDate);
         this.setState({ messageShowingStyle: 'message' });
-        if (startDate.length === 0) {
+        let currentDate = new Date();
+        if (startDate < currentDate) {
             this.setState(prevState => ({
                 error: {
                     ...prevState.error,
-                    startDate: 'Campaign start date can not be empty!'
+                    startDate: 'Campaign start date can not less than current date!'
                 }
             }));
             return false;
@@ -237,13 +261,24 @@ class CampaignCreate extends Component {
     }
 
     validateEndDate = () => {
-        const endDate = this.state.endDate;
+        const endDate = new Date(this.state.endDate);
         this.setState({ messageShowingStyle: 'message' });
-        if (endDate.length === 0) {
+        let currentDate = new Date();
+        let startDate = new Date(this.state.startDate);
+        if (endDate < currentDate) {
             this.setState(prevState => ({
                 error: {
                     ...prevState.error,
-                    endDate: 'Campaign end date can not be empty!'
+                    endDate: 'Campaign end date can not less than current date!'
+                }
+            }));
+            return false;
+        }
+        else if (endDate < startDate){
+            this.setState(prevState => ({
+                error: {
+                    ...prevState.error,
+                    endDate: 'Campaign end date can not less than start date!'
                 }
             }));
             return false;
@@ -307,7 +342,7 @@ class CampaignCreate extends Component {
 
     formSubmit = async (event) => {
         event.preventDefault();
-        if (this.validateName() && this.validateStartDate() && this.validateTitle() && this.validateFinalUrl() && this.validateFileImage() && this.validateMessage()) {
+        if (this.validateName() && this.validateStartDate() && this.validateEndDate() && this.validateTitle() && this.validateFinalUrl() && this.validateFileImage() && this.validateMessage()) {
             this.setState({
                 showLoading : 'show',
                 isButtonEnable : true
@@ -452,8 +487,8 @@ class CampaignCreate extends Component {
                                                                 className="form-control"
                                                                 required
                                                                 onChange={this.onChange}
-                                                                onFocus={this.onFocus}
-                                                                onBlur={this.validateEndDate} />
+                                                                onBlur={this.validateEndDate} 
+                                                                onFocus={this.onFocus}/>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -522,7 +557,11 @@ class CampaignCreate extends Component {
                                                                     <i className="fa fa-dollar" />
                                                                 </span>
                                                             </div>
-                                                            <input type="number" name="bid" value={this.state.bid} readOnly className="form-control" />
+                                                            <input type="number" 
+                                                                   name="bid" 
+                                                                   value={this.state.bid} 
+                                                                   onChange={this.onChange} 
+                                                                   className="form-control" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -621,6 +660,7 @@ class CampaignCreate extends Component {
                                             </div>
                                         </div>
                                     </div>
+
                                     <div className="form-group row">
                                         <div className="offset-4 col-8">
                                             <div className={this.state.showLoading}>
