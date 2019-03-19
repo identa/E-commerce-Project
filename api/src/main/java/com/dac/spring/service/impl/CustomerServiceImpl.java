@@ -485,7 +485,15 @@ public class CustomerServiceImpl implements CustomerService {
         Date currentDate = new Date();
         List<CampaignEntity> list = getCampaignList(currentDate, currentDate);
         List<CustomerGetCampaignResponse> responses = new ArrayList<>();
+        if (list.size() != 3) {
+            for (int i = 1; i <= 3 - list.size(); i++) {
+                list.add(campaignRepository.findById(1).orElse(null));
+            }
+        }
         for (CampaignEntity campaign : list) {
+            campaign.setBudget(campaign.getBudget() - campaign.getBid());
+            campaignRepository.save(campaign);
+
             CustomerGetCampaignResponse response = new CustomerGetCampaignResponse(campaign.getTitle(),
                     campaign.getImageURL(),
                     campaign.getProductURL());
