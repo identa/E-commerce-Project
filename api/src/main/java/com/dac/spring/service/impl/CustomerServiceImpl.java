@@ -483,7 +483,8 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult getCampaign() {
         ServiceResult result = new ServiceResult();
         Date currentDate = new Date();
-        List<CampaignEntity> list = getCampaignList(currentDate, currentDate);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        List<CampaignEntity> list = getCampaignList(formatter.format(currentDate), formatter.format(currentDate));
         List<CustomerGetCampaignResponse> responses = new ArrayList<>();
         if (list.size() != 3) {
             for (int i = 1; i <= 3 - list.size(); i++) {
@@ -514,7 +515,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .getBody().getSubject();
     }
 
-    private List<CampaignEntity> getCampaignList(Date startDate, Date endDate) {
-        return campaignRepository.getCampaign(startDate, endDate, StatusName.ACTIVE);
+    private List<CampaignEntity> getCampaignList(String startDate, String endDate) {
+        return campaignRepository.getCampaign(startDate, endDate);
     }
 }
