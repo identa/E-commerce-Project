@@ -179,6 +179,8 @@ class CampaignDashboard extends Component {
                                                         creativePreview={value.imageURL}
                                                         title={value.title}
                                                         description={value.description}
+                                                        shopID={value.shopID}
+                                                        productURL={value.productURL}
                                                         handleShowModal={this.handleShowModal}
                                                         getCampaignId={this.getCampaignId}/>
                                     })

@@ -10,6 +10,7 @@ import ProductCreate from '../Product/ProductCreate';
 import ProductEdit from '../Product/ProductEdit';
 import CampaignDashboard from '../Campaign/CampaignDashboard';
 import CampaignCreate from '../Campaign/CampaignCreate';
+import CampaignEdit from '../Campaign/CampaignEdit';
 class RouteURL extends Component {
     render() {
         return (
@@ -24,7 +25,8 @@ class RouteURL extends Component {
                     <Route path="/manage/product/edit" component={ProductEdit}></Route>
                     <Route path="/manage/campaign/dashboard" component={CampaignDashboard}></Route>
                     <Route path="/manage/campaign/create" component={CampaignCreate}></Route>
-                </Switch>
+                    <Route path="/manage/campaign/edit" component={CampaignEdit}></Route>
+                </Switch> 
         );
     }
 }

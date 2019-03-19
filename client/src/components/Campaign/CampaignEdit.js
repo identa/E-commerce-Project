@@ -1,28 +1,32 @@
 import React, { Component } from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import {Link,Redirect} from 'react-router-dom';
 
 const clientId = '78bc0dc37ea9d00';
 const urlImgur = 'https://api.imgur.com/3/image';
-const urlCreateCampaign = 'https://dac-project.herokuapp.com/api/shop/createCampaign';
-class CampaignCreate extends Component {
+const urlEditCampaignByAdmin = 'https://dac-project.herokuapp.com/api/admin/updateCampaign';
+const urlEditCampaignByShop = 'https://dac-project.herokuapp.com/api/shop/updateCampaign';
+class CampaignEdit extends Component {
+
     constructor(props) {
         super(props);
-
+        
         this.state = {
-            name: '',
-            status: 'ACTIVE',
-            startDate: '',
-            endDate: '',
-            budget: 1,
-            bid: 1,
-            title: '',
-            description: '',
-            imageURL: '',
-            finalURL: '',
+            campaignId : this.props.location.state.data.campaignId,
+            name: this.props.location.state.data.campaignName,
+            status: this.props.location.state.data.status,
+            startDate: this.props.location.state.data.startDate,
+            endDate: this.props.location.state.data.endDate,
+            budget: this.props.location.state.data.budget,
+            bid: this.props.location.state.data.bidAmount,
+            title: this.props.location.state.data.title,
+            description: this.props.location.state.data.description,
+            imageURL: this.props.location.state.data.creativePreview,
+            finalURL: this.props.location.state.data.productURL,
+            shopID : this.props.location.state.data.shopID,
             messageShowingStyle: 'message',
-            isRedirect: false,
             showLoading : 'collapse',
-            isButtonEnable : false,
+            isRedirect : false,
+            isButtonEnable : true,
             dropdownArrowStyle: {
                 detail: 'fa fa-angle-up',
                 schedule: 'fa fa-angle-up',
@@ -30,25 +34,26 @@ class CampaignCreate extends Component {
                 bidding: 'fa fa-angle-up',
                 creative: 'fa fa-angle-up'
             },
-            error: {
+            error : {
                 name: '',
                 title: '',
                 startDate: '',
                 endDate: '',
-                imageFile: '',
                 finalURL: '',
                 message: '',
             }
         }
     }
-
-    componentDidMount() {
-        document.querySelector("#startDate").valueAsDate = new Date();
-        this.setState({startDate : document.getElementById('startDate').value});
-    }
     
     onChange = (event) => {
         this.setState({ [event.target.name]: event.target.value });
+        this.setState({isButtonEnable : false});
+        this.setState(prevState => ({
+            error :{
+                ...prevState.error,
+                message : ''
+            }
+        }));
     }
 
     onFocus = (event) => {
@@ -159,6 +164,7 @@ class CampaignCreate extends Component {
     }
 
     loadFile = (event) => {
+        this.setState({isButtonEnable : true});
         let reader = new FileReader();
         let file = event.target.files[0];
 
@@ -169,19 +175,22 @@ class CampaignCreate extends Component {
         reader.readAsDataURL(file);
     }
 
-    getImageUrl = async () => {
+    getImageUrl = async () =>{
         let file = document.querySelector("input[type='file']").files[0];
         let link = '';
-        const formData = new FormData();
-        formData.append('image', file);
+        if(file !== undefined){
+                
+            const formData = new FormData();
+            formData.append('image', file);
 
-        const respone = await fetch(urlImgur, {
-            method: 'POST',
-            headers: { 'Authorization': `Client-ID ${clientId}` },
-            body: formData
-        });
-        const json = await respone.json();
-        link = json.data.link;
+            const respone = await fetch(urlImgur, { 
+                                                    method : 'POST',
+                                                    headers :{'Authorization' : `Client-ID ${clientId}` },
+                                                    body : formData
+                                                });
+            const json = await respone.json();
+            link = json.data.link;
+        }
         return link;
     }
 
@@ -317,41 +326,20 @@ class CampaignCreate extends Component {
         }
     }
 
-    validateFileImage = () => {
-        let file = document.querySelector("input[type='file']").files[0];
-        this.setState({ messageShowingStyle: 'message' });
-        if (file === undefined) {
-            this.setState(prevState => ({
-                error: {
-                    ...prevState.error,
-                    imageFile: 'Plesae choose an image!'
-                }
-            }));
-            return false;
-        }
-        else {
-            this.setState(prevState => ({
-                error: {
-                    ...prevState.error,
-                    imageFile: ''
-                }
-            }));
-            return true;
-        }
-    }
-
-    formSubmit = async (event) => {
+    formSubmit = async (event) =>{
         event.preventDefault();
-        if (this.validateName() && this.validateStartDate() && this.validateEndDate() && this.validateTitle() && this.validateFinalUrl() && this.validateFileImage() && this.validateMessage()) {
+        if(this.validateName() && this.validateTitle() && this.validateStartDate() && this.validateEndDate() && this.validateFinalUrl() && this.validateMessage()){
             this.setState({
                 showLoading : 'show',
                 isButtonEnable : true
             });
             const imageURL = await this.getImageUrl();
-            this.setState({ imageURL: imageURL });
-
-            const data = {
-                shopID: localStorage.id,
+            if(imageURL !== ''){
+                this.setState({imageURL : imageURL});
+            }
+            
+            const data ={
+                id : this.state.campaignId, 
                 name: this.state.name,
                 status: this.state.status,
                 startDate: this.state.startDate,
@@ -364,20 +352,29 @@ class CampaignCreate extends Component {
                 productURL: this.state.finalURL
             }
 
-            const respone = await fetch(urlCreateCampaign, {
-                method: 'POST',
+            let url = '';
+            if(localStorage.role === 'ROLE_ADMIN'){
+                url = urlEditCampaignByAdmin;
+            }
+            else if(localStorage.role === 'ROLE_SHOP'){
+                url = urlEditCampaignByShop;
+            }
+            const response = await fetch(url, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': localStorage.token
                 },
                 body: JSON.stringify(data)
             });
-            let result = await respone.json();
-            if (result.status === 'SUCCESS') {
+            let result = await response.json();
+            console.log(result);
+            
+            if(result.status === 'SUCCESS'){
                 this.setState({showLoading : 'collapse'});
-                this.setState({ isRedirect: true });
+                this.setState({isRedirect : true});
             }
-            else if (result.status === 'FAILED') {
+            else if(result.status === 'FAILED'){
                 this.setState(prevState => ({
                     showLoading : 'collapse',
                     isButtonEnable : false,
@@ -391,12 +388,13 @@ class CampaignCreate extends Component {
     }
 
     render() {
+        const role = localStorage.role;
         const isRedirect = this.state.isRedirect;
-        if (isRedirect) {
-            return <Redirect to='/manage/campaign/dashboard' />
+        if(isRedirect){
+            return <Redirect to='/manage/campaign/dashboard'/>
         }
         return (
-            <div className="main">
+             <div className="main">
                 <div className="container">
                     <div className="campaign-container">
                         <div className="col-md-12">
@@ -423,6 +421,7 @@ class CampaignCreate extends Component {
                                                             placeholder="Name"
                                                             className="form-control"
                                                             required
+                                                            value={this.state.name}
                                                             onChange={this.onChange}
                                                             onBlur={this.validateName}
                                                             onFocus={this.onFocus} />
@@ -436,7 +435,7 @@ class CampaignCreate extends Component {
                                                 <div className="form-group row custom-form-row">
                                                     <label className="col-4 col-form-label">Campaign Status :</label>
                                                     <div className="col-8 custom-style">
-                                                        <select name="status" className="form-control" onChange={this.onChange}>
+                                                        <select name="status" className="form-control" value={this.state.status} onChange={this.onChange}>
                                                             <option value="ACTIVE">ACTIVE</option>
                                                             <option value="PAUSE">PAUSE</option>
                                                         </select>
@@ -466,6 +465,7 @@ class CampaignCreate extends Component {
                                                                 id="startDate"
                                                                 className="form-control"
                                                                 required
+                                                                value={this.state.startDate}
                                                                 onChange={this.onChange}
                                                                 onBlur={this.validateStartDate}
                                                                 onFocus={this.onFocus} />
@@ -486,6 +486,7 @@ class CampaignCreate extends Component {
                                                                 id="endDate"
                                                                 className="form-control"
                                                                 required
+                                                                value={this.state.endDate}
                                                                 onChange={this.onChange}
                                                                 onBlur={this.validateEndDate} 
                                                                 onFocus={this.onFocus}/>
@@ -588,6 +589,7 @@ class CampaignCreate extends Component {
                                                             placeholder="Title"
                                                             className="form-control"
                                                             required
+                                                            value={this.state.title}
                                                             onChange={this.onChange}
                                                             onBlur={this.validateTitle}
                                                             onFocus={this.onFocus} />
@@ -605,6 +607,7 @@ class CampaignCreate extends Component {
                                                             placeholder="Description"
                                                             className="form-control"
                                                             rows="4"
+                                                            value={this.state.description}
                                                             onChange={this.onChange} />
                                                     </div>
                                                 </div>
@@ -614,16 +617,10 @@ class CampaignCreate extends Component {
                                                         <input type="file"
                                                             accept="images/*"
                                                             name="imageFile"
-                                                            onChange={(e) => this.loadFile(e)}
-                                                            onFocus={this.onFocus} />
+                                                            onChange={(e) => this.loadFile(e)}/>
                                                     </div>
                                                     <div className="offset-4 col-8 img-preview">
-                                                        <img src="https://cdn.wallpapersafari.com/53/47/4YNVas.jpg" id="preview" alt="" />
-                                                    </div>
-                                                </div>
-                                                <div className="form-group row">
-                                                    <div className="offset-4 col-8 message">
-                                                        {this.state.error.imageFile}
+                                                        <img src={this.state.imageURL} id="preview" alt="" />
                                                     </div>
                                                 </div>
                                                 <div className="form-group row custom-form-row">
@@ -634,6 +631,7 @@ class CampaignCreate extends Component {
                                                             placeholder="Final URL"
                                                             className="form-control"
                                                             required
+                                                            value={this.state.finalURL}
                                                             onChange={this.onChange}
                                                             onFocus={this.onFocus}
                                                             onBlur={this.validateFinalUrl} />
@@ -678,4 +676,4 @@ class CampaignCreate extends Component {
     }
 }
 
-export default CampaignCreate;
+export default CampaignEdit;
