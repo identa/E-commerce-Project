@@ -45,7 +45,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/signout")
-    public ResponseEntity<ServiceResult> signOut(String token) {
+    public ResponseEntity<ServiceResult> signOut(@RequestHeader(value = "Authorization") String token) {
         return new ResponseEntity<>(customerService.signOut(token), HttpStatus.OK);
     }
 
