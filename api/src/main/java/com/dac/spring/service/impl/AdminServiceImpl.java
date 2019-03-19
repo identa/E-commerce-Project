@@ -133,8 +133,8 @@ public class AdminServiceImpl implements AdminService {
     public ServiceResult getAllCustomer() {
         ServiceResult result = new ServiceResult();
         List<AdminGetAllCustomerResponse> employeeEntityList = createCustomerGetResponseList();
-            result.setMessage("Get all customers successfully");
-            result.setData(employeeEntityList);
+        result.setMessage("Get all customers successfully");
+        result.setData(employeeEntityList);
         return result;
     }
 
@@ -168,9 +168,9 @@ public class AdminServiceImpl implements AdminService {
                 if (isStatusAndRoleExisted(statusName, roleName)) {
                     employee.setFirstName(firstName);
                     employee.setLastName(lastName);
-                    if (!password.equals("")){
+                    if (!password.equals("")) {
                         employee.setPassword(encoder.encode(password));
-                    }else employee.setPassword(employee.getPassword());
+                    } else employee.setPassword(employee.getPassword());
                     employee.setStatus(statusRepository.findByName(StatusName.valueOf(statusName)));
                     employee.setRole(roleRepository.findByName(RoleName.valueOf(roleName)));
                     employee.setImageURL(imageURL);
@@ -329,16 +329,16 @@ public class AdminServiceImpl implements AdminService {
             if (!isCategoryExist) {
                 CategoryEntity parentCategory = categoryRepository.findById(parentID).orElse(null);
                 if (parentCategory != null) {
-                        CategoryEntity category = new CategoryEntity();
-                        category.setName(name);
-                        category.setParentID(parentID);
-                        categoryRepository.save(category);
-                        AdminCreateCategoryResponse response = new AdminCreateCategoryResponse(category.getId(),
-                                category.getName(),
-                                parentCategory.getName());
+                    CategoryEntity category = new CategoryEntity();
+                    category.setName(name);
+                    category.setParentID(parentID);
+                    categoryRepository.save(category);
+                    AdminCreateCategoryResponse response = new AdminCreateCategoryResponse(category.getId(),
+                            category.getName(),
+                            parentCategory.getName());
 
-                        result.setMessage(AdminUserCreateConst.SUCCESS);
-                        result.setData(response);
+                    result.setMessage(AdminUserCreateConst.SUCCESS);
+                    result.setData(response);
                 } else {
                     CategoryEntity category = new CategoryEntity();
                     category.setName(name);
@@ -458,38 +458,38 @@ public class AdminServiceImpl implements AdminService {
     public ServiceResult paginateProduct(int page, int size) {
         ServiceResult result = new ServiceResult();
 
-            Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
-            Page<ProductEntity> productList = productPaginationRepository.
-                    findAllByDeleted(info, false);
-            boolean isProductListEmpty = productList.isEmpty();
-            if (!isProductListEmpty) {
-                int totalPages = productList.getTotalPages();
-                List<ShopGetProductResponse> responses = new ArrayList<>();
-                for (ProductEntity entity : productList) {
+        Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
+        Page<ProductEntity> productList = productPaginationRepository.
+                findAllByDeleted(info, false);
+        boolean isProductListEmpty = productList.isEmpty();
+        if (!isProductListEmpty) {
+            int totalPages = productList.getTotalPages();
+            List<ShopGetProductResponse> responses = new ArrayList<>();
+            for (ProductEntity entity : productList) {
 
-                    ShopGetProductResponse response = new ShopGetProductResponse(entity.getId(),
-                            entity.getName(),
-                            entity.getStatus().getName().name(),
-                            entity.getDescription(),
-                            entity.getQuantity(),
-                            entity.getOriginalPrice(),
-                            entity.getDiscount(),
-                            entity.getView(),
-                            entity.getProductImageURL(),
-                            entity.getCategory().getId(),
-                            entity.getShop().getId(),
-                            entity.getCategory().getName(),
-                            entity.getShop().getFirstName()+ " " + entity.getShop().getLastName());
-                    responses.add(response);
-                }
-                ShopPaginateProductByIdResponse response = new ShopPaginateProductByIdResponse(totalPages, responses);
-                result.setMessage("Products are returned successfully");
-                result.setData(response);
-            } else {
-                result.setMessage("Product list is empty");
-                result.setStatus(ServiceResult.Status.FAILED);
+                ShopGetProductResponse response = new ShopGetProductResponse(entity.getId(),
+                        entity.getName(),
+                        entity.getStatus().getName().name(),
+                        entity.getDescription(),
+                        entity.getQuantity(),
+                        entity.getOriginalPrice(),
+                        entity.getDiscount(),
+                        entity.getView(),
+                        entity.getProductImageURL(),
+                        entity.getCategory().getId(),
+                        entity.getShop().getId(),
+                        entity.getCategory().getName(),
+                        entity.getShop().getFirstName() + " " + entity.getShop().getLastName());
+                responses.add(response);
             }
-            return result;
+            ShopPaginateProductByIdResponse response = new ShopPaginateProductByIdResponse(totalPages, responses);
+            result.setMessage("Products are returned successfully");
+            result.setData(response);
+        } else {
+            result.setMessage("Product list is empty");
+            result.setStatus(ServiceResult.Status.FAILED);
+        }
+        return result;
     }
 
     @Override
@@ -498,34 +498,34 @@ public class AdminServiceImpl implements AdminService {
         if (request.getName() != null && request.getStatus() != null) {
             boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch(t -> t.name().equals(request.getStatus()));
             if (isStatusExist) {
-                        if (isDiscountRight(request.getDiscount())){
-                            ProductEntity product = new ProductEntity(request.getName(),
-                                    statusRepository.findByName(StatusName.valueOf(request.getStatus())),
-                                    request.getDescription(),
-                                    request.getQuantity(),
-                                    request.getOriginalPrice(),
-                                    request.getDiscount(),
-                                    categoryRepository.findById(request.getCategoryID()).orElse(null),
-                                    employeeRepository.findById(request.getShopID()).orElse(null));
-                            if (request.getProductImageURL()==null) product.setProductImageURL(ShopConst.DEFAULT_AVATAR);
-                            else product.setProductImageURL(request.getProductImageURL());
-                            productRepository.save(product);
-                            AdminCreateProductResponse response = new AdminCreateProductResponse(product.getId(),
-                                    product.getName(),
-                                    product.getStatus().getName().name(),
-                                    product.getDescription(),
-                                    product.getQuantity(),
-                                    product.getOriginalPrice(),
-                                    product.getDiscount(),
-                                    product.getProductImageURL(),
-                                    product.getCategory().getName(),
-                                    product.getShop().getFirstName());
-                            result.setMessage("Create product successfully");
-                            result.setData(response);
-                        }else {
-                            result.setMessage("Discount is less than 100");
-                            result.setStatus(ServiceResult.Status.FAILED);
-                        }
+                if (isDiscountRight(request.getDiscount())) {
+                    ProductEntity product = new ProductEntity(request.getName(),
+                            statusRepository.findByName(StatusName.valueOf(request.getStatus())),
+                            request.getDescription(),
+                            request.getQuantity(),
+                            request.getOriginalPrice(),
+                            request.getDiscount(),
+                            categoryRepository.findById(request.getCategoryID()).orElse(null),
+                            employeeRepository.findById(request.getShopID()).orElse(null));
+                    if (request.getProductImageURL() == null) product.setProductImageURL(ShopConst.DEFAULT_AVATAR);
+                    else product.setProductImageURL(request.getProductImageURL());
+                    productRepository.save(product);
+                    AdminCreateProductResponse response = new AdminCreateProductResponse(product.getId(),
+                            product.getName(),
+                            product.getStatus().getName().name(),
+                            product.getDescription(),
+                            product.getQuantity(),
+                            product.getOriginalPrice(),
+                            product.getDiscount(),
+                            product.getProductImageURL(),
+                            product.getCategory().getName(),
+                            product.getShop().getFirstName());
+                    result.setMessage("Create product successfully");
+                    result.setData(response);
+                } else {
+                    result.setMessage("Discount is less than 100");
+                    result.setStatus(ServiceResult.Status.FAILED);
+                }
             } else {
                 result.setMessage("Status is not existed");
                 result.setStatus(ServiceResult.Status.FAILED);
@@ -544,36 +544,35 @@ public class AdminServiceImpl implements AdminService {
             boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch(t -> t.name().equals(request.getStatus()));
             if (isStatusExist) {
                 CategoryEntity category = categoryRepository.findById(request.getCategoryID()).orElse(null);
-                if (category != null){
+                if (category != null) {
                     ProductEntity product = productRepository.findByIdAndDeleted(request.getId(), false);
-                            product.setName(request.getName());
-                            product.setDescription(request.getDescription());
-                            product.setOriginalPrice(request.getOriginalPrice());
-                            product.setDiscount(request.getDiscount());
-                            product.setStatus(statusRepository.findByName(StatusName.valueOf(request.getStatus())));
-                            product.setQuantity(request.getQuantity());
-                            if (request.getProductImageURL()==null) product.setProductImageURL(ShopConst.DEFAULT_AVATAR);
-                            else product.setProductImageURL(request.getProductImageURL());
-                            product.setCategory(category);
-                            productRepository.save(product);
-                            ShopUpdateProductResponse response = new ShopUpdateProductResponse(product.getId(),
-                                    product.getName(),
-                                    product.getStatus().getName().name(),
-                                    product.getDescription(),
-                                    product.getQuantity(),
-                                    product.getOriginalPrice(),
-                                    product.getDiscount(),
-                                    product.getProductImageURL(),
-                                    product.getCategory().getName(),
-                                    product.getShop().getFirstName() + " " + product.getShop().getLastName());
+                    product.setName(request.getName());
+                    product.setDescription(request.getDescription());
+                    product.setOriginalPrice(request.getOriginalPrice());
+                    product.setDiscount(request.getDiscount());
+                    product.setStatus(statusRepository.findByName(StatusName.valueOf(request.getStatus())));
+                    product.setQuantity(request.getQuantity());
+                    if (request.getProductImageURL() == null) product.setProductImageURL(ShopConst.DEFAULT_AVATAR);
+                    else product.setProductImageURL(request.getProductImageURL());
+                    product.setCategory(category);
+                    productRepository.save(product);
+                    ShopUpdateProductResponse response = new ShopUpdateProductResponse(product.getId(),
+                            product.getName(),
+                            product.getStatus().getName().name(),
+                            product.getDescription(),
+                            product.getQuantity(),
+                            product.getOriginalPrice(),
+                            product.getDiscount(),
+                            product.getProductImageURL(),
+                            product.getCategory().getName(),
+                            product.getShop().getFirstName() + " " + product.getShop().getLastName());
 
-                            result.setMessage("Create product successfully");
-                            result.setData(response);
-                        }
-                        else {
-                            result.setMessage("Discount is less than 100");
-                            result.setStatus(ServiceResult.Status.FAILED);
-                        }
+                    result.setMessage("Create product successfully");
+                    result.setData(response);
+                } else {
+                    result.setMessage("Discount is less than 100");
+                    result.setStatus(ServiceResult.Status.FAILED);
+                }
             } else {
                 result.setMessage("Status is not existed");
                 result.setStatus(ServiceResult.Status.FAILED);
@@ -590,11 +589,11 @@ public class AdminServiceImpl implements AdminService {
     public ServiceResult deleteProduct(int id) {
         ServiceResult result = new ServiceResult();
         ProductEntity product = productRepository.findByIdAndDeleted(id, false);
-        if (product != null){
+        if (product != null) {
             product.setDeleted(true);
             productRepository.delete(product);
             result.setMessage("Delete product successfully");
-        }else {
+        } else {
             result.setMessage("Cannot delete this product");
             result.setStatus(ServiceResult.Status.FAILED);
         }
@@ -605,13 +604,13 @@ public class AdminServiceImpl implements AdminService {
     public ServiceResult deleteOrderDetail(int id) {
         ServiceResult result = new ServiceResult();
         OrderDetailEntity orderDetail = orderDetailRepository.findById(id).orElse(null);
-        if (orderDetail != null){
+        if (orderDetail != null) {
             OrderEntity order = orderDetail.getOrder();
             order.setTotalPrice(order.getTotalPrice() - orderDetail.getPrice());
             orderDetailRepository.delete(orderDetail);
             orderRepository.save(order);
             result.setMessage("Delete order detail successfully");
-        }else {
+        } else {
             result.setMessage("Cannot delete this order detail");
             result.setStatus(ServiceResult.Status.FAILED);
         }
@@ -622,11 +621,11 @@ public class AdminServiceImpl implements AdminService {
     public ServiceResult deleteOrder(int id) {
         ServiceResult result = new ServiceResult();
         OrderEntity order = orderRepository.findByIdAndDeleted(id, false);
-        if (order != null){
+        if (order != null) {
             orderDetailRepository.deleteAll(orderDetailRepository.findByOrderId(id));
             orderRepository.delete(order);
             result.setMessage("Delete order successfully");
-        }else {
+        } else {
             result.setMessage("Cannot delete this order");
             result.setStatus(ServiceResult.Status.FAILED);
         }
@@ -675,7 +674,7 @@ public class AdminServiceImpl implements AdminService {
             for (OrderDetailEntity entity : orderDetailList) {
 
                 AdminGetOrderDetailResponse response = new AdminGetOrderDetailResponse(entity.getId(),
-                       entity.getPrice(),
+                        entity.getPrice(),
                         entity.getQuantity(),
                         entity.getProduct().getId());
                 responses.add(response);
@@ -699,7 +698,7 @@ public class AdminServiceImpl implements AdminService {
             ProductEntity product = productRepository.findByIdAndDeletedAndStatusName(productID, false, StatusName.ACTIVE);
             if (product != null) {
                 OrderEntity order = orderRepository.findByIdAndDeleted(orderID, false);
-                if (order != null){
+                if (order != null) {
                     int count = product.getQuantity() + orderDetail.getQuantity() - quantity;
                     if (count >= 0) {
                         orderDetail.setProduct(product);
@@ -714,7 +713,7 @@ public class AdminServiceImpl implements AdminService {
                         result.setMessage("The quantity exceeded");
                         result.setStatus(ServiceResult.Status.FAILED);
                     }
-                }else {
+                } else {
                     result.setStatus(ServiceResult.Status.FAILED);
                     result.setMessage("Order not found");
                 }
@@ -732,9 +731,9 @@ public class AdminServiceImpl implements AdminService {
         ServiceResult result = new ServiceResult();
         List<EmployeeEntity> shopList = employeeRepository.findByDeletedAndRoleName(false, RoleName.ROLE_SHOP);
         List<AdminGetAllShopResponse> responses = new ArrayList<>();
-        for (EmployeeEntity entity : shopList){
+        for (EmployeeEntity entity : shopList) {
             AdminGetAllShopResponse response = new AdminGetAllShopResponse(entity.getId(),
-                    entity.getFirstName()+" "+ entity.getLastName());
+                    entity.getFirstName() + " " + entity.getLastName());
             responses.add(response);
         }
         result.setData(responses);
@@ -757,7 +756,7 @@ public class AdminServiceImpl implements AdminService {
                         entity.getId(),
                         entity.getShop().getId(),
                         entity.getName(),
-                       entity.getStatus().getName().name(),
+                        entity.getStatus().getName().name(),
                         entity.getStartDate().toString(),
                         entity.getEndDate().toString(),
                         entity.getBudget());
@@ -782,53 +781,75 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public ServiceResult createCampaign(AdminCreateCampaignRequest request) {
         ServiceResult result = new ServiceResult();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            Date startDate = formatter.parse(request.getStartDate());
-            Date endDate = formatter.parse(request.getEndDate());
+        if (!request.getProductURL().equals("") && !request.getTitle().equals("")
+                && !request.getStatus().equals("") && !request.getName().equals("")) {
+            boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch(t -> t.name().equals(request.getStatus()));
+            if (isStatusExist) {
+                if (request.getBid() < request.getBudget()) {
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                    try {
+                        Date startDate = formatter.parse(request.getStartDate());
+                        Date endDate = formatter.parse(request.getEndDate());
+                        if (startDate.before(endDate)) {
+                            CampaignEntity campaignEntity = new CampaignEntity(request.getName(),
+                                    statusRepository.findByName(StatusName.valueOf(request.getStatus())),
+                                    startDate,
+                                    endDate,
+                                    request.getBudget(),
+                                    request.getBid());
+                            if (request.getImageURL().equals("")) {
+                                campaignEntity.setImageURL(ShopConst.DEFAULT_AVATAR);
+                            } else campaignEntity.setImageURL(request.getImageURL());
+                            campaignEntity.setShop(employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(request.getShopID(),
+                                    false,
+                                    StatusName.ACTIVE,
+                                    RoleName.ROLE_SHOP));
+                            campaignEntity.setTitle(request.getTitle());
+                            campaignEntity.setDescription(request.getDescription());
+                            campaignEntity.setProductURL(request.getProductURL());
+                            campaignEntity.setShop(employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(request.getShopID(),
+                                    false,
+                                    StatusName.ACTIVE,
+                                    RoleName.ROLE_SHOP));
+                            campaignRepository.save(campaignEntity);
 
-            CampaignEntity campaignEntity = new CampaignEntity(request.getName(),
-                    statusRepository.findByName(StatusName.valueOf(request.getStatus())),
-                    startDate,
-                    endDate,
-                    request.getBudget(),
-                    request.getBid());
-            if (request.getImageURL().equals("")) {
-                campaignEntity.setImageURL(ShopConst.DEFAULT_AVATAR);
-            }else campaignEntity.setImageURL(request.getImageURL());
-            campaignEntity.setShop(employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(request.getShopID(),
-                    false,
-                    StatusName.ACTIVE,
-                    RoleName.ROLE_SHOP));
-            campaignEntity.setTitle(request.getTitle());
-            campaignEntity.setDescription(request.getDescription());
-            campaignEntity.setProductURL(request.getProductURL());
-            campaignEntity.setShop(employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(request.getShopID(),
-                    false,
-                    StatusName.ACTIVE,
-                    RoleName.ROLE_SHOP));
+                            AdminGetCampaignResponse response = new AdminGetCampaignResponse(
+                                    campaignEntity.getId(),
+                                    campaignEntity.getShop().getId(),
+                                    campaignEntity.getName(),
+                                    campaignEntity.getStatus().getName().name(),
+                                    formatter.format(campaignEntity.getStartDate()),
+                                    formatter.format(campaignEntity.getEndDate()),
+                                    campaignEntity.getBudget());
+                            response.setBid(campaignEntity.getBid());
+                            response.setImageURL(campaignEntity.getImageURL());
+                            response.setTitle(campaignEntity.getTitle());
+                            response.setDescription(campaignEntity.getDescription());
+                            response.setProductURL(campaignEntity.getProductURL());
 
-            campaignRepository.save(campaignEntity);
+                            result.setMessage("Successfully");
+                            result.setData(response);
+                        } else {
+                            result.setMessage("Start date must less than end date");
+                            result.setStatus(ServiceResult.Status.FAILED);
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    result.setMessage("Bid must less than budget");
+                    result.setStatus(ServiceResult.Status.FAILED);
+                }
+            } else {
+                result.setMessage("Status not found");
+                result.setStatus(ServiceResult.Status.FAILED);
+            }
 
-            AdminGetCampaignResponse response = new AdminGetCampaignResponse(
-                    campaignEntity.getId(),
-                    campaignEntity.getShop().getId(),
-                    campaignEntity.getName(),
-                    campaignEntity.getStatus().getName().name(),
-                    formatter.format(campaignEntity.getStartDate()),
-                    formatter.format(campaignEntity.getEndDate()),
-                    campaignEntity.getBudget());
-            response.setBid(campaignEntity.getBid());
-            response.setImageURL(campaignEntity.getImageURL());
-            response.setTitle(campaignEntity.getTitle());
-            response.setDescription(campaignEntity.getDescription());
-            response.setProductURL(campaignEntity.getProductURL());
-
-            result.setMessage("Successfully");
-            result.setData(response);
-        } catch (ParseException e) {
-            e.printStackTrace();
+        } else {
+            result.setStatus(ServiceResult.Status.FAILED);
+            result.setMessage("Fields cannot be empty");
         }
+
         return result;
     }
 
@@ -836,41 +857,63 @@ public class AdminServiceImpl implements AdminService {
     public ServiceResult updateCampaign(AdminUpdateCampaignRequest request) {
         ServiceResult result = new ServiceResult();
         CampaignEntity campaign = campaignRepository.findById(request.getId()).orElse(null);
-        if (campaign != null){
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            try {
-                Date startDate = formatter.parse(request.getStartDate());
-                Date endDate = formatter.parse(request.getEndDate());
-                campaign.setBid(request.getBid());
-                campaign.setBudget(request.getBudget());
-                campaign.setName(request.getName());
-                campaign.setStartDate(startDate);
-                campaign.setEndDate(endDate);
-                campaign.setDescription(request.getDescription());
-                campaign.setStatus(statusRepository.findByName(StatusName.valueOf(request.getStatus())));
-                campaign.setImageURL(request.getImageURL());
-                campaign.setProductURL(request.getProductURL());
-                campaignRepository.save(campaign);
+        if (request.getProductURL().equals("") && request.getTitle().equals("")
+                && request.getStatus().equals("") && request.getName().equals("")) {
+            boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch(t -> t.name().equals(request.getStatus()));
+            if (isStatusExist) {
+                if (request.getBid() < request.getBudget()) {
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                    try {
+                        Date startDate = formatter.parse(request.getStartDate());
+                        Date endDate = formatter.parse(request.getEndDate());
+                        if (startDate.compareTo(endDate) < 0) {
+                            campaign.setBid(request.getBid());
+                            campaign.setBudget(request.getBudget());
+                            campaign.setName(request.getName());
+                            campaign.setStartDate(startDate);
+                            campaign.setEndDate(endDate);
+                            campaign.setDescription(request.getDescription());
+                            campaign.setStatus(statusRepository.findByName(StatusName.valueOf(request.getStatus())));
+                            campaign.setImageURL(request.getImageURL());
+                            campaign.setProductURL(request.getProductURL());
+                            campaignRepository.save(campaign);
 
-                AdminGetCampaignResponse response = new AdminGetCampaignResponse(campaign.getId(),
-                        campaign.getShop().getId(),
-                        campaign.getName(),
-                        campaign.getStatus().getName().name(),
-                        formatter.format(campaign.getStartDate()),
-                        formatter.format(campaign.getEndDate()),
-                        campaign.getBudget());
-                response.setBid(campaign.getBid());
-                response.setImageURL(campaign.getImageURL());
-                response.setTitle(campaign.getTitle());
-                response.setDescription(campaign.getDescription());
-                response.setProductURL(campaign.getProductURL());
+                            AdminGetCampaignResponse response = new AdminGetCampaignResponse(campaign.getId(),
+                                    campaign.getShop().getId(),
+                                    campaign.getName(),
+                                    campaign.getStatus().getName().name(),
+                                    formatter.format(campaign.getStartDate()),
+                                    formatter.format(campaign.getEndDate()),
+                                    campaign.getBudget());
+                            response.setBid(campaign.getBid());
+                            response.setImageURL(campaign.getImageURL());
+                            response.setTitle(campaign.getTitle());
+                            response.setDescription(campaign.getDescription());
+                            response.setProductURL(campaign.getProductURL());
 
-                result.setMessage("Update campaign successfully");
-                result.setData(response);
-            } catch (ParseException e) {
-                e.printStackTrace();
+                            result.setMessage("Update campaign successfully");
+                            result.setData(response);
+                        } else {
+                            result.setMessage("Start date must less than end date");
+                            result.setStatus(ServiceResult.Status.FAILED);
+                        }
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    result.setMessage("Bid must less than budget");
+                    result.setStatus(ServiceResult.Status.FAILED);
+                }
+            } else {
+                result.setMessage("Status not found");
+                result.setStatus(ServiceResult.Status.FAILED);
             }
+        } else {
+            result.setStatus(ServiceResult.Status.FAILED);
+            result.setMessage("Fields cannot be empty");
         }
+
         return result;
     }
 
@@ -878,19 +921,22 @@ public class AdminServiceImpl implements AdminService {
     public ServiceResult deleteCampaign(int id) {
         ServiceResult result = new ServiceResult();
         CampaignEntity campaign = campaignRepository.findById(id).orElse(null);
-            if (campaign != null){
-                campaignRepository.delete(campaign);
+        if (campaign != null) {
+            campaignRepository.delete(campaign);
 
-                result.setMessage("Delete campaign successfully");
-            }
+            result.setMessage("Delete campaign successfully");
+        } else {
+            result.setStatus(ServiceResult.Status.FAILED);
+            result.setMessage("Campaign not found");
+        }
         return result;
     }
 
-    private double calculatePrice(int quantity, double price, double discount){
-        return (price - price*discount/100)*quantity;
+    private double calculatePrice(int quantity, double price, double discount) {
+        return (price - price * discount / 100) * quantity;
     }
 
-    private boolean isDiscountRight(int discount){
+    private boolean isDiscountRight(int discount) {
         return discount >= 0 && discount < 100;
     }
 }
