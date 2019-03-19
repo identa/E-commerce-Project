@@ -211,10 +211,10 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ServiceResult signOut(HttpServletRequest request) {
+    public ServiceResult signOut(String token) {
         ServiceResult result = new ServiceResult();
-        String token = request.getHeader(CustomerConst.AUTH).split(" ")[1];
-        JWTEntity jwt = jwtRepository.findByToken(token).orElse(null);
+        String authHeader = token.replace("Bearer ", "");
+        JWTEntity jwt = jwtRepository.findByToken(authHeader).orElse(null);
         if (jwt != null) {
             jwtRepository.delete(jwt);
             result.setMessage("Sign out successfully");
@@ -226,9 +226,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ServiceResult getInfo(HttpServletRequest request) {
+    public ServiceResult getInfo(String token) {
         ServiceResult result = new ServiceResult();
-        String authHeader = request.getHeader(CustomerConst.AUTH).split(" ")[1];
+        String authHeader = token.replace("Bearer ", "");
         EmployeeEntity customer = employeeRepository.findByEmail(getUserNameFromJwtToken(authHeader)).orElse(null);
         if (customer != null) {
             CustomerGetInfoResponse response = new CustomerGetInfoResponse(
@@ -333,9 +333,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ServiceResult returnRole(HttpServletRequest request) {
+    public ServiceResult returnRole(String token) {
         ServiceResult result = new ServiceResult();
-        String authHeader = request.getHeader(CustomerConst.AUTH).split(" ")[1];
+        String authHeader = token.replace("Bearer ", "");
         EmployeeEntity employee = employeeRepository.findByEmail(getUserNameFromJwtToken(authHeader)).orElse(null);
         if (employee != null) {
             result.setData(employee.getRole().getName().name());

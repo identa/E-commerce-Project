@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -31,8 +30,8 @@ public class ShopController {
     AdminService adminService;
 
     @GetMapping("/getInfoById")
-    public ResponseEntity<ServiceResult> getInfoById(HttpServletRequest request) {
-        return new ResponseEntity<>(customerService.getInfo(request), HttpStatus.OK);
+    public ResponseEntity<ServiceResult> getInfoById(@RequestHeader(value = "Authorization") String token) {
+        return new ResponseEntity<>(customerService.getInfo(token), HttpStatus.OK);
     }
 
     @PutMapping("/update")

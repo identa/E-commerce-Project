@@ -128,7 +128,7 @@ public class ShopServiceImpl implements ShopService {
                             entity.getCategory().getId(),
                             entity.getShop().getId(),
                             entity.getCategory().getName(),
-                            entity.getShop().getFirstName()+ " " + entity.getShop().getLastName());
+                            entity.getShop().getFirstName() + " " + entity.getShop().getLastName());
                     responses.add(response);
                 }
                 ShopPaginateProductByIdResponse response = new ShopPaginateProductByIdResponse(totalPages, responses);
@@ -198,38 +198,38 @@ public class ShopServiceImpl implements ShopService {
             boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch(t -> t.name().equals(request.getStatus()));
             if (isStatusExist) {
                 CategoryEntity category = categoryRepository.findById(request.getCategoryID()).orElse(null);
-                    ProductEntity product = productRepository.findByIdAndDeleted(
-                            request.getId(), false);
-                        if (isDiscountRight(request.getDiscount())) {
-                            product.setName(request.getName());
-                            product.setDescription(request.getDescription());
-                            product.setOriginalPrice(request.getOriginalPrice());
-                            product.setDiscount(request.getDiscount());
-                            product.setStatus(statusRepository.findByName(StatusName.valueOf(request.getStatus())));
-                            product.setQuantity(request.getQuantity());
-                            if (request.getProductImageURL() == null)
-                                product.setProductImageURL(ShopConst.DEFAULT_AVATAR);
-                            else product.setProductImageURL(request.getProductImageURL());
-                            product.setCategory(category);
+                ProductEntity product = productRepository.findByIdAndDeleted(
+                        request.getId(), false);
+                if (isDiscountRight(request.getDiscount())) {
+                    product.setName(request.getName());
+                    product.setDescription(request.getDescription());
+                    product.setOriginalPrice(request.getOriginalPrice());
+                    product.setDiscount(request.getDiscount());
+                    product.setStatus(statusRepository.findByName(StatusName.valueOf(request.getStatus())));
+                    product.setQuantity(request.getQuantity());
+                    if (request.getProductImageURL() == null)
+                        product.setProductImageURL(ShopConst.DEFAULT_AVATAR);
+                    else product.setProductImageURL(request.getProductImageURL());
+                    product.setCategory(category);
 
-                            productRepository.save(product);
-                            ShopUpdateProductResponse response = new ShopUpdateProductResponse(product.getId(),
-                                    product.getName(),
-                                    product.getStatus().getName().name(),
-                                    product.getDescription(),
-                                    product.getQuantity(),
-                                    product.getOriginalPrice(),
-                                    product.getDiscount(),
-                                    product.getProductImageURL(),
-                                    product.getCategory().getName(),
-                                    product.getShop().getFirstName() + " " + product.getShop().getLastName());
+                    productRepository.save(product);
+                    ShopUpdateProductResponse response = new ShopUpdateProductResponse(product.getId(),
+                            product.getName(),
+                            product.getStatus().getName().name(),
+                            product.getDescription(),
+                            product.getQuantity(),
+                            product.getOriginalPrice(),
+                            product.getDiscount(),
+                            product.getProductImageURL(),
+                            product.getCategory().getName(),
+                            product.getShop().getFirstName() + " " + product.getShop().getLastName());
 
-                            result.setMessage("Create product successfully");
-                            result.setData(response);
-                        } else {
-                            result.setMessage("Discount is less than 100");
-                            result.setStatus(ServiceResult.Status.FAILED);
-                        }
+                    result.setMessage("Create product successfully");
+                    result.setData(response);
+                } else {
+                    result.setMessage("Discount is less than 100");
+                    result.setStatus(ServiceResult.Status.FAILED);
+                }
             } else {
                 result.setMessage("Status is not existed");
                 result.setStatus(ServiceResult.Status.FAILED);

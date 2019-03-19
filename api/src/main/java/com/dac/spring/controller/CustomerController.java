@@ -12,14 +12,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/customer")
-public class CustomerController extends HttpServlet {
+public class CustomerController {
     @Autowired
     CustomerService customerService;
 
@@ -47,14 +45,14 @@ public class CustomerController extends HttpServlet {
     }
 
     @DeleteMapping("/signout")
-    public ResponseEntity<ServiceResult> signOut(HttpServletRequest request) {
-        return new ResponseEntity<>(customerService.signOut(request), HttpStatus.OK);
+    public ResponseEntity<ServiceResult> signOut(String token) {
+        return new ResponseEntity<>(customerService.signOut(token), HttpStatus.OK);
     }
 
     @GetMapping("/getById")
     @PreAuthorize("hasRole('CUSTOMER')")
-    public ResponseEntity<ServiceResult> getInfoById(HttpServletRequest request) {
-        return new ResponseEntity<>(customerService.getInfo(request), HttpStatus.OK);
+    public ResponseEntity<ServiceResult> getInfoById(@RequestHeader(value = "Authorization") String token) {
+        return new ResponseEntity<>(customerService.getInfo(token), HttpStatus.OK);
     }
 
     @PutMapping("/update")
@@ -85,8 +83,8 @@ public class CustomerController extends HttpServlet {
     }
 
     @GetMapping("/getRole")
-    public ResponseEntity<ServiceResult> getRole(HttpServletRequest request){
-        return new ResponseEntity<>(customerService.returnRole(request),HttpStatus.OK);
+    public ResponseEntity<ServiceResult> getRole(@RequestHeader(value = "Authorization") String token){
+        return new ResponseEntity<>(customerService.returnRole(token),HttpStatus.OK);
     }
 
     @PostMapping("/createOrder")
