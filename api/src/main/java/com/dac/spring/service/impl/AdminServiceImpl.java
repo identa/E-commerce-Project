@@ -857,8 +857,8 @@ public class AdminServiceImpl implements AdminService {
     public ServiceResult updateCampaign(AdminUpdateCampaignRequest request) {
         ServiceResult result = new ServiceResult();
         CampaignEntity campaign = campaignRepository.findById(request.getId()).orElse(null);
-        if (request.getProductURL().equals("") && request.getTitle().equals("")
-                && request.getStatus().equals("") && request.getName().equals("")) {
+        if (!request.getProductURL().equals("") && !request.getTitle().equals("")
+                && !request.getStatus().equals("") && !request.getName().equals("")) {
             boolean isStatusExist = Arrays.stream(StatusName.values()).anyMatch(t -> t.name().equals(request.getStatus()));
             if (isStatusExist) {
                 if (request.getBid() < request.getBudget()) {
