@@ -12,20 +12,25 @@ import CampaignDashboard from '../Campaign/CampaignDashboard';
 import CampaignCreate from '../Campaign/CampaignCreate';
 import CampaignEdit from '../Campaign/CampaignEdit';
 class RouteURL extends Component {
+    constructor(props) {
+        super(props);
+        
+    }
+    
     render() {
         return (
                 <Switch>
-                    <Route exact path="/" component={Home}></Route>
-                    <Route path="/customer/profile" component={Profile}></Route>
-                    <Route path="/manage/customer/dashboard" component={CustomerDashboard}></Route>
-                    <Route path="/manage/customer/create" component={CustomerCreate}></Route>
-                    <Route path="/manage/customer/edit" component={CustomerEdit}></Route>
-                    <Route path="/manage/product/dashboard" component={ProductDashboard}></Route>
-                    <Route path="/manage/product/create" component={ProductCreate}></Route>
-                    <Route path="/manage/product/edit" component={ProductEdit}></Route>
-                    <Route path="/manage/campaign/dashboard" component={CampaignDashboard}></Route>
-                    <Route path="/manage/campaign/create" component={CampaignCreate}></Route>
-                    <Route path="/manage/campaign/edit" component={CampaignEdit}></Route>
+                    <Route exact path="/" component={Home}/>
+                    <Route path="/customer/profile" {...this.props} render={(props) => <Profile {...props} changeImageAvatar={this.props.changeImageAvatar}/>} />
+                    <Route path="/manage/customer/dashboard" component={CustomerDashboard}/>
+                    <Route path="/manage/customer/create" component={CustomerCreate}/>
+                    <Route path="/manage/customer/edit" component={CustomerEdit}/>
+                    <Route path="/manage/product/dashboard" component={ProductDashboard}/>
+                    <Route path="/manage/product/create" component={ProductCreate}/>
+                    <Route path="/manage/product/edit" component={ProductEdit}/>
+                    <Route path="/manage/campaign/dashboard" component={CampaignDashboard}/>
+                    <Route path="/manage/campaign/create" component={CampaignCreate}/>
+                    <Route path="/manage/campaign/edit" component={CampaignEdit}/>
                 </Switch> 
         );
     }

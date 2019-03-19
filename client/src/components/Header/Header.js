@@ -40,7 +40,8 @@ class Header extends Component {
                 <>
                     {
                         authenticate ? <UserLink        changeAuthenticated={this.changeAuthenticated}
-                                                        getRole={this.getRole}/> 
+                                                        getRole={this.getRole}
+                                                        {...this.props}/> 
                                      : <ModalComponent 
                                                         changeAuthenticated={this.changeAuthenticated}
                                                         setRole={this.setRole}/>

@@ -9,6 +9,7 @@ class UserLink extends Component {
         this.state = {
             name : '',
             role : '',
+            imageURL : localStorage.imageURL
         }
     }
     
@@ -31,6 +32,10 @@ class UserLink extends Component {
         }
     }
 
+    changeImageAvatar = (imageURL) =>{
+        this.setState({imageURL : imageURL});
+    }
+
     renderLi = () =>{
         const role = localStorage.role;
         switch(role){
@@ -44,23 +49,23 @@ class UserLink extends Component {
                         </>)
             case 'ROLE_SHOP':
                 return (<>
-                    <li><Link to="/customer/profile">User Information</Link></li>
-                    <li><Link to="/manage/product/dashboard">Management Product</Link></li>
-                    <li><Link to="/manage/campaign/dashboard">Management Campaign</Link></li>
-                    <li><Link to="/" onClick={this.logout}>Logout</Link></li>
-                </>)
+                            <li><Link to="/customer/profile">User Information</Link></li>
+                            <li><Link to="/manage/product/dashboard">Management Product</Link></li>
+                            <li><Link to="/manage/campaign/dashboard">Management Campaign</Link></li>
+                            <li><Link to="/" onClick={this.logout}>Logout</Link></li>
+                        </>)
             default :
                 return (<>
-                    <li><Link to="/customer/profile">User Information</Link></li>                    
-                    <li><Link to="/" onClick={this.logout}>Logout</Link></li>
-                </>)
+                            <li><Link to="/customer/profile">User Information</Link></li>                    
+                            <li><Link to="/" onClick={this.logout}>Logout</Link></li>
+                        </>)
 
         }
     }
 
     render() {
         const name = localStorage.firstName + ' ' +  localStorage.lastName;
-        const imageURL = localStorage.imageURL;
+        const imageURL = this.props.getImageAvatar();
         return (
             <div className="links-bar">
                 <Button variant="link" className="menu-action-link">

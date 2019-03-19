@@ -21,6 +21,8 @@ class Profile extends Component {
             imageURL : '',
             messageShowingStyle : 'message',
             isRedirect : false,
+            isButtonEnable : true,
+            showLoading : 'collapse',
             error : {
                 firstName : '',
                 lastName : '',
@@ -62,6 +64,7 @@ class Profile extends Component {
     
     onChange = (event) =>{
         this.setState({ [event.target.name]: event.target.value });
+        this.setState({isButtonEnable : false});
         this.setState(prevState =>({
             error :{
                 ...prevState.error,
@@ -151,6 +154,7 @@ class Profile extends Component {
     }
     
     loadFile = (event) =>{
+        this.setState({isButtonEnable : false});
         let reader = new FileReader();  
         let file = event.target.files[0];
         
@@ -184,6 +188,10 @@ class Profile extends Component {
         event.preventDefault();
 
         if(this.validateFirstName() && this.validateLastName() && this.validateMessage()){
+            this.setState({
+                showLoading : 'show',
+                isButtonEnable : true
+            });
             const imgURL = await this.getImageUrl();
             if(imgURL !== ''){
                 this.setState({imageURL : imgURL});
@@ -213,6 +221,8 @@ class Profile extends Component {
             })
             const result = await response.json();
             if(result.status === 'SUCCESS'){
+                localStorage.imageURL = imgURL;
+                this.props.changeImageAvatar(imgURL);
                 this.setState({isRedirect : true});
             }
             else if (result.status === 'FAILED'){
@@ -226,6 +236,7 @@ class Profile extends Component {
         }
 
     }
+
     render() {
         const isRedirect = this.state.isRedirect;
 
@@ -289,10 +300,17 @@ class Profile extends Component {
                                                 </div>
                                                 <div className="form-group row">
                                                     <div className="offset-4 col-8">
-                                                        <Link className="btn" to="/">Back to Home</Link>
-                                                        <button name="submit" type="submit" className="btn btn-primary">Update</button>
+                                                        <Link className="btn btn-update-profile" to="/">Back to Home</Link>
+                                                        <button name="submit" type="submit" className="btn btn-primary" disabled={this.state.isButtonEnable}>Update</button>
                                                         <div className="message">
                                                             {this.state.error.message}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="form-group row">
+                                                    <div className="offset-4 col-8">
+                                                        <div className={this.state.showLoading}>
+                                                            <i className="fa fa-spinner fa-spin"/>Loading....
                                                         </div>
                                                     </div>
                                                 </div>

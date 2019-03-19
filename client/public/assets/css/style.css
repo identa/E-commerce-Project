@@ -605,6 +605,9 @@ a:hover{
     margin: 0;
     justify-content: center;
 }
+.btn-update-profile{
+    color: #007bff;
+}
 .form-group{
     margin-bottom: 1rem;
 }
