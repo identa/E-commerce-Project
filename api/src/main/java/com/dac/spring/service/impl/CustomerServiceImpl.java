@@ -31,6 +31,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -483,13 +484,29 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult getCampaign() {
         ServiceResult result = new ServiceResult();
         Date currentDate = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        List<CampaignEntity> list = getCampaignList(currentDate,currentDate);
+        Random random = new Random();
+        List<CampaignEntity> list = getCampaignList(currentDate, currentDate);
+        List<CampaignEntity> validList = new ArrayList<>();
+        List<CampaignEntity> activeList = new ArrayList<>();
         List<CustomerGetCampaignResponse> responses = new ArrayList<>();
-        if (list.size() != CustomerConst.CAMPAIGN_AMOUNT) {
-                list.addAll(campaignRepository.getDefaultCampaign(CustomerConst.CAMPAIGN_AMOUNT - list.size()));
+
+        for (CampaignEntity campaignEntity : list) {
+            if (campaignEntity.getBudget() >= campaignEntity.getBid())
+                validList.add(campaignEntity);
         }
-        for (CampaignEntity campaign : list) {
+        if (validList.size() < CustomerConst.CAMPAIGN_AMOUNT) {
+            for (CampaignEntity campaign : validList){
+                activeList.add(campaign);
+            }
+            for (int j = 1; j <= CustomerConst.CAMPAIGN_AMOUNT - validList.size(); j++) {
+                activeList.add(campaignRepository.findByNameContaining("Default campaign " + j));
+            }
+        } else {
+            for (int k = 1; k <= CustomerConst.CAMPAIGN_AMOUNT; k++) {
+                activeList.add(validList.get(random.nextInt(validList.size())));
+            }
+        }
+        for (CampaignEntity campaign : activeList) {
             campaign.setBudget(campaign.getBudget() - campaign.getBid());
             campaignRepository.save(campaign);
 
@@ -498,6 +515,7 @@ public class CustomerServiceImpl implements CustomerService {
                     campaign.getProductURL());
             responses.add(response);
         }
+        result.setMessage("Get campaign successfully");
         result.setData(responses);
         return result;
     }
@@ -507,7 +525,7 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult result = new ServiceResult();
         Date currentDate = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        List<CampaignEntity> list = getCampaignList1(currentDate,currentDate);
+        List<CampaignEntity> list = getCampaignList1(formatter.format(currentDate), formatter.format(currentDate));
         List<CustomerGetCampaignResponse> responses = new ArrayList<>();
         if (list.size() != CustomerConst.CAMPAIGN_AMOUNT) {
             list.addAll(campaignRepository.getDefaultCampaign(CustomerConst.CAMPAIGN_AMOUNT - list.size()));
@@ -537,10 +555,10 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     private List<CampaignEntity> getCampaignList(Date startDate, Date endDate) {
-        return campaignRepository.findTop3ByStartDateLessThanEqualAndEndDateGreaterThanAndStatusNameOrderByBidDesc(startDate, endDate, StatusName.ACTIVE);
+        return campaignRepository.findByStartDateLessThanEqualAndEndDateGreaterThanAndStatusNameOrderByBidDesc(startDate, endDate, StatusName.ACTIVE);
     }
 
-    private List<CampaignEntity> getCampaignList1(Date startDate, Date endDate) {
+    private List<CampaignEntity> getCampaignList1(String startDate, String endDate) {
         return campaignRepository.getCampaign(startDate, endDate);
     }
 }
