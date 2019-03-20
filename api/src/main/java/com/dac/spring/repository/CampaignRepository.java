@@ -14,7 +14,7 @@ import java.util.List;
 public interface CampaignRepository extends JpaRepository<CampaignEntity, Integer> {
     List<CampaignEntity> findTop3ByStartDateLessThanEqualAndEndDateGreaterThanAndStatusNameOrderByBidDesc(Date date1, Date date2, StatusName statusName);
 
-    @Query(nativeQuery = true, value = "select * from campaign where statusid= 1 and start_date <= :startDate and end_date > :endDate and budget >= bid order by bid desc limit 0,3")
+    @Query(nativeQuery = true, value = "select * from campaign where statusid= 1 and start_date <= ?1 and end_date > ?2 and budget >= bid order by bid desc limit 0,3")
     List<CampaignEntity> getCampaign(Date startDate, Date endDate);
 
     @Query(nativeQuery = true, value = "select * from campaign c where c.statusid= 1 and c.budget < c.bid order by c.bid desc ")
