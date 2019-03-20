@@ -352,7 +352,7 @@ class CampaignEdit extends Component {
 
     formSubmit = async (event) =>{
         event.preventDefault();
-        if(this.validateName() && this.validateTitle() && this.validateStartDate() && this.validateEndDate() && this.validateBid() && this.validateFinalUrl() && this.validateMessage()){
+        if(this.validateName() && this.validateTitle() && this.validateBid() && this.validateFinalUrl() && this.validateMessage()){
             this.setState({
                 showLoading : 'show',
                 isButtonEnable : true
@@ -487,11 +487,9 @@ class CampaignEdit extends Component {
                                                                 name="startDate"
                                                                 id="startDate"
                                                                 className="form-control"
-                                                                required
+                                                                readOnly
                                                                 value={this.state.startDate}
-                                                                onChange={this.onChange}
-                                                                onBlur={this.validateStartDate}
-                                                                onFocus={this.onFocus} />
+                                                                 />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -508,11 +506,9 @@ class CampaignEdit extends Component {
                                                                 name="endDate"
                                                                 id="endDate"
                                                                 className="form-control"
-                                                                required
+                                                                readOnly
                                                                 value={this.state.endDate}
-                                                                onChange={this.onChange}
-                                                                onBlur={this.validateEndDate} 
-                                                                onFocus={this.onFocus}/>
+                                                                />
                                                         </div>
                                                     </div>
                                                 </div>
