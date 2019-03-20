@@ -22,7 +22,7 @@ class CampaignCreate extends Component {
             messageShowingStyle: 'message',
             isRedirect: false,
             showLoading : 'collapse',
-            isButtonEnable : false,
+            isButtonEnable : true,
             dropdownArrowStyle: {
                 detail: 'fa fa-angle-up',
                 schedule: 'fa fa-angle-up',
@@ -37,6 +37,7 @@ class CampaignCreate extends Component {
                 endDate: '',
                 imageFile: '',
                 finalURL: '',
+                bid : '',
                 message: '',
             }
         }
@@ -48,6 +49,13 @@ class CampaignCreate extends Component {
     }
     
     onChange = (event) => {
+        this.setState(prevState => ({
+            error: {
+                ...prevState.error,
+                message: ''
+            }
+        }));
+        this.setState({isButtonEnable : false});
         this.setState({ [event.target.name]: event.target.value });
     }
 
@@ -100,6 +108,14 @@ class CampaignCreate extends Component {
                     error: {
                         ...prevState.error,
                         endDate: ''
+                    }
+                }));
+                break;
+            case 'bid':
+                this.setState(prevState => ({
+                    error: {
+                        ...prevState.error,
+                        bid: ''
                     }
                 }));
                 break;
@@ -352,9 +368,32 @@ class CampaignCreate extends Component {
         }
     }
 
+    validateBid = () =>{
+        const bid = this.state.bid;
+        const budget = this.state.budget;
+        if(bid > budget){
+            this.setState(prevState => ({
+                error: {
+                    ...prevState.error,
+                    bid: 'Bid must less than budget!'
+                }
+            }));
+            return false;
+        }
+        else {
+            this.setState(prevState => ({
+                error: {
+                    ...prevState.error,
+                    bid: ''
+                }
+            }));
+            return true;
+        }
+    }
+
     formSubmit = async (event) => {
         event.preventDefault();
-        if (this.validateName() && this.validateStartDate() && this.validateEndDate() && this.validateTitle() && this.validateFinalUrl() && this.validateFileImage() && this.validateMessage()) {
+        if (this.validateName() && this.validateStartDate() && this.validateEndDate() && this.validateBid() && this.validateTitle() && this.validateFinalUrl() && this.validateFileImage() && this.validateMessage()) {
             this.setState({
                 showLoading : 'show',
                 isButtonEnable : true
@@ -571,10 +610,18 @@ class CampaignCreate extends Component {
                                                             </div>
                                                             <input type="number" 
                                                                    name="bid" 
+                                                                   min="1"
                                                                    value={this.state.bid} 
                                                                    onChange={this.onChange} 
+                                                                   onBlur={this.validateBid}
+                                                                   onFocus={this.onFocus}
                                                                    className="form-control" />
                                                         </div>
+                                                    </div>
+                                                </div>
+                                                <div className="form-group row">
+                                                    <div className="offset-4 col-8 message">
+                                                        {this.state.error.bid}
                                                     </div>
                                                 </div>
                                             </div>

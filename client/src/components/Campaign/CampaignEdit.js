@@ -39,6 +39,7 @@ class CampaignEdit extends Component {
                 title: '',
                 startDate: '',
                 endDate: '',
+                bid : '',
                 finalURL: '',
                 message: '',
             }
@@ -326,9 +327,32 @@ class CampaignEdit extends Component {
         }
     }
 
+    validateBid = () =>{
+        const bid = this.state.bid;
+        const budget = this.state.budget;
+        if(bid > budget){
+            this.setState(prevState => ({
+                error: {
+                    ...prevState.error,
+                    bid: 'Bid must less than budget!'
+                }
+            }));
+            return false;
+        }
+        else {
+            this.setState(prevState => ({
+                error: {
+                    ...prevState.error,
+                    bid: ''
+                }
+            }));
+            return true;
+        }
+    }
+
     formSubmit = async (event) =>{
         event.preventDefault();
-        if(this.validateName() && this.validateTitle() && this.validateStartDate() && this.validateEndDate() && this.validateFinalUrl() && this.validateMessage()){
+        if(this.validateName() && this.validateTitle() && this.validateStartDate() && this.validateEndDate() && this.validateBid() && this.validateFinalUrl() && this.validateMessage()){
             this.setState({
                 showLoading : 'show',
                 isButtonEnable : true
@@ -388,7 +412,6 @@ class CampaignEdit extends Component {
     }
 
     render() {
-        const role = localStorage.role;
         const isRedirect = this.state.isRedirect;
         if(isRedirect){
             return <Redirect to='/manage/campaign/dashboard'/>
@@ -398,7 +421,7 @@ class CampaignEdit extends Component {
                 <div className="container">
                     <div className="campaign-container">
                         <div className="col-md-12">
-                            <h4>Create Campaign</h4>
+                            <h4>Edit Campaign</h4>
                             <hr />
                             <div className="campaign-content">
                                 <form onSubmit={this.formSubmit}>
@@ -564,6 +587,11 @@ class CampaignEdit extends Component {
                                                                    onChange={this.onChange} 
                                                                    className="form-control" />
                                                         </div>
+                                                    </div>
+                                                </div>
+                                                <div className="form-group row">
+                                                    <div className="offset-4 col-8 message">
+                                                        {this.state.error.bid}
                                                     </div>
                                                 </div>
                                             </div>
