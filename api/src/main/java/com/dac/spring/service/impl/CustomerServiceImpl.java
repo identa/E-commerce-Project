@@ -502,6 +502,29 @@ public class CustomerServiceImpl implements CustomerService {
         return result;
     }
 
+    @Override
+    public ServiceResult getCampaign1() {
+        ServiceResult result = new ServiceResult();
+        Date currentDate = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        List<CampaignEntity> list = getCampaignList1(formatter.format(currentDate),formatter.format(currentDate));
+        List<CustomerGetCampaignResponse> responses = new ArrayList<>();
+        if (list.size() != CustomerConst.CAMPAIGN_AMOUNT) {
+            list.addAll(campaignRepository.getDefaultCampaign(CustomerConst.CAMPAIGN_AMOUNT - list.size()));
+        }
+        for (CampaignEntity campaign : list) {
+            campaign.setBudget(campaign.getBudget() - campaign.getBid());
+            campaignRepository.save(campaign);
+
+            CustomerGetCampaignResponse response = new CustomerGetCampaignResponse(campaign.getTitle(),
+                    campaign.getImageURL(),
+                    campaign.getProductURL());
+            responses.add(response);
+        }
+        result.setData(responses);
+        return result;
+    }
+
     private double calculatePrice(int quantity, double price, double discount) {
         return (price - price * discount / 100) * quantity;
     }
@@ -515,5 +538,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     private List<CampaignEntity> getCampaignList(Date startDate, Date endDate) {
         return campaignRepository.findTop3ByStartDateLessThanEqualAndEndDateGreaterThanAndStatusNameOrderByBidDesc(startDate, endDate, StatusName.ACTIVE);
+    }
+
+    private List<CampaignEntity> getCampaignList1(String startDate, String endDate) {
+        return campaignRepository.getCampaign(startDate, endDate);
     }
 }
