@@ -589,6 +589,10 @@ a:hover{
 .btn-link:hover{
     color: #6dd5ed;
 }
+.disable-link{
+    pointer-events: none;
+    cursor: default;
+}
 /*-----------------------------------user management--------------------------*/
 .main{
     padding: 15px 0;

@@ -17,7 +17,6 @@ class Profile extends Component {
             firstName : '',
             lastName : '',
             email : '',
-            password : '',
             imageURL : '',
             messageShowingStyle : 'message',
             isRedirect : false,
@@ -26,7 +25,6 @@ class Profile extends Component {
             error : {
                 firstName : '',
                 lastName : '',
-                password : '',
                 message : ''       
             }
         }
@@ -203,7 +201,7 @@ class Profile extends Component {
                 id: this.state.uid,
                 firstName : this.state.firstName,
                 lastName : this.state.lastName,
-                password : this.state.password,
+                password : '',
                 imageURL : this.state.imageURL
             }
 
@@ -224,8 +222,10 @@ class Profile extends Component {
             })
             const result = await response.json();
             if(result.status === 'SUCCESS'){
-                localStorage.imageURL = imgURL;
+                localStorage.imageURL = result.data.imageURL;
                 this.props.changeImageAvatar(imgURL);
+                localStorage.firstName = result.data.firstName;
+                localStorage.lastName = result.data.lastName;
                 this.setState({isRedirect : true});
             }
             else if (result.status === 'FAILED'){

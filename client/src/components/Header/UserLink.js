@@ -9,11 +9,13 @@ class UserLink extends Component {
         this.state = {
             name : '',
             role : '',
-            imageURL : localStorage.imageURL
+            imageURL : localStorage.imageURL,
+            disableLink : ''
         }
     }
     
     logout = () =>{
+        this.setState({disableLink : 'disable-link'});
         if(localStorage.getItem("token")){
             fetch(url, {
                 method : 'DELETE',
@@ -57,7 +59,7 @@ class UserLink extends Component {
             default :
                 return (<>
                             <li><Link to="/customer/profile">User Information</Link></li>                    
-                            <li><Link to="/" onClick={this.logout}>Logout</Link></li>
+                            <li><Link to="/" onClick={this.logout} className={this.state.disableLink}>Logout</Link></li>
                         </>)
 
         }

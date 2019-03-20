@@ -158,6 +158,18 @@ class CampaignCreate extends Component {
         }
     }
 
+    formatDate = (date) =>{
+        let dateReturn = new Date(date);
+        let month = '' + (dateReturn.getMonth() + 1);
+        let day = '' + dateReturn.getDate();
+        let year = '' + dateReturn.getFullYear();
+        if(month.length < 2) 
+            month = '0' + month;
+        if (day.length < 2) 
+            day = '0' + day;
+        return [year,month,day].join('-');
+    }
+
     loadFile = (event) => {
         let reader = new FileReader();
         let file = event.target.files[0];
@@ -237,9 +249,9 @@ class CampaignCreate extends Component {
     }
 
     validateStartDate = () => {
-        const startDate = new Date(this.state.startDate);
+        const startDate = this.formatDate(new Date(this.state.startDate));      
         this.setState({ messageShowingStyle: 'message' });
-        let currentDate = new Date();
+        let currentDate = this.formatDate(new Date());       
         if (startDate < currentDate) {
             this.setState(prevState => ({
                 error: {
