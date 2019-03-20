@@ -486,10 +486,8 @@ public class CustomerServiceImpl implements CustomerService {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         List<CampaignEntity> list = getCampaignList(formatter.format(currentDate), formatter.format(currentDate));
         List<CustomerGetCampaignResponse> responses = new ArrayList<>();
-        if (list.size() != 3) {
-            for (int i = 1; i <= 3 - list.size(); i++) {
-                list.add(campaignRepository.findById(1).orElse(null));
-            }
+        if (list.size() != CustomerConst.CAMPAIGN_AMOUNT) {
+                list.addAll(campaignRepository.getDefaultCampaign(CustomerConst.CAMPAIGN_AMOUNT - list.size()));
         }
         for (CampaignEntity campaign : list) {
             campaign.setBudget(campaign.getBudget() - campaign.getBid());
