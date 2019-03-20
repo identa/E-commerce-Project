@@ -265,8 +265,17 @@ class CampaignCreate extends Component {
     }
 
     validateStartDate = () => {
-        const startDate = this.formatDate(new Date(this.state.startDate));      
         this.setState({ messageShowingStyle: 'message' });
+        if(this.state.startDate === ''){
+            this.setState(prevState => ({
+                error: {
+                    ...prevState.error,
+                    startDate: 'Please choose start date!'
+                }
+            }));
+            return false;
+        }
+        const startDate = this.formatDate(new Date(this.state.startDate));      
         let currentDate = this.formatDate(new Date());       
         if (startDate < currentDate) {
             this.setState(prevState => ({
@@ -289,8 +298,17 @@ class CampaignCreate extends Component {
     }
 
     validateEndDate = () => {
-        const endDate = new Date(this.state.endDate);
         this.setState({ messageShowingStyle: 'message' });
+        if(this.state.endDate === ''){
+            this.setState(prevState => ({
+                error: {
+                    ...prevState.error,
+                    endDate: 'Please choose end date!'
+                }
+            }));
+            return false;
+        }
+        const endDate = new Date(this.state.endDate);
         let currentDate = new Date();
         let startDate = new Date(this.state.startDate);
         if (endDate < currentDate) {
@@ -455,6 +473,7 @@ class CampaignCreate extends Component {
                             <hr />
                             <div className="campaign-content">
                                 <form onSubmit={this.formSubmit}>
+                                    {/*************************************Detail*****************************/}
                                     <div className="card">
                                         <div className="card-header custom-card-header" onClick={this.onOpenComponent} data-toggle="collapse" data-target="#collapseDetail" aria-expanded="true" aria-controls="collapseDetail">
                                             <h5 aria-controls="collapseDetail">Detail</h5>
@@ -497,6 +516,7 @@ class CampaignCreate extends Component {
                                         </div>
                                     </div>
 
+                                    {/*************************************Scheudle*****************************/}
                                     <div className="card">
                                         <div className="card-header custom-card-header" onClick={this.onOpenComponent} data-toggle="collapse" data-target="#collapseSchedule" aria-expanded="true" aria-controls="collapseSchedule">
                                             <h5 aria-controls="collapseSchedule">Schedule</h5>
@@ -552,6 +572,7 @@ class CampaignCreate extends Component {
                                         </div>
                                     </div>
 
+                                    {/*************************************Budget*****************************/}
                                     <div className="card">
                                         <div className="card-header custom-card-header" onClick={this.onOpenComponent} data-toggle="collapse" data-target="#collapseBudget" aria-expanded="true" aria-controls="collapseBudget">
                                             <h5 aria-controls="collapseBudget">Budget</h5>
@@ -588,6 +609,7 @@ class CampaignCreate extends Component {
                                         </div>
                                     </div>
 
+                                    {/*************************************Bid Amount*****************************/}
                                     <div className="card">
                                         <div className="card-header custom-card-header" onClick={this.onOpenComponent} data-toggle="collapse" data-target="#collapseBidding" aria-expanded="true" aria-controls="collapseBidding">
                                             <h5 aria-controls="collapseBidding">Bidding</h5>
@@ -628,6 +650,7 @@ class CampaignCreate extends Component {
                                         </div>
                                     </div>
 
+                                    {/*************************************Creative*****************************/}
                                     <div className="card">
                                         <div className="card-header custom-card-header" onClick={this.onOpenComponent} data-toggle="collapse" data-target="#collapseCreative" aria-expanded="true" aria-controls="collapseCreative">
                                             <h5 aria-controls="collapseCreative">Creative</h5>

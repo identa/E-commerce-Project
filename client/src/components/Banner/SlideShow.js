@@ -34,7 +34,7 @@ class SlideShow extends Component {
                     {
                         campaignList.map((value,key) =>{
                             return (<Carousel.Item key={key}>
-                                        <a href={value.productURL} target="_blank">
+                                        <a href={value.productURL} target='_blank'>
                                             <img src={value.imageURL} alt={value.title}/>
                                         </a>
                                     </Carousel.Item>)

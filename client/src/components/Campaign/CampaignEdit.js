@@ -26,6 +26,7 @@ class CampaignEdit extends Component {
             messageShowingStyle: 'message',
             showLoading : 'collapse',
             isRedirect : false,
+            isReadOnlyStartDate : false,
             isButtonEnable : true,
             dropdownArrowStyle: {
                 detail: 'fa fa-angle-up',
@@ -39,13 +40,34 @@ class CampaignEdit extends Component {
                 title: '',
                 startDate: '',
                 endDate: '',
-                bid : '',
+                budget : '',
                 finalURL: '',
                 message: '',
             }
         }
     }
     
+    componentDidMount() {
+        const startDate = this.formatDate(new Date(this.state.startDate));
+        const currentDate = this.formatDate(new Date());
+
+        if(startDate < currentDate){
+            this.setState({isReadOnlyStartDate : true});
+        }
+    }
+    
+    formatDate = (date) =>{
+        let dateReturn = new Date(date);
+        let month = '' + (dateReturn.getMonth() + 1);
+        let day = '' + dateReturn.getDate();
+        let year = '' + dateReturn.getFullYear();
+        if(month.length < 2) 
+            month = '0' + month;
+        if (day.length < 2) 
+            day = '0' + day;
+        return [year,month,day].join('-');
+    }
+
     onChange = (event) => {
         this.setState({ [event.target.name]: event.target.value });
         this.setState({isButtonEnable : false});
@@ -109,6 +131,16 @@ class CampaignEdit extends Component {
                     }
                 }));
                 break;
+            case 'budget':
+                this.setState(prevState => ({
+                    error: {
+                        ...prevState.error,
+                        budget: ''
+                    }
+                }));
+                break;
+            default : 
+                break;
         }
     }
 
@@ -160,6 +192,8 @@ class CampaignEdit extends Component {
                     coppyState.creative = 'fa fa-angle-up';
                 }
                 this.setState({ dropdownArrowStyle: coppyState });
+                break;
+            default : 
                 break;
         }
     }
@@ -247,10 +281,19 @@ class CampaignEdit extends Component {
     }
 
     validateStartDate = () => {
-        const startDate = new Date(this.state.startDate);
         this.setState({ messageShowingStyle: 'message' });
-        let currentDate = new Date();
-        if (startDate < currentDate) {
+        if(this.state.startDate === ''){
+            this.setState(prevState => ({
+                error: {
+                    ...prevState.error,
+                    startDate: 'Please choose start date!'
+                }
+            }));
+            return false;
+        }
+        const startDate = this.formatDate(new Date(this.state.startDate));
+        const currentDate = this.formatDate(new Date());
+        if(startDate < currentDate){
             this.setState(prevState => ({
                 error: {
                     ...prevState.error,
@@ -271,20 +314,19 @@ class CampaignEdit extends Component {
     }
 
     validateEndDate = () => {
-        const endDate = new Date(this.state.endDate);
         this.setState({ messageShowingStyle: 'message' });
-        let currentDate = new Date();
-        let startDate = new Date(this.state.startDate);
-        if (endDate < currentDate) {
+        if(this.state.endDate === ''){
             this.setState(prevState => ({
                 error: {
                     ...prevState.error,
-                    endDate: 'Campaign end date can not less than current date!'
+                    endDate: 'Please choose end date!'
                 }
             }));
             return false;
         }
-        else if (endDate < startDate){
+        const endDate = new Date(this.state.endDate);
+        let startDate = new Date(this.state.startDate);
+        if (endDate < startDate){
             this.setState(prevState => ({
                 error: {
                     ...prevState.error,
@@ -327,14 +369,14 @@ class CampaignEdit extends Component {
         }
     }
 
-    validateBid = () =>{
+    validateBudget = () =>{
         const bid = this.state.bid;
         const budget = this.state.budget;
-        if(bid > budget){
+        if(budget < bid){
             this.setState(prevState => ({
                 error: {
                     ...prevState.error,
-                    bid: 'Bid must less than budget!'
+                    budget: 'Budget must great than bid!'
                 }
             }));
             return false;
@@ -343,7 +385,7 @@ class CampaignEdit extends Component {
             this.setState(prevState => ({
                 error: {
                     ...prevState.error,
-                    bid: ''
+                    budget: ''
                 }
             }));
             return true;
@@ -352,7 +394,7 @@ class CampaignEdit extends Component {
 
     formSubmit = async (event) =>{
         event.preventDefault();
-        if(this.validateName() && this.validateTitle() && this.validateBid() && this.validateFinalUrl() && this.validateMessage()){
+        if(this.validateName() && this.validateTitle() && this.validateStartDate() && this.validateEndDate() && this.validateBudget() && this.validateFinalUrl() && this.validateMessage()){
             this.setState({
                 showLoading : 'show',
                 isButtonEnable : true
@@ -392,8 +434,6 @@ class CampaignEdit extends Component {
                 body: JSON.stringify(data)
             });
             let result = await response.json();
-            console.log(result);
-            
             if(result.status === 'SUCCESS'){
                 this.setState({showLoading : 'collapse'});
                 this.setState({isRedirect : true});
@@ -425,6 +465,7 @@ class CampaignEdit extends Component {
                             <hr />
                             <div className="campaign-content">
                                 <form onSubmit={this.formSubmit}>
+                                    {/*************************************Detail*****************************/}
                                     <div className="card">
                                         <div className="card-header custom-card-header" onClick={this.onOpenComponent} data-toggle="collapse" data-target="#collapseDetail" aria-expanded="true" aria-controls="collapseDetail">
                                             <h5 aria-controls="collapseDetail">Detail</h5>
@@ -468,6 +509,7 @@ class CampaignEdit extends Component {
                                         </div>
                                     </div>
 
+                                    {/*************************************Schedule*****************************/}
                                     <div className="card">
                                         <div className="card-header custom-card-header" onClick={this.onOpenComponent} data-toggle="collapse" data-target="#collapseSchedule" aria-expanded="true" aria-controls="collapseSchedule">
                                             <h5 aria-controls="collapseSchedule">Schedule</h5>
@@ -487,9 +529,11 @@ class CampaignEdit extends Component {
                                                                 name="startDate"
                                                                 id="startDate"
                                                                 className="form-control"
-                                                                readOnly
+                                                                readOnly={this.state.isReadOnlyStartDate}
                                                                 value={this.state.startDate}
-                                                                 />
+                                                                onChange={this.onChange}
+                                                                onBlur={this.validateStartDate}
+                                                                onFocus={this.onFocus}/>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -505,10 +549,11 @@ class CampaignEdit extends Component {
                                                             <input type="date"
                                                                 name="endDate"
                                                                 id="endDate"
-                                                                className="form-control"
-                                                                readOnly
+                                                                className="form-control"                                                               
                                                                 value={this.state.endDate}
-                                                                />
+                                                                onChange={this.onChange}
+                                                                onBlur={this.validateEndDate}
+                                                                onFocus={this.onFocus}/>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -521,6 +566,7 @@ class CampaignEdit extends Component {
                                         </div>
                                     </div>
 
+                                    {/*************************************Budget*****************************/}
                                     <div className="card">
                                         <div className="card-header custom-card-header" onClick={this.onOpenComponent} data-toggle="collapse" data-target="#collapseBudget" aria-expanded="true" aria-controls="collapseBudget">
                                             <h5 aria-controls="collapseBudget">Budget</h5>
@@ -549,14 +595,21 @@ class CampaignEdit extends Component {
                                                                 required
                                                                 value={this.state.budget}
                                                                 onChange={this.onChange}
-                                                                onFocus={this.onFocus} />
+                                                                onFocus={this.onFocus} 
+                                                                onBlur={this.validateBudget}/>
                                                         </div>
+                                                    </div>
+                                                </div>
+                                                <div className="form-group row">
+                                                    <div className="offset-4 col-8 message">
+                                                        {this.state.error.budget}
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
+                                    {/*************************************Bid Amount*****************************/}
                                     <div className="card">
                                         <div className="card-header custom-card-header" onClick={this.onOpenComponent} data-toggle="collapse" data-target="#collapseBidding" aria-expanded="true" aria-controls="collapseBidding">
                                             <h5 aria-controls="collapseBidding">Bidding</h5>
@@ -580,20 +633,16 @@ class CampaignEdit extends Component {
                                                             <input type="number" 
                                                                    name="bid" 
                                                                    value={this.state.bid} 
-                                                                   onChange={this.onChange} 
+                                                                   readOnly
                                                                    className="form-control" />
                                                         </div>
-                                                    </div>
-                                                </div>
-                                                <div className="form-group row">
-                                                    <div className="offset-4 col-8 message">
-                                                        {this.state.error.bid}
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
+                                    {/*************************************Creative*****************************/}
                                     <div className="card">
                                         <div className="card-header custom-card-header" onClick={this.onOpenComponent} data-toggle="collapse" data-target="#collapseCreative" aria-expanded="true" aria-controls="collapseCreative">
                                             <h5 aria-controls="collapseCreative">Creative</h5>

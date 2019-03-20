@@ -12,11 +12,6 @@ import CampaignDashboard from '../Campaign/CampaignDashboard';
 import CampaignCreate from '../Campaign/CampaignCreate';
 import CampaignEdit from '../Campaign/CampaignEdit';
 class RouteURL extends Component {
-    constructor(props) {
-        super(props);
-        
-    }
-    
     render() {
         return (
                 <Switch>

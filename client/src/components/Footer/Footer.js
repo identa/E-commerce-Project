@@ -137,8 +137,8 @@ class Footer extends Component {
             <div className="row">
                 <div className="certificate-icon">
                     <div className="certificate-contain col-md-12 col-sm-12 col-xs-12">
-                        <img src={process.env.PUBLIC_URL + '/assets/images/icon-verify/2.png'} />
-                        <img src={process.env.PUBLIC_URL + '/assets/images/icon-verify/3.png'} />
+                        <img src={process.env.PUBLIC_URL + '/assets/images/icon-verify/2.png'} alt=''/>
+                        <img src={process.env.PUBLIC_URL + '/assets/images/icon-verify/3.png'} alt=''/>
                     </div>
                 </div>
             </div>
