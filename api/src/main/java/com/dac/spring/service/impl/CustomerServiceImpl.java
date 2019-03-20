@@ -484,7 +484,7 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult result = new ServiceResult();
         Date currentDate = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        List<CampaignEntity> list = getCampaignList(formatter.format(currentDate), formatter.format(currentDate));
+        List<CampaignEntity> list = getCampaignList(currentDate,currentDate);
         List<CustomerGetCampaignResponse> responses = new ArrayList<>();
         if (list.size() != CustomerConst.CAMPAIGN_AMOUNT) {
                 list.addAll(campaignRepository.getDefaultCampaign(CustomerConst.CAMPAIGN_AMOUNT - list.size()));
@@ -513,7 +513,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .getBody().getSubject();
     }
 
-    private List<CampaignEntity> getCampaignList(String startDate, String endDate) {
-        return campaignRepository.getCampaign(startDate, endDate);
+    private List<CampaignEntity> getCampaignList(Date startDate, Date endDate) {
+        return campaignRepository.findTop3ByStartDateLessThanEqualAndEndDateGreaterThanAndStatusNameOrderByBidDesc(startDate, endDate, StatusName.ACTIVE);
     }
 }
