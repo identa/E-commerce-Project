@@ -12,9 +12,10 @@ import java.util.List;
 
 @Repository
 public interface CampaignRepository extends JpaRepository<CampaignEntity, Integer> {
-    List<CampaignEntity> findByStartDateLessThanEqualAndEndDateGreaterThanAndStatusNameOrderByBidDesc(Date date1, Date date2, StatusName statusName);
+    List<CampaignEntity> findAllByStartDateLessThanEqualAndEndDateGreaterThanAndStatusNameOrderByBidDesc(Date date1, Date date2, StatusName statusName);
 
     CampaignEntity findByNameContaining(String name);
+
     @Query(nativeQuery = true, value = "select * from campaign c where c.statusid= 1 and c.start_date <= ?1 and c.end_date > ?2 and c.budget >= c.bid order by c.bid desc limit 0,3")
     List<CampaignEntity> getCampaign(String startDate, String endDate);
 

@@ -555,7 +555,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     private List<CampaignEntity> getCampaignList(Date startDate, Date endDate) {
-        return campaignRepository.findByStartDateLessThanEqualAndEndDateGreaterThanAndStatusNameOrderByBidDesc(startDate, endDate, StatusName.ACTIVE);
+        return campaignRepository.findAllByStartDateLessThanEqualAndEndDateGreaterThanAndStatusNameOrderByBidDesc(startDate, endDate, StatusName.ACTIVE);
     }
 
     private List<CampaignEntity> getCampaignList1(String startDate, String endDate) {
