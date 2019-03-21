@@ -199,7 +199,7 @@ class CampaignEdit extends Component {
     }
 
     loadFile = (event) => {
-        this.setState({isButtonEnable : true});
+        this.setState({isButtonEnable : false});
         let reader = new FileReader();
         let file = event.target.files[0];
 
@@ -281,36 +281,39 @@ class CampaignEdit extends Component {
     }
 
     validateStartDate = () => {
-        this.setState({ messageShowingStyle: 'message' });
-        if(this.state.startDate === ''){
-            this.setState(prevState => ({
-                error: {
-                    ...prevState.error,
-                    startDate: 'Please choose start date!'
-                }
-            }));
-            return false;
+        if(!this.state.isReadOnlyStartDate){
+            this.setState({ messageShowingStyle: 'message' });
+            if(this.state.startDate === ''){
+                this.setState(prevState => ({
+                    error: {
+                        ...prevState.error,
+                        startDate: 'Please choose start date!'
+                    }
+                }));
+                return false;
+            }
+            const startDate = this.formatDate(new Date(this.state.startDate));
+            const currentDate = this.formatDate(new Date());
+            if(startDate < currentDate){
+                this.setState(prevState => ({
+                    error: {
+                        ...prevState.error,
+                        startDate: 'Campaign start date can not less than current date!'
+                    }
+                }));
+                return false;
+            }
+            else {
+                this.setState(prevState => ({
+                    error: {
+                        ...prevState.error,
+                        startDate: ''
+                    }
+                }));
+                return true;
+            }
         }
-        const startDate = this.formatDate(new Date(this.state.startDate));
-        const currentDate = this.formatDate(new Date());
-        if(startDate < currentDate){
-            this.setState(prevState => ({
-                error: {
-                    ...prevState.error,
-                    startDate: 'Campaign start date can not less than current date!'
-                }
-            }));
-            return false;
-        }
-        else {
-            this.setState(prevState => ({
-                error: {
-                    ...prevState.error,
-                    startDate: ''
-                }
-            }));
-            return true;
-        }
+        return true; 
     }
 
     validateEndDate = () => {
@@ -393,7 +396,7 @@ class CampaignEdit extends Component {
     }
 
     formSubmit = async (event) =>{
-        event.preventDefault();
+        event.preventDefault();      
         if(this.validateName() && this.validateTitle() && this.validateStartDate() && this.validateEndDate() && this.validateBudget() && this.validateFinalUrl() && this.validateMessage()){
             this.setState({
                 showLoading : 'show',

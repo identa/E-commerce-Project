@@ -171,6 +171,8 @@ class CampaignCreate extends Component {
                 }
                 this.setState({ dropdownArrowStyle: coppyState });
                 break;
+            default : 
+                break;
         }
     }
 
@@ -187,6 +189,7 @@ class CampaignCreate extends Component {
     }
 
     loadFile = (event) => {
+        this.setState({isButtonEnable : false});
         let reader = new FileReader();
         let file = event.target.files[0];
 
@@ -218,6 +221,10 @@ class CampaignCreate extends Component {
         this.setState({ messageShowingStyle: 'message' });
         if (name.length === 0) {
             this.setState(prevState => ({
+                dropdownArrowStyle :{
+                    ...prevState.dropdownArrowStyle,
+                    detail : 'fa fa-angle-up'
+                },
                 error: {
                     ...prevState.error,
                     name: 'Campaign name can not be empty!'
@@ -483,7 +490,7 @@ class CampaignCreate extends Component {
                                                 </button>
                                             </div>
                                         </div>
-                                        <div className="collapse show" id="collapseDetail">
+                                        <div className="show" id="collapseDetail">
                                             <div className="card-body">
                                                 <div className="form-group row custom-form-row">
                                                     <label className="col-4 col-form-label">Name :</label>
@@ -492,7 +499,6 @@ class CampaignCreate extends Component {
                                                             name="name"
                                                             placeholder="Name"
                                                             className="form-control"
-                                                            required
                                                             onChange={this.onChange}
                                                             onBlur={this.validateName}
                                                             onFocus={this.onFocus} />
