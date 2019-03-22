@@ -31,6 +31,7 @@ class ProductCreate extends Component {
             error : {
                 name : '',
                 price : '',
+                quantity : '',
                 message : ''               
             }
         }
@@ -102,6 +103,14 @@ class ProductCreate extends Component {
                 }
             }));
         }
+        if(name ==='quantity'){
+            this.setState(prevState => ({
+                error: {
+                    ...prevState.error,
+                    quantity: ''
+                }
+            }));
+        }
     }
 
     loadFile = (event) =>{
@@ -136,7 +145,7 @@ class ProductCreate extends Component {
 
     formSubmit = async (event) =>{
         event.preventDefault();
-        if(this.validateName() && this.validatePrice() && this.validateMessage()){
+        if(this.validateName() && this.validatePrice() && this.validateQuantity() && this.validateMessage()){
             this.setState({
                 showLoading : 'show',
                 isButtonEnable : true
@@ -220,9 +229,18 @@ class ProductCreate extends Component {
     }
 
     validatePrice = () =>{
-        const originalPrice = this.state.originalPrice;
+        if(isNaN(this.state.originalPrice)){            
+            this.setState(prevState =>({
+                error :{
+                    ...prevState.error,
+                    price : 'Please enter a number!'
+                }
+            }));
+            return false;
+        }
+        let originalPrice = Number(this.state.originalPrice);
         this.setState({messageShowingStyle : 'message'});
-        if(originalPrice === 0){
+        if(originalPrice <= 0){
             this.setState(prevState =>({
                 error :{
                     ...prevState.error,
@@ -236,6 +254,47 @@ class ProductCreate extends Component {
                 error :{
                     ...prevState.error,
                     price : ''
+                }
+            }));
+            return true;
+        }   
+    }
+
+    validateQuantity = () =>{        
+        if(this.state.quantity === '' || isNaN(this.state.quantity)){      
+            this.setState(prevState =>({
+                error :{
+                    ...prevState.error,
+                    quantity : 'Please enter a valid number!'
+                }
+            }));
+            return false;
+        }
+        let quantity = Number(this.state.quantity);
+        this.setState({messageShowingStyle : 'message'});
+        if(!Number.isInteger(quantity)){
+            this.setState(prevState =>({
+                error :{
+                    ...prevState.error,
+                    quantity : 'Please enter a integer number!'
+                }
+            }));
+            return false;
+        }
+        if(quantity <= 0){
+            this.setState(prevState =>({
+                error :{
+                    ...prevState.error,
+                    quantity : 'Quantity must be greater than 0'
+                }
+            }));
+            return false;
+        }
+        else{
+            this.setState(prevState =>({
+                error :{
+                    ...prevState.error,
+                    quantity : ''
                 }
             }));
             return true;
@@ -276,7 +335,7 @@ class ProductCreate extends Component {
                                                                name="name" 
                                                                placeholder="Name" 
                                                                className="form-control" 
-                                                               required="required" 
+                                                               autoFocus
                                                                onChange={this.onChange} 
                                                                onFocus={this.onFocus} 
                                                                onBlur={this.validateName}/>
@@ -289,29 +348,28 @@ class ProductCreate extends Component {
                                                 <div className="form-group row">
                                                     <label className="col-4 col-form-label">Quantity *</label> 
                                                     <div className="col-8">
-                                                        <input type="number" 
+                                                        <input type="text" 
                                                                name="quantity" 
                                                                placeholder="Quantity" 
                                                                className="form-control" 
                                                                value={this.state.quantity} 
-                                                               min="1" 
-                                                               required="required" 
                                                                onChange={this.onChange} 
-                                                               onFocus={this.onFocus}/>
+                                                               onFocus={this.onFocus}
+                                                               onBlur={this.validateQuantity}/>
+                                                        <div className="message">
+                                                            {this.state.error.quantity}
+                                                        </div>
                                                     </div>
                                                 </div>                                           
                                                 
                                                 <div className="form-group row">
                                                     <label className="col-4 col-form-label">Price *</label> 
                                                     <div className="col-8">
-                                                        <input type="number" 
+                                                        <input type="text" 
                                                                name="originalPrice" 
                                                                placeholder="Price" 
                                                                value={this.state.originalPrice}
-                                                               min="0" 
                                                                className="form-control" 
-                                                               step="0.01" 
-                                                               required="required" 
                                                                onChange={this.onChange} 
                                                                onFocus={this.onFocus} 
                                                                onBlur={this.validatePrice}/>
@@ -331,10 +389,7 @@ class ProductCreate extends Component {
                                                                min="0" 
                                                                max="100" 
                                                                className="form-control" 
-                                                               step="0.01" 
-                                                               required="required" 
-                                                               onChange={this.onChange} 
-                                                               onFocus={this.onFocus}/>                                                       
+                                                               onChange={this.onChange} />                                                       
                                                     </div>
                                                 </div>                                                                                           
 

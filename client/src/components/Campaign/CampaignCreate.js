@@ -119,6 +119,8 @@ class CampaignCreate extends Component {
                     }
                 }));
                 break;
+            default : 
+                break;
         }
     }
 

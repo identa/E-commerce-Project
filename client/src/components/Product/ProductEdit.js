@@ -158,7 +158,7 @@ class ProductEdit extends Component {
         }
         let originalPrice = Number(this.state.originalPrice);
         this.setState({messageShowingStyle : 'message'});
-        if(originalPrice === 0){
+        if(originalPrice <= 0){
             this.setState(prevState =>({
                 error :{
                     ...prevState.error,
@@ -340,6 +340,7 @@ class ProductEdit extends Component {
                                                                name="name" 
                                                                placeholder="Name" 
                                                                className="form-control"  
+                                                               autoFocus
                                                                value={this.state.name}
                                                                onChange={this.onChange} 
                                                                onFocus={this.onFocus} 
@@ -394,8 +395,7 @@ class ProductEdit extends Component {
                                                                min="0" 
                                                                max="100" 
                                                                className="form-control" 
-                                                               onChange={this.onChange} 
-                                                               onFocus={this.onFocus}/>                                                       
+                                                               onChange={this.onChange} />                                                       
                                                     </div>
                                                 </div>                                                                                           
 
