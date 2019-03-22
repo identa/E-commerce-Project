@@ -284,7 +284,7 @@ class Profile extends Component {
                                                 </div>
                                                 
                                                 <div className="form-group row">
-                                                    <label htmlFor="username" className="col-4 col-form-label">Email Name*</label> 
+                                                    <label htmlFor="username" className="col-4 col-form-label">Email*</label> 
                                                     <div className="col-8">
                                                         <input id="email" value={this.state.email} className="form-control" readOnly />                             
                                                     </div>

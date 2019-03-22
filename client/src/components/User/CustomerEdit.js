@@ -19,12 +19,11 @@ class CustomerEdit extends Component {
             imageURL : this.props.location.state.data.imageURL,
             messageShowingStyle : 'message',
             showLoading : 'collapse',
-            isButtonEnable : false,
+            isButtonEnable : true,
             isRedirect : false,
             error : {
                 firstName : '',
                 lastName : '',
-                password : '',
                 message : ''       
             }
         }
@@ -32,6 +31,7 @@ class CustomerEdit extends Component {
     
     onChange = (event) =>{
         this.setState({ [event.target.name]: event.target.value });
+        this.setState({isButtonEnable : false});
         this.setState(prevState =>({
             error :{
                 ...prevState.error,
@@ -43,32 +43,6 @@ class CustomerEdit extends Component {
     validateMessage = () =>{
         const message = this.state.error.message;
         return message.length === 0;
-    }
-
-    validatePassword = () =>{
-        const password = this.state.password;
-        this.setState({messageShowingStyle : 'message'});
-        if(password === null){
-            return true;
-        }
-        else if(password.length > 0 && password.length < 6){
-            this.setState(prevState =>({
-                error :{
-                    ...prevState.error,
-                    password : 'Password at least 6 characters!'
-                }
-            }));
-            return false;
-        }
-        else {
-            this.setState(prevState =>({
-                error :{
-                    ...prevState.error,
-                    password : ''
-                }
-            }));
-            return true;
-        }
     }
 
     validateFirstName = ()=> {
@@ -136,25 +110,10 @@ class CustomerEdit extends Component {
                 }
             }));
         }
-        if(name ==='email'){
-            this.setState(prevState => ({
-                error: {
-                    ...prevState.error,
-                    email: ''
-                }
-            }));
-        }
-        if(name ==='password'){
-            this.setState(prevState => ({
-                error: {
-                    ...prevState.error,
-                    password: ''
-                }
-            }));
-        }
     }
 
     loadFile = (event) =>{
+        this.setState({isButtonEnable : false});
         let reader = new FileReader();  
         let file = event.target.files[0];
         
@@ -186,7 +145,7 @@ class CustomerEdit extends Component {
 
     formSubmit = async (event) =>{
         event.preventDefault();
-        if(this.validateFirstName() && this.validateLastName() && this.validatePassword() && this.validateMessage()){
+        if(this.validateFirstName() && this.validateLastName() && this.validateMessage()){
             this.setState({
                 showLoading : 'show',
                 isButtonEnable : true
@@ -259,7 +218,14 @@ class CustomerEdit extends Component {
                                                 <div className="form-group row">
                                                     <label className="col-4 col-form-label">First Name *</label> 
                                                     <div className="col-8">
-                                                        <input type="text" name="firstName" placeholder="First name" value={this.state.firstName} className="form-control" required="required" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.validateFirstName}/>
+                                                        <input type="text"
+                                                               name="firstName" 
+                                                               placeholder="First name" 
+                                                               value={this.state.firstName} 
+                                                               className="form-control" 
+                                                               onChange={this.onChange} 
+                                                               onFocus={this.onFocus} 
+                                                               onBlur={this.validateFirstName}/>
                                                         <div className="message">
                                                             {this.state.error.firstName}
                                                         </div>
@@ -270,7 +236,14 @@ class CustomerEdit extends Component {
                                                 <div className="form-group row">
                                                     <label className="col-4 col-form-label">Last Name *</label> 
                                                     <div className="col-8">
-                                                        <input type="text" name="lastName" placeholder="Last name" value={this.state.lastName} className="form-control" required="required" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.validateLastName}/>
+                                                        <input type="text" 
+                                                               name="lastName"  
+                                                               placeholder="Last name" 
+                                                               value={this.state.lastName} 
+                                                               className="form-control" 
+                                                               onChange={this.onChange} 
+                                                               onFocus={this.onFocus} 
+                                                               onBlur={this.validateLastName}/>
                                                         <div className="message">
                                                             {this.state.error.lastName}
                                                         </div>
@@ -281,19 +254,13 @@ class CustomerEdit extends Component {
                                                 <div className="form-group row">
                                                     <label className="col-4 col-form-label">Email </label> 
                                                     <div className="col-8">
-                                                        <input type="email" name="email" value={this.state.email} className="form-control" readOnly/>                                                     
+                                                        <input type="email" 
+                                                               name="email" 
+                                                               value={this.state.email} 
+                                                               className="form-control" 
+                                                               readOnly/>                                                     
                                                     </div>
-                                                </div>
-                                                
-                                                <div className="form-group row">
-                                                    <label className="col-4 col-form-label">Password </label> 
-                                                    <div className="col-8">
-                                                        <input type="password" name="password" placeholder="Password" value={this.state.password} className="form-control" onChange={this.onChange} onFocus={this.onFocus} onBlur={this.validatePassword}/>
-                                                        <div className="message">
-                                                            {this.state.error.password}
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                </div>                                               
 
                                                 <div className="form-group row">
                                                     <label htmlFor="select" className="col-4 col-form-label">Role</label> 
