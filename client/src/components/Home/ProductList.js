@@ -5,27 +5,37 @@ class ProductList extends Component {
     render() {
         return (
             <div className="product-container">
-        <h2>
-          <u>Collections</u>
-        </h2>
-        <div className="product-content row">
-          <ProductItem/>
+                <div className="container">
+                    <h2>
+                        <u>Collections</u>
+                    </h2>
+                    <div className="product-content row">
+                        <ProductItem />
 
-          <ProductItem/>
+                        <ProductItem />
 
-          <ProductItem/>
-          
-          <ProductItem/>
+                        <ProductItem />
 
-          <ProductItem/>
+                        <ProductItem />
 
-          <ProductItem/>
+                        <ProductItem />
 
-          <ProductItem/>
-          
-          <ProductItem/>
-        </div>
-      </div>
+                        <ProductItem />
+
+                        <ProductItem />
+
+                        <ProductItem />
+
+                        <ProductItem />
+
+                        <ProductItem />
+
+                        <ProductItem />
+
+                        <ProductItem />
+                    </div>
+                </div>
+            </div>
         );
     }
 }
