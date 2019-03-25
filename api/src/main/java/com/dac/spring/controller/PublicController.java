@@ -2,6 +2,7 @@ package com.dac.spring.controller;
 
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.req.AdminPaginateCategoryRequest;
+import com.dac.spring.model.req.CustomerGetInfoRequest;
 import com.dac.spring.model.req.CustomerSearchProductRequest;
 import com.dac.spring.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,5 +33,10 @@ public class PublicController {
     @GetMapping("/getCampaign")
     public ResponseEntity<ServiceResult> getCampaign(){
         return new ResponseEntity<>(customerService.getCampaign(),HttpStatus.OK);
+    }
+
+    @PostMapping("/getProduct")
+    public ResponseEntity<ServiceResult> getProduct(@RequestBody CustomerGetInfoRequest request){
+        return new ResponseEntity<>(customerService.getProduct(request.getId()),HttpStatus.OK);
     }
 }

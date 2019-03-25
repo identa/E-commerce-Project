@@ -15,7 +15,9 @@ public class CustomerGetProductByCatResponse {
 
     private String category;
 
-    public CustomerGetProductByCatResponse(int id, String name, String description, double originalPrice, int discount, String productImageURL, String category) {
+    private int categoryID;
+
+    public CustomerGetProductByCatResponse(int id, String name, String description, double originalPrice, int discount, String productImageURL, String category, int categoryID) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -23,6 +25,7 @@ public class CustomerGetProductByCatResponse {
         this.discount = discount;
         this.productImageURL = productImageURL;
         this.category = category;
+        this.categoryID = categoryID;
     }
 
     public int getId() {
@@ -79,5 +82,13 @@ public class CustomerGetProductByCatResponse {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public int getCategoryID() {
+        return categoryID;
+    }
+
+    public void setCategoryID(int categoryID) {
+        this.categoryID = categoryID;
     }
 }
