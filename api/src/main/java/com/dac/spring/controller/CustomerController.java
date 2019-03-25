@@ -96,22 +96,4 @@ public class CustomerController {
     public ResponseEntity<ServiceResult> deleteOrder(@RequestBody CustomerDeleteOrderRequest request){
         return new ResponseEntity<>(customerService.deleteOrder(request.getId()),HttpStatus.OK);
     }
-
-    @PostMapping("/searchProduct")
-    public ResponseEntity<ServiceResult> searchProduct(@RequestBody CustomerSearchProductRequest request){
-        return new ResponseEntity<>(customerService.searchProduct(request.getName(),
-                request.getPage(),
-                request.getSize()),HttpStatus.OK);
-    }
-
-    @PostMapping("/paginateProduct")
-    public ResponseEntity<ServiceResult> paginateProduct(@RequestBody AdminPaginateCategoryRequest request){
-        return new ResponseEntity<>(customerService.paginateProduct(request.getPage(),
-                request.getSize()),HttpStatus.OK);
-    }
-
-    @GetMapping("/getCampaign")
-    public ResponseEntity<ServiceResult> getCampaign(){
-        return new ResponseEntity<>(customerService.getCampaign(),HttpStatus.OK);
-    }
 }
