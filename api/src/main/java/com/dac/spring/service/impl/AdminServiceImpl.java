@@ -322,7 +322,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ServiceResult createCategory(String name, int parentID) {
+    public ServiceResult createCategory(String name, int parentID, int limit) {
         ServiceResult result = new ServiceResult();
         if (name != null) {
             boolean isCategoryExist = categoryRepository.existsByName(name);
@@ -332,6 +332,7 @@ public class AdminServiceImpl implements AdminService {
                     CategoryEntity category = new CategoryEntity();
                     category.setName(name);
                     category.setParentID(parentID);
+                    category.setLimited(limit);
                     categoryRepository.save(category);
                     AdminCreateCategoryResponse response = new AdminCreateCategoryResponse(category.getId(),
                             category.getName(),

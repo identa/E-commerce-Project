@@ -468,6 +468,8 @@ public class CustomerServiceImpl implements CustomerService {
                         entity.getOriginalPrice(),
                         entity.getDiscount(),
                         entity.getProductImageURL());
+                if (entity.getCategory().getLimited() < entity.getQuantity())response.setLimit(entity.getCategory().getLimited());
+                else response.setLimit(entity.getQuantity());
                 responses.add(response);
             }
             CustomerPaginateProductListResponse response = new CustomerPaginateProductListResponse(totalPages, responses);
@@ -533,9 +535,5 @@ public class CustomerServiceImpl implements CustomerService {
 
     private List<CampaignEntity> getCampaignList(Date startDate, Date endDate) {
         return campaignRepository.findAllByStartDateLessThanEqualAndEndDateGreaterThanAndStatusNameOrderByBidDesc(startDate, endDate, StatusName.ACTIVE);
-    }
-
-    private List<CampaignEntity> getCampaignList1(String startDate, String endDate) {
-        return campaignRepository.getCampaign(startDate, endDate);
     }
 }
