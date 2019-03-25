@@ -114,9 +114,4 @@ public class CustomerController {
     public ResponseEntity<ServiceResult> getCampaign(){
         return new ResponseEntity<>(customerService.getCampaign(),HttpStatus.OK);
     }
-
-    @GetMapping("/getCampaign1")
-    public ResponseEntity<ServiceResult> getCampaign1(){
-        return new ResponseEntity<>(customerService.getCampaign1(),HttpStatus.OK);
-    }
 }

@@ -457,7 +457,7 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult result = new ServiceResult();
         Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
         Page<ProductEntity> productList = productPaginationRepository.
-                findAllByDeletedAndStatusNameAndQuantityGreaterThan(info, false, StatusName.ACTIVE, 0);
+                findAllByDeletedAndStatusName(info, false, StatusName.ACTIVE);
         boolean isProductListEmpty = productList.isEmpty();
         if (!isProductListEmpty) {
             int totalPages = productList.getTotalPages();
@@ -516,29 +516,6 @@ public class CustomerServiceImpl implements CustomerService {
             responses.add(response);
         }
         result.setMessage("Get campaign successfully");
-        result.setData(responses);
-        return result;
-    }
-
-    @Override
-    public ServiceResult getCampaign1() {
-        ServiceResult result = new ServiceResult();
-        Date currentDate = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        List<CampaignEntity> list = getCampaignList1(formatter.format(currentDate), formatter.format(currentDate));
-        List<CustomerGetCampaignResponse> responses = new ArrayList<>();
-        if (list.size() != CustomerConst.CAMPAIGN_AMOUNT) {
-            list.addAll(campaignRepository.getDefaultCampaign(CustomerConst.CAMPAIGN_AMOUNT - list.size()));
-        }
-        for (CampaignEntity campaign : list) {
-            campaign.setBudget(campaign.getBudget() - campaign.getBid());
-            campaignRepository.save(campaign);
-
-            CustomerGetCampaignResponse response = new CustomerGetCampaignResponse(campaign.getTitle(),
-                    campaign.getImageURL(),
-                    campaign.getProductURL());
-            responses.add(response);
-        }
         result.setData(responses);
         return result;
     }
