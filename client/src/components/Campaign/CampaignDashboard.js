@@ -76,7 +76,7 @@ class CampaignDashboard extends Component {
         let ul = [];
         for (let i = 0; i < totalPages; i++){
             ul.push(<li key={i}>
-                <a className="page-link" id={'page-'+`${i + 1}`} href="javascript:void(0)" onClick={(e) => this.handlePaging(e)}>{`${i + 1}`}</a>
+                <a className="page-link" id={'page-'+ (i + 1)} href="javascript:void(0)" onClick={(e) => this.handlePaging(e)}>{(i + 1)}</a>
             </li>);
         }
         return ul;

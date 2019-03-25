@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import {Link} from 'react-router-dom';
 class ProductItem extends Component {
     render() {
         return (
@@ -18,9 +18,9 @@ class ProductItem extends Component {
                         <h4 className="product-name">Product</h4>
                         <span className="product-price">99999$</span>
                         <div className="action">
-                            <a href="javascript:void(0)" className="btn btn-detail">
+                            <Link to="/product/detail" className="btn btn-detail">
                                 <i className="fa fa-eye"/>
-                            </a>
+                            </Link>
                             <a href="javascript:void(0)" className="btn btn-add-to-cart add-to-cart">
                                 <i className="fa fa-shopping-cart" />
                             </a>

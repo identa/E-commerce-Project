@@ -11,6 +11,7 @@ import ProductEdit from '../Product/ProductEdit';
 import CampaignDashboard from '../Campaign/CampaignDashboard';
 import CampaignCreate from '../Campaign/CampaignCreate';
 import CampaignEdit from '../Campaign/CampaignEdit';
+import ProductDetail from '../Product/ProductDetail';
 class RouteURL extends Component {
     render() {
         return (
@@ -26,7 +27,8 @@ class RouteURL extends Component {
                     <Route path="/manage/campaign/dashboard" component={CampaignDashboard}/>
                     <Route path="/manage/campaign/create" component={CampaignCreate}/>
                     <Route path="/manage/campaign/edit" component={CampaignEdit}/>
-                </Switch> 
+                    <Route path={"/product/detail"} component={ProductDetail}/>
+                </Switch>  
         );
     }
 }

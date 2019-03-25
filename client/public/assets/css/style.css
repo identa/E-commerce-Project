@@ -203,7 +203,26 @@ a:hover{
     transform: rotateX(360deg);
     font-size: 20px;
 }
-
+.card-load-more {
+    display: flex;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    justify-content: center;
+}
+.btn-load-more {
+    width: 160px;
+    height: 45px;
+    background: #1a9cb8;
+    font-size: 20px;
+    color: white;
+    text-decoration: none;
+    border: none;
+}
+.btn-load-more:hover{
+    background: white;
+    border: 1px solid #1a9cb8;
+    color: #1a9cb8;
+}
 /*-------------------------------footer----------------------------------*/
 .footer{
     background: #003e52;
@@ -760,4 +779,175 @@ table .td-description {
     width: 100%;
     height: auto;
     border-radius: 0;
+}
+/*------------------------------------------product detail-------------------------------*/
+.page-container {
+    padding-top: 20px;
+    padding-bottom: 0;
+    position: relative;
+    z-index: 1;
+}
+.detail-nav {
+    background: transparent;
+    margin-bottom: 15px;
+}
+.detail-nav a {
+    color: #aaaaaa;
+}
+.detail-nav a:hover {
+    color: #1a9cb8;
+}
+.detail-nav i {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.detail-nav a:last-child {
+    color: black;
+    cursor: inherit;
+}
+.product-detail-image{
+    padding: 0;
+}
+.product-detail-image img {
+    width: 100%;
+    height: auto;
+}
+.product-detail-info{
+    padding: 0 0 0 50px;
+}
+.product-title h1 {
+    color: #3f3f3f;
+    text-transform: capitalize;
+}
+.product-price span {
+    color: #3f3f3f;
+    font-size: 25px;
+}
+.product-quantity{
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+}
+.product-quantity span {
+    color: #3f3f3f;
+    margin-right: 5px;
+}
+.product-quantity button {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #3f3f3f;
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+}
+.product-quantity input[type="number"]{
+    width: 50px;
+    height: 30px;
+    text-align: center;
+    background: #fff;
+    border-bottom: 1px solid #3f3f3f;
+    border-top: 1px solid #3f3f3f;
+    border-left: none;
+    border-right: none;
+}
+.product-quantity input[type="number"]::-webkit-inner-spin-button, 
+.product-quantity input[type="number"]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+.btn-minus:hover,
+.btn-plus:hover {
+    background: #3f3f3f;
+    border: 1px solid #3f3f3f;
+    color: white;
+}
+.product-btn-add-cart{
+    margin-top: 20px;
+}
+.product-btn-add-cart button {
+    width: 185px;
+    height: 40px;
+    border-radius: 0
+}
+.product-btn-add-cart button:hover{
+    background: white;
+    border: 1px solid #3f3f3f;
+    color: #3f3f3f;
+}
+.product-description {
+    margin-top: 20px;
+}
+
+ul.nav-tabs {
+    position: relative;
+    text-align: left;
+    padding: 10px 0 0 0;
+    border-bottom: white;
+}
+ul.nav-tabs::before {
+    position: absolute;
+    top:10px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    content: '';
+    z-index: 0;
+    display: block;
+    width: auto;
+    height: auto;
+    line-height: 0;
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid #e8e8e8;
+    background: #e8e8e8;
+}
+ul.nav-tabs::after {
+    position: absolute;
+    top:10px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    content: '';
+    z-index: 0;
+    border-bottom: 1px solid #e8e8e8;
+    width: auto;
+    height: auto;
+    line-height: 0;
+    margin: 0;
+    padding: 0;
+    background: #e8e8e8;
+}
+ul.nav-tabs li span {
+    display: block;
+    color: #3f3f3f;
+    margin: 10px 20px 10px 20px;
+    line-height: 24px;
+}
+ul.nav-tabs li.active {
+    position: relative;
+    z-index: 2;
+    background: white;
+    border-top:  2px solid #1a9cb8;
+    border-bottom: white;
+}
+.product-detail-description {
+    display: flex;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    background: white;
+    text-indent: 20px;
+    line-height: 24px;
+    text-align: justify;
+}
+@media(max-width : 576px){
+    .product-detail-info {
+        padding-left: 0;
+    }
+}
+figure {
+    background-repeat: no-repeat
+}
+figure:hover img {
+    opacity: 0;
 }

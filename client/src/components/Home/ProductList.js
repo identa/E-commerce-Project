@@ -34,6 +34,10 @@ class ProductList extends Component {
 
                         <ProductItem />
                     </div>
+
+                    <div className="card-load-more">
+                        <button className="btn-load-more">Load more</button>
+                    </div>
                 </div>
             </div>
         );

@@ -10,27 +10,27 @@ class Footer extends Component {
             <ul>
               <li>
                 <i className="fa fa-angle-right" />
-                <a href="#">About DAC Tech VN</a>
+                <a href="# ">About DAC Tech VN</a>
               </li>
               <li>
                 <i className="fa fa-angle-right" />
-                <a href="#">Sell on DAC Tech VN</a>
+                <a href="# ">Sell on DAC Tech VN</a>
               </li>
               <li>
                 <i className="fa fa-angle-right" />
-                <a href="#">Afﬁliate Program</a>
+                <a href="# ">Afﬁliate Program</a>
               </li>
               <li>
                 <i className="fa fa-angle-right" />
-                <a href="#">Terms &amp; Conditions</a>
+                <a href="# ">Terms &amp; Conditions</a>
               </li>
               <li>
                 <i className="fa fa-angle-right" />
-                <a href="#">Privacy Policy</a>
+                <a href="# ">Privacy Policy</a>
               </li>
               <li>
                 <i className="fa fa-angle-right" />
-                <a href="#">Press &amp; Media</a>
+                <a href="# ">Press &amp; Media</a>
               </li>
             </ul>
           </div>
