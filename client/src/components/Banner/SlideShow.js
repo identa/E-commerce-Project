@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {Carousel} from 'react-bootstrap';
 
-const urlGetCampaign = 'https://dac-project.herokuapp.com/api/customer/getCampaign';
+const urlGetCampaign = 'https://dac-project.herokuapp.com/api/public/getCampaign';
 class SlideShow extends Component {
 
     constructor(props) {

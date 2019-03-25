@@ -27,7 +27,7 @@ class RouteURL extends Component {
                     <Route path="/manage/campaign/dashboard" component={CampaignDashboard}/>
                     <Route path="/manage/campaign/create" component={CampaignCreate}/>
                     <Route path="/manage/campaign/edit" component={CampaignEdit}/>
-                    <Route path={"/product/detail"} component={ProductDetail}/>
+                    <Route path={"/product/detail/:id/:slug"} component={ProductDetail}/>
                 </Switch>  
         );
     }
