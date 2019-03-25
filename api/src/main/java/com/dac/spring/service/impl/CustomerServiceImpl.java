@@ -339,7 +339,7 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult result = new ServiceResult();
         ProductEntity product = productRepository.findByIdAndDeletedAndStatusName(id, false, StatusName.ACTIVE);
         if (product!= null) {
-                CategoryEntity category = categoryRepository.findById(id).orElse(null);
+                CategoryEntity category = categoryRepository.findById(product.getCategory().getId()).orElse(null);
                 if (category != null) {
                     CustomerGetProductByCatResponse response = new CustomerGetProductByCatResponse(product.getId(),
                             product.getName(),
