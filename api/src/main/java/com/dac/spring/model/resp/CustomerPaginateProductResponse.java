@@ -9,6 +9,8 @@ public class CustomerPaginateProductResponse {
 
     private int discount;
 
+    private int limit;
+
     private String productImageURL;
 
     public CustomerPaginateProductResponse(int id, String name, double originalPrice, int discount, String productImageURL) {
@@ -57,5 +59,13 @@ public class CustomerPaginateProductResponse {
 
     public void setProductImageURL(String productImageURL) {
         this.productImageURL = productImageURL;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
     }
 }

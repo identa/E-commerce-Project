@@ -74,7 +74,7 @@ public class AdminController {
 
     @PostMapping("/createCategory")
     public ResponseEntity<ServiceResult> createCategory(@Valid @RequestBody AdminCreateCategoryRequest request){
-        return new ResponseEntity<>(adminService.createCategory(request.getName(), request.getParentID()),HttpStatus.OK);
+        return new ResponseEntity<>(adminService.createCategory(request.getName(), request.getParentID(), request.getLimit()),HttpStatus.OK);
     }
 
     @PutMapping("/updateCategory")

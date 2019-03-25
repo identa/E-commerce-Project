@@ -31,6 +31,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -456,7 +457,7 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult result = new ServiceResult();
         Pageable info = PageRequest.of(page - 1, size, Sort.by("id").ascending());
         Page<ProductEntity> productList = productPaginationRepository.
-                findAllByDeletedAndStatusNameAndQuantityGreaterThan(info, false, StatusName.ACTIVE, 0);
+                findAllByDeletedAndStatusName(info, false, StatusName.ACTIVE);
         boolean isProductListEmpty = productList.isEmpty();
         if (!isProductListEmpty) {
             int totalPages = productList.getTotalPages();
@@ -467,6 +468,8 @@ public class CustomerServiceImpl implements CustomerService {
                         entity.getOriginalPrice(),
                         entity.getDiscount(),
                         entity.getProductImageURL());
+                if (entity.getCategory().getLimited() < entity.getQuantity())response.setLimit(entity.getCategory().getLimited());
+                else response.setLimit(entity.getQuantity());
                 responses.add(response);
             }
             CustomerPaginateProductListResponse response = new CustomerPaginateProductListResponse(totalPages, responses);
@@ -483,15 +486,29 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult getCampaign() {
         ServiceResult result = new ServiceResult();
         Date currentDate = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        List<CampaignEntity> list = getCampaignList(formatter.format(currentDate), formatter.format(currentDate));
+        Random random = new Random();
+        List<CampaignEntity> list = getCampaignList(currentDate, currentDate);
+        List<CampaignEntity> validList = new ArrayList<>();
+        List<CampaignEntity> activeList = new ArrayList<>();
         List<CustomerGetCampaignResponse> responses = new ArrayList<>();
-        if (list.size() != 3) {
-            for (int i = 1; i <= 3 - list.size(); i++) {
-                list.add(campaignRepository.findById(1).orElse(null));
+
+        for (CampaignEntity campaignEntity : list) {
+            if (campaignEntity.getBudget() >= campaignEntity.getBid())
+                validList.add(campaignEntity);
+        }
+        if (validList.size() < CustomerConst.CAMPAIGN_AMOUNT) {
+            for (CampaignEntity campaign : validList){
+                activeList.add(campaign);
+            }
+            for (int j = 1; j <= CustomerConst.CAMPAIGN_AMOUNT - validList.size(); j++) {
+                activeList.add(campaignRepository.findByNameContaining("Default campaign " + j));
+            }
+        } else {
+            for (int k = 1; k <= CustomerConst.CAMPAIGN_AMOUNT; k++) {
+                activeList.add(validList.get(random.nextInt(validList.size())));
             }
         }
-        for (CampaignEntity campaign : list) {
+        for (CampaignEntity campaign : activeList) {
             campaign.setBudget(campaign.getBudget() - campaign.getBid());
             campaignRepository.save(campaign);
 
@@ -500,6 +517,7 @@ public class CustomerServiceImpl implements CustomerService {
                     campaign.getProductURL());
             responses.add(response);
         }
+        result.setMessage("Get campaign successfully");
         result.setData(responses);
         return result;
     }
@@ -515,7 +533,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .getBody().getSubject();
     }
 
-    private List<CampaignEntity> getCampaignList(String startDate, String endDate) {
-        return campaignRepository.getCampaign(startDate, endDate);
+    private List<CampaignEntity> getCampaignList(Date startDate, Date endDate) {
+        return campaignRepository.findAllByStartDateLessThanEqualAndEndDateGreaterThanAndStatusNameOrderByBidDesc(startDate, endDate, StatusName.ACTIVE);
     }
 }

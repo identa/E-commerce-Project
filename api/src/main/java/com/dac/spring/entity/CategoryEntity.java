@@ -14,12 +14,13 @@ public class CategoryEntity {
 
     private int parentID;
 
+    private int limited;
+
     @OneToMany(mappedBy = "category")
     private List<ProductEntity> productEntityList;
 
     public CategoryEntity() {
     }
-
 
     public int getId() {
         return id;
@@ -51,5 +52,13 @@ public class CategoryEntity {
 
     public void setProductEntityList(List<ProductEntity> productEntityList) {
         this.productEntityList = productEntityList;
+    }
+
+    public int getLimited() {
+        return limited;
+    }
+
+    public void setLimited(int limited) {
+        this.limited = limited;
     }
 }

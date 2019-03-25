@@ -14,7 +14,7 @@ public interface AdminService {
     ServiceResult createEmployee(String firstName, String lastName, String email, String password, String imageURL, String statusName, String roleName);
     ServiceResult signupAdmin(String firstName, String lastName, String email, String password);
     ServiceResult paginateUser(int page, int size);
-    ServiceResult createCategory(String name, int parentID);
+    ServiceResult createCategory(String name, int parentID, int limit);
     ServiceResult updateCategory(int id, String name, String parentName);
     ServiceResult paginateCategory(int page, int size);
     ServiceResult deleteCategory(int id);
