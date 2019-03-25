@@ -22,6 +22,10 @@ public interface CampaignRepository extends JpaRepository<CampaignEntity, Intege
     @Query(nativeQuery = true, value = "select * from campaign c where c.statusid= 1 and c.budget < c.bid order by c.bid desc ")
     List<CampaignEntity> getActiveCampaign();
 
+    List<CampaignEntity> findAllByStatusName(StatusName statusName);
+
+    List<CampaignEntity> findAllByEndDateLessThan(Date date);
+
     @Query(nativeQuery = true, value = "select * from campaign where end_date < ?1")
     List<CampaignEntity> getExpireCampaign(String endDate);
 
