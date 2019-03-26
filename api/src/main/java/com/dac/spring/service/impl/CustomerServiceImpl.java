@@ -539,7 +539,8 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
         for (CampaignEntity campaign : activeList) {
-            campaign.setSpend(campaign.getBid());
+            campaign.setSpend(campaign.getSpend() + campaign.getBid());
+
             campaignRepository.save(campaign);
 
             CustomerGetCampaignResponse response = new CustomerGetCampaignResponse(campaign.getTitle(),
