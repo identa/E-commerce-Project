@@ -28,6 +28,8 @@ public class CampaignEntity {
 
     private double bid;
 
+    private double spend;
+
     private String imageURL;
 
     private String title;
@@ -116,6 +118,14 @@ public class CampaignEntity {
 
     public void setBid(double bid) {
         this.bid = bid;
+    }
+
+    public double getSpend() {
+        return spend;
+    }
+
+    public void setSpend(double spend) {
+        this.spend = spend;
     }
 
     public String getImageURL() {
