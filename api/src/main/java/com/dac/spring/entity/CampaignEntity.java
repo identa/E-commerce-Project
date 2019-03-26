@@ -28,8 +28,6 @@ public class CampaignEntity {
 
     private double bid;
 
-    private double spend;
-
     private String imageURL;
 
     private String title;
@@ -37,6 +35,9 @@ public class CampaignEntity {
     private String description;
 
     private String productURL;
+
+    @Column(name = "spend")
+    private double spend;
 
     @ManyToOne
     @JoinColumn(name = "shopID", nullable = false)
