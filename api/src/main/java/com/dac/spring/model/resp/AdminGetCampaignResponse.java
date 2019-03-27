@@ -17,6 +17,8 @@ public class AdminGetCampaignResponse {
 
     private double bid;
 
+    private double spend;
+
     private String imageURL;
 
     private String title;
@@ -139,5 +141,13 @@ public class AdminGetCampaignResponse {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public double getSpend() {
+        return spend;
+    }
+
+    public void setSpend(double spend) {
+        this.spend = spend;
     }
 }

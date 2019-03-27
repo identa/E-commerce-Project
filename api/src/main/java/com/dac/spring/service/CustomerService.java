@@ -3,7 +3,6 @@ package com.dac.spring.service;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.req.CustomerCreateOrderDetailRequest;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface CustomerService {
@@ -15,6 +14,7 @@ public interface CustomerService {
     ServiceResult getCategoryTree();
     ServiceResult getAllCategory();
     ServiceResult paginateProductByCat(int id, int page, int size);
+    ServiceResult getProduct(int id);
     ServiceResult returnRole(String token);
     ServiceResult createOrder(int customerID, List<CustomerCreateOrderDetailRequest> orderDetailRequests);
     ServiceResult deleteOrder(int id);

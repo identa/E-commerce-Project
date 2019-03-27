@@ -766,6 +766,8 @@ public class AdminServiceImpl implements AdminService {
                 response.setTitle(entity.getTitle());
                 response.setDescription(entity.getDescription());
                 response.setProductURL(entity.getProductURL());
+                response.setSpend(entity.getSpend());
+
                 responses.add(response);
 
             }
@@ -891,6 +893,7 @@ public class AdminServiceImpl implements AdminService {
                             response.setTitle(campaign.getTitle());
                             response.setDescription(campaign.getDescription());
                             response.setProductURL(campaign.getProductURL());
+                            response.setSpend(campaign.getSpend());
 
                             result.setMessage("Update campaign successfully");
                             result.setData(response);
@@ -898,7 +901,6 @@ public class AdminServiceImpl implements AdminService {
                             result.setMessage("Start date must less than end date");
                             result.setStatus(ServiceResult.Status.FAILED);
                         }
-
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -914,7 +916,6 @@ public class AdminServiceImpl implements AdminService {
             result.setStatus(ServiceResult.Status.FAILED);
             result.setMessage("Fields cannot be empty");
         }
-
         return result;
     }
 

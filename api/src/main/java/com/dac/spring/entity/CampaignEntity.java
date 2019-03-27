@@ -36,6 +36,9 @@ public class CampaignEntity {
 
     private String productURL;
 
+    @Column(name = "spend")
+    private double spend;
+
     @ManyToOne
     @JoinColumn(name = "shopID", nullable = false)
     private EmployeeEntity shop;
@@ -116,6 +119,14 @@ public class CampaignEntity {
 
     public void setBid(double bid) {
         this.bid = bid;
+    }
+
+    public double getSpend() {
+        return spend;
+    }
+
+    public void setSpend(double spend) {
+        this.spend = spend;
     }
 
     public String getImageURL() {

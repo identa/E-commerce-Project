@@ -319,7 +319,8 @@ public class CustomerServiceImpl implements CustomerService {
                             entity.getOriginalPrice(),
                             entity.getDiscount(),
                             entity.getProductImageURL(),
-                            category.getName());
+                            category.getName(),
+                            category.getId());
                     responses.add(response);
                 }
             }
@@ -328,6 +329,34 @@ public class CustomerServiceImpl implements CustomerService {
             result.setData(response);
         } else {
             result.setMessage("Product list is empty");
+            result.setStatus(ServiceResult.Status.FAILED);
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceResult getProduct(int id) {
+        ServiceResult result = new ServiceResult();
+        ProductEntity product = productRepository.findByIdAndDeletedAndStatusName(id, false, StatusName.ACTIVE);
+        if (product!= null) {
+                CategoryEntity category = categoryRepository.findById(product.getCategory().getId()).orElse(null);
+                if (category != null) {
+                    CustomerGetProductByCatResponse response = new CustomerGetProductByCatResponse(product.getId(),
+                            product.getName(),
+                            product.getDescription(),
+                            product.getOriginalPrice(),
+                            product.getDiscount(),
+                            product.getProductImageURL(),
+                            category.getName(),
+                            category.getId());
+                    result.setMessage(CustomerConst.PRODUCT_SUCCESS);
+                    result.setData(response);
+                }else {
+                    result.setMessage("Category not found");
+                    result.setStatus(ServiceResult.Status.FAILED);
+                }
+        } else {
+            result.setMessage("Product not found");
             result.setStatus(ServiceResult.Status.FAILED);
         }
         return result;
@@ -440,7 +469,8 @@ public class CustomerServiceImpl implements CustomerService {
                         product.getOriginalPrice(),
                         product.getDiscount(),
                         product.getProductImageURL(),
-                        product.getCategory().getName());
+                        product.getCategory().getName(),
+                        product.getCategory().getId());
                 responses.add(response);
             }
             result.setData(responses);
@@ -493,7 +523,8 @@ public class CustomerServiceImpl implements CustomerService {
         List<CustomerGetCampaignResponse> responses = new ArrayList<>();
 
         for (CampaignEntity campaignEntity : list) {
-            if (campaignEntity.getBudget() >= campaignEntity.getBid())
+
+            if (campaignEntity.getBudget() > campaignEntity.getSpend())
                 validList.add(campaignEntity);
         }
         if (validList.size() < CustomerConst.CAMPAIGN_AMOUNT) {
@@ -509,7 +540,8 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
         for (CampaignEntity campaign : activeList) {
-            campaign.setBudget(campaign.getBudget() - campaign.getBid());
+            campaign.setSpend(campaign.getSpend() + campaign.getBid());
+
             campaignRepository.save(campaign);
 
             CustomerGetCampaignResponse response = new CustomerGetCampaignResponse(campaign.getTitle(),
