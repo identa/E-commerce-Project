@@ -766,6 +766,8 @@ public class AdminServiceImpl implements AdminService {
                 response.setTitle(entity.getTitle());
                 response.setDescription(entity.getDescription());
                 response.setProductURL(entity.getProductURL());
+                response.setSpend(entity.getSpend());
+
                 responses.add(response);
 
             }
