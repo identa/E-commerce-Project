@@ -523,7 +523,7 @@ public class CustomerServiceImpl implements CustomerService {
         List<CustomerGetCampaignResponse> responses = new ArrayList<>();
 
         for (CampaignEntity campaignEntity : list) {
-            if (campaignEntity.getBudget() >= campaignEntity.getBid())
+            if (campaignEntity.getBudget() > campaignEntity.getSpend())
                 validList.add(campaignEntity);
         }
         if (validList.size() < CustomerConst.CAMPAIGN_AMOUNT) {
