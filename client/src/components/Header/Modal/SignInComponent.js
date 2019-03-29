@@ -30,17 +30,34 @@ class SignInComponent extends Component {
         const message = this.state.error.message;
         return message.length === 0;
     }
-    
+    setErrorToState = (type, errorMess) => {
+        switch (type) {
+            case 'email':
+                this.setState(prevState =>({
+                    error :{
+                        ...prevState.error,
+                        email : errorMess
+                    }
+                }));
+            break;
+            case 'passWord':
+                this.setState(prevState =>({
+                    error :{
+                        ...prevState.error,
+                        email : errorMess
+                    }
+                }));
+            break;
+        }
+    }
+
     validateEmail = () => {
         const email = this.state.email;
         this.setState({messageShowingStyle : 'form-row'});
+        let errorMess = '';
         if(email.length === 0){
-            this.setState(prevState =>({
-                error :{
-                    ...prevState.error,
-                    email : 'Email can not be empty!'
-                }
-            }));
+            errorMess = 'Email cannot be empty!';
+            this.setErrorToState('email', errorMess);
             return false;
         }
         if(!REGEX_EMAIL.test(email)){

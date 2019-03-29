@@ -16,7 +16,7 @@ class RouteURL extends Component {
     render() {
         return (
                 <Switch>
-                    <Route exact path="/" component={Home}/>
+                    <Route exact path="/" {...this.props} render={(props) => <Home {...props} addItemToCart={this.props.addItemToCart}/>}/>
                     <Route path="/customer/profile" {...this.props} render={(props) => <Profile {...props} changeImageAvatar={this.props.changeImageAvatar}/>} />
                     <Route path="/manage/customer/dashboard" component={CustomerDashboard}/>
                     <Route path="/manage/customer/create" component={CustomerCreate}/>

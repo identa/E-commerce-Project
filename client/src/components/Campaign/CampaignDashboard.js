@@ -161,6 +161,7 @@ class CampaignDashboard extends Component {
                                     <th>End date</th>
                                     <th>Budget</th>
                                     <th>Bid Amount</th>
+                                    <th>Spend</th>
                                     <th>Creative preview</th>
                                     <th>Title</th>
                                     <th>Description</th>
@@ -176,6 +177,7 @@ class CampaignDashboard extends Component {
                                                         endDate={value.endDate}
                                                         budget={value.budget}
                                                         bidAmount={value.bid}
+                                                        spend={value.spend}
                                                         creativePreview={value.imageURL}
                                                         title={value.title}
                                                         description={value.description}

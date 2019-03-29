@@ -49,7 +49,8 @@ class ProductList extends Component {
                                                     price={value.originalPrice}
                                                     discount={value.discount}
                                                     limit={value.limit}
-                                                    imageURL={value.productImageURL}/>
+                                                    imageURL={value.productImageURL}
+                                                    {...this.props}/>
                             })
                         }
                     </div>

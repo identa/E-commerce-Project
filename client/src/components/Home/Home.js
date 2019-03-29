@@ -7,7 +7,7 @@ class Home extends Component {
         return (
             <>
                 <BannerComponent/>
-                <ProductList/>
+                <ProductList {...this.props}/>
             </>
             
         );

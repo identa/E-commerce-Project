@@ -32,7 +32,6 @@ class Header extends Component {
     render() {
 
         const authenticate = localStorage.getItem("token"); 
-        
         return (
             <>
                 <div className="header">                    
@@ -54,7 +53,7 @@ class Header extends Component {
 
                         <SearchBar/>
 
-                        <ShoppingCart/>
+                        <ShoppingCart {...this.props}/>
                     </div>
                 </div>
 

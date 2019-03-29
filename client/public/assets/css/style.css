@@ -63,8 +63,9 @@ a:hover{
     font-size: 16px;
 }
 .nav-cart{
+    position: relative;
     display: inline-block;
-    width: 20%;
+    width: 70px;
     height: 40px;
 }
 .nav-cart-content{
@@ -951,4 +952,105 @@ figure {
 }
 figure:hover img {
     opacity: 0;
+}
+/*------------------------------------------shopping cart-------------------------------*/
+.cart-detail{
+    position: absolute;
+    background: white;
+    width: 300px; 
+    top:40px;
+    right: 10px;
+    left: 10px;
+    display: none;
+    z-index: 5;
+}
+.cart-list {
+    overflow: auto;
+    max-height: 300px;
+    position: relative;
+}
+.cart-item {
+    margin-top: 10px;
+    margin-left: 10px;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid #e8e8e8;
+}
+.cart-item h4 {
+    font-size: 15px;
+}
+.image-cart{
+    float: left;
+    margin-right: 15px;
+    width: 35%;
+}
+.image-cart img {
+    display: block;
+    max-width: 100px;
+    height: 100px;
+}
+.text-cart{
+    overflow: hidden;
+    position: relative;
+    padding-right: 20px;  
+}
+.remove-link {
+    position: absolute;
+    right: 10px;
+    top : 8px;
+}
+.text-mini-cart{
+    padding: 15px 20px;
+    font-size: 16px;
+    border-top: 3px solid #e8e8e8;
+}
+.cart-block-total{
+    color: #808080;
+    float :right;
+}
+.check-cart-mini{
+    padding: 15px 20px;
+    font-size: 12px;   
+}
+.btn-view-cart{
+    padding: 10px 24px 10px 24px;
+    width: 100%;
+    cursor: pointer;
+    text-align: center;
+    color: #3f3f3f;
+    border-color : #e8e8e8;
+    border-radius: 0;
+    margin-bottom: 5px;
+}
+.btn-view-cart:hover {
+    color: #7aaedd !important;
+    border-color: #7aaedd;
+}
+.btn-checkout {
+    width: 100%;
+    margin-top: 5px;
+    padding: 10px 24px 10px 24px;
+    cursor: pointer;
+    text-align: center;
+    color: white !important;
+    border-color : #3f3f3f;
+    background: #3f3f3f;
+    border-radius: 0;
+}
+.btn-checkout:hover {
+    color: #3f3f3f !important;
+    border-color: #3f3f3f;
+    background: transparent;
+}
+.remove-link a i {
+    font-size: 16px;
+    color: black
+}
+figure.image-cart img {
+    opacity: 1;
+}
+@media(max-width:576px){
+    .cart-detail {
+        left: 0;
+    }
 }

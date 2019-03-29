@@ -47,6 +47,7 @@ class RowItem extends Component {
                 <td>{this.props.endDate}</td>
                 <td>{this.props.budget}</td>
                 <td>{this.props.bidAmount}</td>
+                <td>{this.props.spend}</td>
                 <td className='td-creative'>
                     <img src={this.props.creativePreview} alt='' className='img-creative'/>
                 </td>

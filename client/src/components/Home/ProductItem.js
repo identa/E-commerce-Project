@@ -52,6 +52,9 @@ class ProductItem extends Component {
         return str;
     }
 
+    addItemToCart = () =>{
+        this.props.addItemToCart(this.state.pid, this.state.pname, 1 , this.state.price, this.state.imageURL);
+    }
     render() {
         const data = {
             pid: this.state.pid,
@@ -84,7 +87,7 @@ class ProductItem extends Component {
                             <Link to={{pathname : "/product/detail/" + this.state.pid + "/" + this.to_slug(this.state.pname),state : {data : data} }} className="btn btn-detail">
                                 <i className="fa fa-eye" />
                             </Link>
-                            <a href="javascript:void(0)" className="btn btn-add-to-cart add-to-cart">
+                            <a href="javascript:void(0)" className="btn btn-add-to-cart add-to-cart" onClick={this.addItemToCart}>
                                 <i className="fa fa-shopping-cart" />
                             </a>
                         </div>

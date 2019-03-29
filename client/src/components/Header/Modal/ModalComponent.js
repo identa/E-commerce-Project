@@ -42,14 +42,16 @@ class ModalComponent extends Component {
                     <Modal.Body>
                         <>
                             {
-                                isSignUpShowing ? <SignUpComponent 
-                                                                    onHideModal={this.handleClose} 
-                                                                    showSignIn={this.showSignIn}
-                                                                    {...this.props}/>
+                                isSignUpShowing ?   <SignUpComponent 
+                                                        onHideModal={this.handleClose} 
+                                                        showSignIn={this.showSignIn}
+                                                        {...this.props}
+                                                    />
                                                  : <SignInComponent 
-                                                                    onHideModal={this.handleClose} 
-                                                                    showSignUp={this.showSignUp}
-                                                                    {...this.props}/>
+                                                        onHideModal={this.handleClose} 
+                                                        showSignUp={this.showSignUp}
+                                                        {...this.props}
+                                                    />
                             }
                         </>
                     </Modal.Body>

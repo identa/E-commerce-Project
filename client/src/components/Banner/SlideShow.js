@@ -32,7 +32,7 @@ class SlideShow extends Component {
             <div className="slide-show">
                 <Carousel>
                     {
-                        campaignList.map((value,key) =>{
+                        campaignList && campaignList.map((value,key) =>{
                             return (<Carousel.Item key={key}>
                                         <a href={value.productURL} target='_blank' rel="noopener noreferrer">
                                             <img src={value.imageURL} alt={value.title}/>

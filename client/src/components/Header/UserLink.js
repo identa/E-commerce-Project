@@ -34,10 +34,6 @@ class UserLink extends Component {
         }
     }
 
-    changeImageAvatar = (imageURL) =>{
-        this.setState({imageURL : imageURL});
-    }
-
     renderLi = () =>{
         const role = localStorage.role;
         switch(role){
