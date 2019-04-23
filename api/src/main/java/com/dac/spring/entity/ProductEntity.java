@@ -28,6 +28,8 @@ public class ProductEntity {
 
     private int view;
 
+    private int ordered;
+
     private String productImageURL;
 
     @ManyToOne
@@ -40,6 +42,12 @@ public class ProductEntity {
 
     @OneToMany(mappedBy = "product")
     private List<OrderDetailEntity> orderDetailEntityList;
+
+    @OneToMany(mappedBy = "product")
+    private List<ImageEntity> imageEntityList;
+
+    @OneToMany(mappedBy = "product")
+    private List<CartEntity> cartEntityList;
 
     public ProductEntity() {
     }
@@ -139,6 +147,14 @@ public class ProductEntity {
         this.view = view;
     }
 
+    public int getOrdered() {
+        return ordered;
+    }
+
+    public void setOrdered(int ordered) {
+        this.ordered = ordered;
+    }
+
     public CategoryEntity getCategory() {
         return category;
     }
@@ -169,5 +185,21 @@ public class ProductEntity {
 
     public void setProductImageURL(String productImageURL) {
         this.productImageURL = productImageURL;
+    }
+
+    public List<CartEntity> getCartEntityList() {
+        return cartEntityList;
+    }
+
+    public void setCartEntityList(List<CartEntity> cartEntityList) {
+        this.cartEntityList = cartEntityList;
+    }
+
+    public List<ImageEntity> getImageEntityList() {
+        return imageEntityList;
+    }
+
+    public void setImageEntityList(List<ImageEntity> imageEntityList) {
+        this.imageEntityList = imageEntityList;
     }
 }

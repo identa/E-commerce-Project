@@ -12,4 +12,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Integer>
     List<ProductEntity> findByCategoryId(int id);
     ProductEntity findByIdAndDeletedAndStatusName(int id, boolean deleted, StatusName statusName);
     ProductEntity findByIdAndDeleted(int id, boolean deleted);
+    List<ProductEntity> findAllByDeletedAndStatusNameOrderByViewAsc(boolean deleted, StatusName statusName);
+    List<ProductEntity> findAllByDeletedAndStatusNameOrderByOrderedAsc(boolean deleted, StatusName statusName);
 }

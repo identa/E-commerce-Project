@@ -67,6 +67,9 @@ public class CustomerServiceImpl implements CustomerService {
     CampaignRepository campaignRepository;
 
     @Autowired
+    CartRepository cartRepository;
+
+    @Autowired
     AuthenticationManager authenticationManager;
 
     @Autowired
@@ -551,6 +554,123 @@ public class CustomerServiceImpl implements CustomerService {
         }
         result.setMessage("Get campaign successfully");
         result.setData(responses);
+        return result;
+    }
+
+    @Override
+    public ServiceResult getMostViewedProduct() {
+        ServiceResult result = new ServiceResult();
+        List<ProductEntity> productEntityList = productRepository.findAllByDeletedAndStatusNameOrderByViewAsc(false, StatusName.ACTIVE);
+
+        List<CustomerGetMostViewedProductResponse> responses = new ArrayList<>();
+        for (ProductEntity entity : productEntityList){
+            CustomerGetMostViewedProductResponse response = new CustomerGetMostViewedProductResponse(entity.getId(),
+                    entity.getName(),
+                    entity.getCategory().getName(),
+                    entity.getOriginalPrice() * entity.getDiscount(),
+                    entity.getProductImageURL());
+            responses.add(response);
+        }
+
+        result.setMessage("Get most viewed products successfully");
+        result.setData(responses);
+        return result;
+    }
+
+    @Override
+    public ServiceResult getMostOrderedProduct() {
+        ServiceResult result = new ServiceResult();
+        List<ProductEntity> productEntityList = productRepository.findAllByDeletedAndStatusNameOrderByOrderedAsc(false, StatusName.ACTIVE);
+
+        List<CustomerGetMostViewedProductResponse> responses = new ArrayList<>();
+        for (ProductEntity entity : productEntityList){
+            CustomerGetMostViewedProductResponse response = new CustomerGetMostViewedProductResponse(entity.getId(),
+                    entity.getName(),
+                    entity.getCategory().getName(),
+                    entity.getOriginalPrice() * entity.getDiscount(),
+                    entity.getProductImageURL());
+            responses.add(response);
+        }
+
+        result.setMessage("Get most ordered products successfully");
+        result.setData(responses);
+        return result;
+    }
+
+    @Override
+    public ServiceResult getProductDetail(int pid, int uid) {
+        ServiceResult result = new ServiceResult();
+        ProductEntity productEntity = productRepository.findByIdAndDeletedAndStatusName(pid, false, StatusName.ACTIVE);
+        boolean isInCart = cartRepository.existsByEmployeeIdAndProductId(uid, pid);
+        List<ImageResponse> responseList = new ArrayList<>();
+        for (ImageEntity imageEntity : productEntity.getImageEntityList()){
+            responseList.add(new ImageResponse(imageEntity.getImageURL()));
+        }
+
+        ProductDetailResponse response = new ProductDetailResponse(productEntity.getId(),
+                productEntity.getName(),
+                productEntity.getOriginalPrice(),
+                productEntity.getDiscount(),
+                productEntity.getDescription(),
+                productEntity.getCategory().getLimited(),
+                isInCart,
+                responseList);
+
+        result.setMessage("Get product detail successfully");
+        result.setData(response);
+        return result;
+    }
+
+    @Override
+    public ServiceResult addToCart(int pid, int uid) {
+        ServiceResult result = new ServiceResult();
+        ProductEntity productEntity = productRepository.findByIdAndDeletedAndStatusName(pid, false, StatusName.ACTIVE);
+        EmployeeEntity employeeEntity = employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(uid, false, StatusName.ACTIVE, RoleName.ROLE_CUSTOMER);
+        CartEntity cartEntity = new CartEntity();
+        cartEntity.setEmployee(employeeEntity);
+        cartEntity.setProduct(productEntity);
+        cartEntity.setQuantity(1);
+        cartEntity.setPrice(calculatePrice(cartEntity.getQuantity(), productEntity.getOriginalPrice(), productEntity.getDiscount()));
+        cartRepository.save(cartEntity);
+
+        AddToCartResponse response = new AddToCartResponse(cartEntity.getId(),
+                employeeEntity.getId(),
+                productEntity.getId(),
+                cartEntity.getQuantity(),
+                cartEntity.getPrice());
+
+        result.setMessage("Add to cart successfully");
+        result.setData(response);
+        return result;
+    }
+
+    @Override
+    public ServiceResult getCart(int id) {
+        ServiceResult result = new ServiceResult();
+        double totalPrice = 0;
+        int totalItem = 0;
+        int itemAmount = 0;
+
+        List<CartEntity> cartEntityList = cartRepository.findAllByEmployeeId(id);
+        itemAmount = cartEntityList.size();
+
+        List<GetCartData> cartData = new ArrayList<>();
+
+        for (CartEntity entity : cartEntityList){
+            GetCartData response = new GetCartData(entity.getId(),
+                    entity.getProduct().getName(),
+                    entity.getPrice(),
+                    entity.getProduct().getDiscount(),
+                    entity.getQuantity(),
+                    entity.getProduct().getProductImageURL());
+            cartData.add(response);
+            totalPrice += entity.getPrice();
+            totalItem += entity.getQuantity();
+        }
+
+        GetCartResponse response = new GetCartResponse(totalPrice, totalItem, itemAmount, cartData);
+        result.setMessage("Get cart successfully");
+        result.setData(response);
         return result;
     }
 

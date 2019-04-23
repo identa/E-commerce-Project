@@ -21,4 +21,9 @@ public interface CustomerService {
     ServiceResult searchProduct(String name, int page, int size);
     ServiceResult paginateProduct(int page, int size);
     ServiceResult getCampaign();
+    ServiceResult getMostViewedProduct();
+    ServiceResult getMostOrderedProduct();
+    ServiceResult getProductDetail(int pid, int uid);
+    ServiceResult addToCart(int pid, int uid);
+    ServiceResult getCart(int id);
 }

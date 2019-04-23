@@ -40,6 +40,9 @@ public class EmployeeEntity {
     @OneToMany(mappedBy = "shop")
     private List<CampaignEntity> campaignEntityList;
 
+    @OneToMany(mappedBy = "employee")
+    private List<CartEntity> cartEntityList;
+
     public EmployeeEntity() {
     }
 
@@ -155,5 +158,13 @@ public class EmployeeEntity {
 
     public void setCampaignEntityList(List<CampaignEntity> campaignEntityList) {
         this.campaignEntityList = campaignEntityList;
+    }
+
+    public List<CartEntity> getCartEntityList() {
+        return cartEntityList;
+    }
+
+    public void setCartEntityList(List<CartEntity> cartEntityList) {
+        this.cartEntityList = cartEntityList;
     }
 }

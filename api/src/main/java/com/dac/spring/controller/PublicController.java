@@ -39,4 +39,29 @@ public class PublicController {
     public ResponseEntity<ServiceResult> getProduct(@RequestBody CustomerGetInfoRequest request){
         return new ResponseEntity<>(customerService.getProduct(request.getId()),HttpStatus.OK);
     }
+
+    @GetMapping("/getMVProduct")
+    public ResponseEntity<ServiceResult> getMostViewedProduct(){
+        return new ResponseEntity<>(customerService.getMostViewedProduct(),HttpStatus.OK);
+    }
+
+    @GetMapping("/getMOProduct")
+    public ResponseEntity<ServiceResult> getMostOrderedProduct(){
+        return new ResponseEntity<>(customerService.getMostOrderedProduct(),HttpStatus.OK);
+    }
+
+    @GetMapping("product/{pid}/{uid}")
+    public ResponseEntity<ServiceResult> getCart(@PathVariable int pid, @PathVariable int uid){
+        return new ResponseEntity<>(customerService.getProductDetail(pid, uid), HttpStatus.OK);
+    }
+
+    @GetMapping("cart/add/{pid}/{uid}")
+    public ResponseEntity<ServiceResult> addToCart(@PathVariable int pid, @PathVariable int uid){
+        return new ResponseEntity<>(customerService.addToCart(pid, uid), HttpStatus.OK);
+    }
+
+    @GetMapping("cart/get/{id}")
+    public ResponseEntity<ServiceResult> getCart(@PathVariable int id){
+        return new ResponseEntity<>(customerService.getCart(id), HttpStatus.OK);
+    }
 }
