@@ -11,6 +11,8 @@ public class CartEntity {
 
     private double price;
 
+    private int discount;
+
     private int quantity;
 
     @ManyToOne
@@ -38,6 +40,14 @@ public class CartEntity {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public int getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(int discount) {
+        this.discount = discount;
     }
 
     public int getQuantity() {

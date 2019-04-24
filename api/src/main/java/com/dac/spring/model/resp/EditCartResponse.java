@@ -1,9 +1,7 @@
 package com.dac.spring.model.resp;
 
-public class GetCartData {
+public class EditCartResponse {
     private int id;
-
-    private String name;
 
     private double price;
 
@@ -11,15 +9,11 @@ public class GetCartData {
 
     private int quantity;
 
-    private String imageURL;
-
-    public GetCartData(int id, String name, double price, double cuttedPrice, int quantity, String imageURL) {
+    public EditCartResponse(int id, double price, double cuttedPrice, int quantity) {
         this.id = id;
-        this.name = name;
         this.price = price;
         this.cuttedPrice = cuttedPrice;
         this.quantity = quantity;
-        this.imageURL = imageURL;
     }
 
     public int getId() {
@@ -28,14 +22,6 @@ public class GetCartData {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public double getPrice() {
@@ -60,13 +46,5 @@ public class GetCartData {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-    }
-
-    public String getImageURL() {
-        return imageURL;
-    }
-
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
     }
 }

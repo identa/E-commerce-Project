@@ -630,14 +630,17 @@ public class CustomerServiceImpl implements CustomerService {
         cartEntity.setEmployee(employeeEntity);
         cartEntity.setProduct(productEntity);
         cartEntity.setQuantity(1);
-        cartEntity.setPrice(calculatePrice(cartEntity.getQuantity(), productEntity.getOriginalPrice(), productEntity.getDiscount()));
+        cartEntity.setPrice(productEntity.getOriginalPrice());
+        cartEntity.setDiscount(productEntity.getDiscount());
+
         cartRepository.save(cartEntity);
 
         AddToCartResponse response = new AddToCartResponse(cartEntity.getId(),
                 employeeEntity.getId(),
                 productEntity.getId(),
                 cartEntity.getQuantity(),
-                cartEntity.getPrice());
+                cartEntity.getPrice(),
+                cartEntity.getDiscount());
 
         result.setMessage("Add to cart successfully");
         result.setData(response);
@@ -649,7 +652,7 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult result = new ServiceResult();
         double totalPrice = 0;
         int totalItem = 0;
-        int itemAmount = 0;
+        int itemAmount;
 
         List<CartEntity> cartEntityList = cartRepository.findAllByEmployeeId(id);
         itemAmount = cartEntityList.size();
@@ -659,12 +662,12 @@ public class CustomerServiceImpl implements CustomerService {
         for (CartEntity entity : cartEntityList){
             GetCartData response = new GetCartData(entity.getId(),
                     entity.getProduct().getName(),
-                    entity.getPrice(),
-                    entity.getProduct().getDiscount(),
+                    calculatePrice(1, entity.getPrice(), entity.getDiscount()),
+                    calculatePrice(1, entity.getPrice(), 0),
                     entity.getQuantity(),
                     entity.getProduct().getProductImageURL());
             cartData.add(response);
-            totalPrice += entity.getPrice();
+            totalPrice +=  calculatePrice(entity.getQuantity(), entity.getPrice(), entity.getDiscount());
             totalItem += entity.getQuantity();
         }
 
@@ -681,6 +684,24 @@ public class CustomerServiceImpl implements CustomerService {
         CartEntity entity = cartRepository.findById(id).orElse(null);
         cartRepository.delete(entity);
         result.setMessage("Delete item from cart successfully");
+        return result;
+    }
+
+    @Override
+    public ServiceResult editCart(int id, int qty) {
+        ServiceResult result = new ServiceResult();
+        CartEntity entity = cartRepository.findById(id).orElse(null);
+
+        entity.setQuantity(qty);
+        cartRepository.save(entity);
+
+        EditCartResponse response = new EditCartResponse(id,
+                calculatePrice(1, entity.getPrice(), entity.getDiscount()),
+                calculatePrice(1, entity.getPrice(), 0),
+                entity.getQuantity());
+
+        result.setData(response);
+        result.setMessage("Edit cart successfully");
         return result;
     }
 
