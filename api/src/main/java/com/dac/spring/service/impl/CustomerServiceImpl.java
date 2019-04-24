@@ -674,6 +674,16 @@ public class CustomerServiceImpl implements CustomerService {
         return result;
     }
 
+    @Override
+    public ServiceResult deleteCart(int id) {
+        ServiceResult result = new ServiceResult();
+
+        CartEntity entity = cartRepository.findById(id).orElse(null);
+        cartRepository.delete(entity);
+        result.setMessage("Delete item from cart successfully");
+        return result;
+    }
+
     private double calculatePrice(int quantity, double price, double discount) {
         return (price - price * discount / 100) * quantity;
     }

@@ -64,4 +64,9 @@ public class PublicController {
     public ResponseEntity<ServiceResult> getCart(@PathVariable int id){
         return new ResponseEntity<>(customerService.getCart(id), HttpStatus.OK);
     }
+
+    @DeleteMapping("cart/delete/{id}")
+    public ResponseEntity<ServiceResult> deleteCart(@PathVariable int id){
+        return new ResponseEntity<>(customerService.deleteCart(id), HttpStatus.OK);
+    }
 }

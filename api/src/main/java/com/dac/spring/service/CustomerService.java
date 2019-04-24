@@ -26,4 +26,5 @@ public interface CustomerService {
     ServiceResult getProductDetail(int pid, int uid);
     ServiceResult addToCart(int pid, int uid);
     ServiceResult getCart(int id);
+    ServiceResult deleteCart(int id);
 }
