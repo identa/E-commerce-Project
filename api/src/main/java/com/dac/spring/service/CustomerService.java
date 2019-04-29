@@ -23,9 +23,14 @@ public interface CustomerService {
     ServiceResult getCampaign();
     ServiceResult getMostViewedProduct();
     ServiceResult getMostOrderedProduct();
+    ServiceResult getMostViewedProductAll();
+    ServiceResult getMostOrderedProductAll();
     ServiceResult getProductDetail(int pid, int uid);
     ServiceResult addToCart(int pid, int uid);
     ServiceResult getCart(int id);
     ServiceResult deleteCart(int id);
     ServiceResult editCart(int id, int qty);
+    ServiceResult getWishlist(int id);
+    ServiceResult addToWishlist(int pid, int uid);
+    ServiceResult deleteWishlist(int id);
 }

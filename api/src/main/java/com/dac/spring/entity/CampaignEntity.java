@@ -14,6 +14,7 @@ public class CampaignEntity {
     private int id;
 
     private String name;
+
     @ManyToOne
     @JoinColumn(name = "statusID")
     private StatusEntity status;

@@ -70,6 +70,9 @@ public class CustomerServiceImpl implements CustomerService {
     CartRepository cartRepository;
 
     @Autowired
+    WishlistRepository wishlistRepository;
+
+    @Autowired
     AuthenticationManager authenticationManager;
 
     @Autowired
@@ -560,7 +563,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult getMostViewedProduct() {
         ServiceResult result = new ServiceResult();
-        List<ProductEntity> productEntityList = productRepository.findAllByDeletedAndStatusNameOrderByViewAsc(false, StatusName.ACTIVE);
+        List<ProductEntity> productEntityList = productRepository.findTop8ByDeletedAndStatusNameOrderByViewDesc(false, StatusName.ACTIVE);
 
         List<CustomerGetMostViewedProductResponse> responses = new ArrayList<>();
         for (ProductEntity entity : productEntityList){
@@ -580,7 +583,49 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult getMostOrderedProduct() {
         ServiceResult result = new ServiceResult();
-        List<ProductEntity> productEntityList = productRepository.findAllByDeletedAndStatusNameOrderByOrderedAsc(false, StatusName.ACTIVE);
+        List<ProductEntity> productEntityList = productRepository.findTop4ByDeletedAndStatusNameOrderByOrderedDesc(false, StatusName.ACTIVE);
+
+        List<CustomerGetMostViewedProductResponse> responses = new ArrayList<>();
+        for (ProductEntity entity : productEntityList){
+            CustomerGetMostViewedProductResponse response = new CustomerGetMostViewedProductResponse(entity.getId(),
+                    entity.getName(),
+                    entity.getCategory().getName(),
+                    entity.getOriginalPrice() * entity.getDiscount(),
+                    entity.getProductImageURL());
+            responses.add(response);
+        }
+
+        result.setMessage("Get most ordered products successfully");
+        result.setData(responses);
+        return result;
+    }
+
+    @Override
+    public ServiceResult getMostViewedProductAll() {
+        ServiceResult result = new ServiceResult();
+        List<ProductEntity> productEntityList = productRepository.findAllByDeletedAndStatusNameOrderByViewDesc(false, StatusName.ACTIVE);
+
+        List<CustomerGetMOProductAllResponse> responses = new ArrayList<>();
+        for (ProductEntity entity : productEntityList){
+            CustomerGetMOProductAllResponse response = new CustomerGetMOProductAllResponse(entity.getId(),
+                    entity.getProductImageURL(),
+                    entity.getName(),
+                    4.5,
+                    20,
+                    calculatePrice(1, entity.getOriginalPrice(), entity.getDiscount()),
+                    entity.getOriginalPrice());
+            responses.add(response);
+        }
+
+        result.setMessage("Get most viewed products successfully");
+        result.setData(responses);
+        return result;
+    }
+
+    @Override
+    public ServiceResult getMostOrderedProductAll() {
+        ServiceResult result = new ServiceResult();
+        List<ProductEntity> productEntityList = productRepository.findAllByDeletedAndStatusNameOrderByOrderedDesc(false, StatusName.ACTIVE);
 
         List<CustomerGetMostViewedProductResponse> responses = new ArrayList<>();
         for (ProductEntity entity : productEntityList){
@@ -702,6 +747,61 @@ public class CustomerServiceImpl implements CustomerService {
 
         result.setData(response);
         result.setMessage("Edit cart successfully");
+        return result;
+    }
+
+    @Override
+    public ServiceResult getWishlist(int id) {
+        ServiceResult result = new ServiceResult();
+        List<WishlistEntity> wishlistEntityList = wishlistRepository.findAllByEmployeeId(id);
+
+        List<WishlistData> wishlistDataList = new ArrayList<>();
+
+        for (WishlistEntity wishlistEntity : wishlistEntityList){
+            WishlistData data = new WishlistData(wishlistEntity.getId(),
+                    wishlistEntity.getProduct().getId(),
+                    wishlistEntity.getProduct().getName(),
+                    calculatePrice(1, wishlistEntity.getProduct().getOriginalPrice(), wishlistEntity.getProduct().getDiscount()),
+                    wishlistEntity.getProduct().getOriginalPrice());
+            wishlistDataList.add(data);
+        }
+
+        GetWishlistResponse response = new GetWishlistResponse(id, wishlistDataList);
+
+        result.setData(response);
+        result.setMessage("Get wishlist successfully");
+        return result;
+    }
+
+    @Override
+    public ServiceResult addToWishlist(int pid, int uid) {
+        ServiceResult result = new ServiceResult();
+        ProductEntity productEntity = productRepository.findByIdAndDeletedAndStatusName(pid, false, StatusName.ACTIVE);
+        EmployeeEntity employeeEntity = employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(uid, false, StatusName.ACTIVE, RoleName.ROLE_CUSTOMER);
+
+        WishlistEntity entity = new WishlistEntity();
+        entity.setEmployee(employeeEntity);
+        entity.setProduct(productEntity);
+
+        wishlistRepository.save(entity);
+
+        AddToWishlistResponse response = new AddToWishlistResponse(entity.getId(),
+                entity.getProduct().getId(),
+                entity.getEmployee().getId());
+
+        result.setData(response);
+        result.setMessage("Add to cart successfully");
+        return result;
+    }
+
+    @Override
+    public ServiceResult deleteWishlist(int id) {
+        ServiceResult result = new ServiceResult();
+
+        WishlistEntity entity = wishlistRepository.findById(id).orElse(null);
+        wishlistRepository.delete(entity);
+        
+        result.setMessage("Delete item from wishlist successfully");
         return result;
     }
 

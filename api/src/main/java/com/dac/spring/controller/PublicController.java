@@ -45,9 +45,19 @@ public class PublicController {
         return new ResponseEntity<>(customerService.getMostViewedProduct(),HttpStatus.OK);
     }
 
+    @GetMapping("/getMVProduct/all")
+    public ResponseEntity<ServiceResult> getMostViewedProductAll(){
+        return new ResponseEntity<>(customerService.getMostViewedProductAll(),HttpStatus.OK);
+    }
+
     @GetMapping("/getMOProduct")
     public ResponseEntity<ServiceResult> getMostOrderedProduct(){
         return new ResponseEntity<>(customerService.getMostOrderedProduct(),HttpStatus.OK);
+    }
+
+    @GetMapping("/getMOProduct/all")
+    public ResponseEntity<ServiceResult> getMostOrderedProductAll(){
+        return new ResponseEntity<>(customerService.getMostOrderedProductAll(),HttpStatus.OK);
     }
 
     @GetMapping("product/{pid}/{uid}")
@@ -73,5 +83,20 @@ public class PublicController {
     @PutMapping("cart/edit/{id}/{qty}")
     public ResponseEntity<ServiceResult> editCart(@PathVariable int id, @PathVariable int qty){
         return new ResponseEntity<>(customerService.editCart(id, qty), HttpStatus.OK);
+    }
+
+    @GetMapping("wishlist/{id}")
+    public ResponseEntity<ServiceResult> getWishlist(@PathVariable int id){
+        return new ResponseEntity<>(customerService.getWishlist(id), HttpStatus.OK);
+    }
+
+    @PostMapping("wishlist/add/{pid}/{uid}")
+    public ResponseEntity<ServiceResult> addToWishlist(@PathVariable int pid, @PathVariable int uid){
+        return new ResponseEntity<>(customerService.addToWishlist(pid, uid), HttpStatus.OK);
+    }
+
+    @DeleteMapping("wishlist/{id}")
+    public ResponseEntity<ServiceResult> deleteWishlist(@PathVariable int id){
+        return new ResponseEntity<>(customerService.deleteWishlist(id), HttpStatus.OK);
     }
 }

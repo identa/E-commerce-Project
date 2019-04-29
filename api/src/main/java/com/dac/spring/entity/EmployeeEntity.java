@@ -43,6 +43,9 @@ public class EmployeeEntity {
     @OneToMany(mappedBy = "employee")
     private List<CartEntity> cartEntityList;
 
+    @OneToMany(mappedBy = "employee")
+    private List<WishlistEntity> wishlistEntityList;
+
     public EmployeeEntity() {
     }
 
@@ -166,5 +169,13 @@ public class EmployeeEntity {
 
     public void setCartEntityList(List<CartEntity> cartEntityList) {
         this.cartEntityList = cartEntityList;
+    }
+
+    public List<WishlistEntity> getWishlistEntityList() {
+        return wishlistEntityList;
+    }
+
+    public void setWishlistEntityList(List<WishlistEntity> wishlistEntityList) {
+        this.wishlistEntityList = wishlistEntityList;
     }
 }
