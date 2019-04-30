@@ -32,5 +32,6 @@ public interface CustomerService {
     ServiceResult editCart(int id, int qty);
     ServiceResult getWishlist(int id);
     ServiceResult addToWishlist(int pid, int uid);
-    ServiceResult deleteWishlist(int id);
+    ServiceResult deleteWishlist(int pid, int uid);
+    ServiceResult getOrder(int id);
 }

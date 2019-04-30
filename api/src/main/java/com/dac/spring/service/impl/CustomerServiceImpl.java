@@ -755,18 +755,18 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult result = new ServiceResult();
         List<WishlistEntity> wishlistEntityList = wishlistRepository.findAllByEmployeeId(id);
 
-        List<WishlistData> wishlistDataList = new ArrayList<>();
+        List<WishlistData> response = new ArrayList<>();
 
         for (WishlistEntity wishlistEntity : wishlistEntityList){
-            WishlistData data = new WishlistData(wishlistEntity.getId(),
-                    wishlistEntity.getProduct().getId(),
+            WishlistData data = new WishlistData(wishlistEntity.getProduct().getId(),
+                    wishlistEntity.getProduct().getProductImageURL(),
                     wishlistEntity.getProduct().getName(),
+                    4.5,
+                    20,
                     calculatePrice(1, wishlistEntity.getProduct().getOriginalPrice(), wishlistEntity.getProduct().getDiscount()),
                     wishlistEntity.getProduct().getOriginalPrice());
-            wishlistDataList.add(data);
+            response.add(data);
         }
-
-        GetWishlistResponse response = new GetWishlistResponse(id, wishlistDataList);
 
         result.setData(response);
         result.setMessage("Get wishlist successfully");
@@ -795,13 +795,31 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ServiceResult deleteWishlist(int id) {
+    public ServiceResult deleteWishlist(int pid, int uid) {
         ServiceResult result = new ServiceResult();
 
-        WishlistEntity entity = wishlistRepository.findById(id).orElse(null);
+        WishlistEntity entity = wishlistRepository.findByProductIdAndEmployeeId(pid, uid);
         wishlistRepository.delete(entity);
         
         result.setMessage("Delete item from wishlist successfully");
+        return result;
+    }
+
+    @Override
+    public ServiceResult getOrder(int id) {
+        ServiceResult result = new ServiceResult();
+        List<OrderEntity> orderEntityList = orderRepository.findAllByEmployeeIdAndDeleted(id, false);
+
+        List<GetOrderResponse> responseList = new ArrayList<>();
+
+        for (OrderEntity orderEntity : orderEntityList){
+            GetOrderResponse response = new GetOrderResponse(orderEntity.getId(),
+                    orderEntity.getEmployee().getId());
+            responseList.add(response);
+        }
+
+        result.setData(responseList);
+        result.setMessage("Get order successfully");
         return result;
     }
 

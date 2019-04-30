@@ -5,12 +5,13 @@ import javax.persistence.*;
 @Entity
 @Table(name = "order_detail")
 public class OrderDetailEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private double price;
+
+    private int discount;
 
     private int quantity;
 
@@ -46,6 +47,14 @@ public class OrderDetailEntity {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public int getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(int discount) {
+        this.discount = discount;
     }
 
     public int getQuantity() {

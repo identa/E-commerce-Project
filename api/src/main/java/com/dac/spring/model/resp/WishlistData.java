@@ -3,18 +3,24 @@ package com.dac.spring.model.resp;
 public class WishlistData {
     private int id;
 
-    private int productID;
+    private String imageURL;
 
     private String name;
+
+    private double rating;
+
+    private int totalRatings;
 
     private double price;
 
     private double cuttedPrice;
 
-    public WishlistData(int id, int productID, String name, double price, double cuttedPrice) {
+    public WishlistData(int id, String imageURL, String name, double rating, int totalRatings, double price, double cuttedPrice) {
         this.id = id;
-        this.productID = productID;
+        this.imageURL = imageURL;
         this.name = name;
+        this.rating = rating;
+        this.totalRatings = totalRatings;
         this.price = price;
         this.cuttedPrice = cuttedPrice;
     }
@@ -27,12 +33,12 @@ public class WishlistData {
         this.id = id;
     }
 
-    public int getProductID() {
-        return productID;
+    public String getImageURL() {
+        return imageURL;
     }
 
-    public void setProductID(int productID) {
-        this.productID = productID;
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
     }
 
     public String getName() {
@@ -41,6 +47,22 @@ public class WishlistData {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public int getTotalRatings() {
+        return totalRatings;
+    }
+
+    public void setTotalRatings(int totalRatings) {
+        this.totalRatings = totalRatings;
     }
 
     public double getPrice() {

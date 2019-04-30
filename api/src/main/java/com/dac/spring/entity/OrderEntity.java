@@ -15,7 +15,7 @@ public class OrderEntity {
     @JoinColumn(name = "statusID")
     private StatusEntity status;
 
-    private boolean deleted= false;
+    private boolean deleted = false;
 
     private double totalPrice;
 

@@ -90,13 +90,18 @@ public class PublicController {
         return new ResponseEntity<>(customerService.getWishlist(id), HttpStatus.OK);
     }
 
-    @PostMapping("wishlist/add/{pid}/{uid}")
+    @PostMapping("wishlist/{pid}/{uid}")
     public ResponseEntity<ServiceResult> addToWishlist(@PathVariable int pid, @PathVariable int uid){
         return new ResponseEntity<>(customerService.addToWishlist(pid, uid), HttpStatus.OK);
     }
 
-    @DeleteMapping("wishlist/{id}")
-    public ResponseEntity<ServiceResult> deleteWishlist(@PathVariable int id){
-        return new ResponseEntity<>(customerService.deleteWishlist(id), HttpStatus.OK);
+    @DeleteMapping("wishlist/{pid}/{uid}")
+    public ResponseEntity<ServiceResult> deleteWishlist(@PathVariable int pid, @PathVariable int uid){
+        return new ResponseEntity<>(customerService.deleteWishlist(pid, uid), HttpStatus.OK);
+    }
+
+    @GetMapping("order/{id}")
+    public ResponseEntity<ServiceResult> getOrder(@PathVariable int id){
+        return new ResponseEntity<>(customerService.getOrder(id), HttpStatus.OK);
     }
 }
