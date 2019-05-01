@@ -1,14 +1,14 @@
 package com.dac.spring.controller;
 
 import com.dac.spring.model.ServiceResult;
-import com.dac.spring.model.req.AdminPaginateCategoryRequest;
-import com.dac.spring.model.req.CustomerGetInfoRequest;
-import com.dac.spring.model.req.CustomerSearchProductRequest;
+import com.dac.spring.model.req.*;
 import com.dac.spring.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -103,5 +103,15 @@ public class PublicController {
     @GetMapping("order/{id}")
     public ResponseEntity<ServiceResult> getOrder(@PathVariable int id){
         return new ResponseEntity<>(customerService.getOrder(id), HttpStatus.OK);
+    }
+
+    @PostMapping("order/{id}")
+    public ResponseEntity<ServiceResult> addOrder(@PathVariable int id, @RequestBody AddOrderReq request){
+        return new ResponseEntity<>(customerService.addOrder(id, request.getOrders()), HttpStatus.OK);
+    }
+
+    @GetMapping("product")
+    public ResponseEntity<ServiceResult> search(@RequestParam(value = "search") String query){
+        return new ResponseEntity<>(customerService.search(query), HttpStatus.OK);
     }
 }

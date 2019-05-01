@@ -11,7 +11,7 @@ public class OrderDetailEntity {
 
     private double price;
 
-    private int discount;
+    private int discount = 0;
 
     private int quantity;
 

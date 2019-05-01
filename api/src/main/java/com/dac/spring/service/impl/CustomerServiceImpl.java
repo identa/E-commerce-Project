@@ -8,6 +8,7 @@ import com.dac.spring.entity.*;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
 import com.dac.spring.model.enums.StatusName;
+import com.dac.spring.model.req.AddOrderRequest;
 import com.dac.spring.model.req.CustomerCreateOrderDetailRequest;
 import com.dac.spring.model.resp.*;
 import com.dac.spring.repository.*;
@@ -822,6 +823,54 @@ public class CustomerServiceImpl implements CustomerService {
         result.setMessage("Get order successfully");
         return result;
     }
+
+    @Override
+    public ServiceResult addOrder(int id, List<AddOrderRequest> request) {
+        ServiceResult result = new ServiceResult();
+        EmployeeEntity employeeEntity = employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(id, false, StatusName.ACTIVE, RoleName.ROLE_CUSTOMER);
+        OrderEntity orderEntity = new OrderEntity();
+        orderEntity.setStatus(statusRepository.findByName(StatusName.ACTIVE));
+        orderEntity.setTotalPrice(0);
+        orderEntity.setDeleted(false);
+        orderEntity.setEmployee(employeeEntity);
+        orderRepository.save(orderEntity);
+        List<OrderDetailEntity> orderDetailEntityList = new ArrayList<>();
+        for (AddOrderRequest orderRequest : request){
+            OrderDetailEntity orderDetailEntity = new OrderDetailEntity(orderRequest.getPrice(),
+                    orderRequest.getQuantity(),
+                    productRepository.findById(orderRequest.getId()).orElse(null),
+                    orderRepository.findById(orderEntity.getId()).orElse(null));
+            orderDetailEntityList.add(orderDetailEntity);
+        }
+
+        orderDetailRepository.saveAll(orderDetailEntityList);
+
+        AddOrderResponse response = new AddOrderResponse(orderEntity.getId());
+        result.setMessage("Check out successfully");
+        result.setData(response);
+        return result;
+    }
+
+    @Override
+    public ServiceResult search(String query) {
+        ServiceResult result = new ServiceResult();
+        List<ProductEntity> productEntityList = productRepository.findAllByDeletedAndStatusNameAndNameContaining(false, StatusName.ACTIVE, query);
+
+        List<CustomerGetMOProductAllResponse> responses = new ArrayList<>();
+        for (ProductEntity entity : productEntityList){
+            CustomerGetMOProductAllResponse response = new CustomerGetMOProductAllResponse(entity.getId(),
+                    entity.getProductImageURL(),
+                    entity.getName(),
+                    4.5,
+                    20,
+                    calculatePrice(1, entity.getOriginalPrice(), entity.getDiscount()),
+                    entity.getOriginalPrice());
+            responses.add(response);
+        }
+
+        result.setMessage("Get most viewed products successfully");
+        result.setData(responses);
+        return result;    }
 
     private double calculatePrice(int quantity, double price, double discount) {
         return (price - price * discount / 100) * quantity;
