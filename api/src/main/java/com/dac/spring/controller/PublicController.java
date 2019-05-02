@@ -114,4 +114,14 @@ public class PublicController {
     public ResponseEntity<ServiceResult> search(@RequestParam(value = "search") String query){
         return new ResponseEntity<>(customerService.search(query), HttpStatus.OK);
     }
+
+    @GetMapping("cat")
+    public ResponseEntity<ServiceResult> getCat(){
+        return new ResponseEntity<>(customerService.getCat(), HttpStatus.OK);
+    }
+
+    @GetMapping("cat/{id}")
+    public ResponseEntity<ServiceResult> showCat(@PathVariable int id){
+        return new ResponseEntity<>(customerService.showCat(id), HttpStatus.OK);
+    }
 }

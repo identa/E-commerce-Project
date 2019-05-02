@@ -10,4 +10,5 @@ import java.util.List;
 public interface WishlistRepository extends JpaRepository<WishlistEntity, Integer> {
     List<WishlistEntity> findAllByEmployeeId(int id);
     WishlistEntity findByProductIdAndEmployeeId(int pid, int uid);
+    boolean existsByProductIdAndEmployeeId(int pid, int uid);
 }

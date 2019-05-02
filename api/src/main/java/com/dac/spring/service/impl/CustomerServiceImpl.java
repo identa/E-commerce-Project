@@ -648,6 +648,7 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult result = new ServiceResult();
         ProductEntity productEntity = productRepository.findByIdAndDeletedAndStatusName(pid, false, StatusName.ACTIVE);
         boolean isInCart = cartRepository.existsByEmployeeIdAndProductId(uid, pid);
+        boolean isInWishlist = wishlistRepository.existsByProductIdAndEmployeeId(pid, uid);
         List<ImageResponse> responseList = new ArrayList<>();
         for (ImageEntity imageEntity : productEntity.getImageEntityList()){
             responseList.add(new ImageResponse(imageEntity.getImageURL()));
@@ -660,6 +661,7 @@ public class CustomerServiceImpl implements CustomerService {
                 productEntity.getDescription(),
                 productEntity.getCategory().getLimited(),
                 isInCart,
+                isInWishlist,
                 responseList);
 
         result.setMessage("Get product detail successfully");
@@ -870,7 +872,47 @@ public class CustomerServiceImpl implements CustomerService {
 
         result.setMessage("Get most viewed products successfully");
         result.setData(responses);
-        return result;    }
+        return result;
+    }
+
+    @Override
+    public ServiceResult getCat() {
+        ServiceResult result = new ServiceResult();
+        List<CategoryEntity> categoryEntityList = categoryRepository.findAll();
+        List<GetCatResponse> responses = new ArrayList<>();
+        for (CategoryEntity entity : categoryEntityList){
+            GetCatResponse response = new GetCatResponse(entity.getId(),
+                    entity.getImageURL(),
+                    entity.getName());
+            responses.add(response);
+        }
+
+        result.setMessage("Get category successfully");
+        result.setData(responses);
+        return result;
+    }
+
+    @Override
+    public ServiceResult showCat(int id) {
+        ServiceResult result = new ServiceResult();
+        List<ProductEntity> productEntityList = productRepository.findByCategoryIdAndDeletedAndStatusName(id, false, StatusName.ACTIVE);
+
+        List<CustomerGetMOProductAllResponse> responses = new ArrayList<>();
+        for (ProductEntity entity : productEntityList){
+            CustomerGetMOProductAllResponse response = new CustomerGetMOProductAllResponse(entity.getId(),
+                    entity.getProductImageURL(),
+                    entity.getName(),
+                    4.5,
+                    20,
+                    calculatePrice(1, entity.getOriginalPrice(), entity.getDiscount()),
+                    entity.getOriginalPrice());
+            responses.add(response);
+        }
+
+        result.setMessage("Get category products successfully");
+        result.setData(responses);
+        return result;
+    }
 
     private double calculatePrice(int quantity, double price, double discount) {
         return (price - price * discount / 100) * quantity;

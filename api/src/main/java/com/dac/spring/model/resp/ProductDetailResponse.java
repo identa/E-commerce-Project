@@ -19,9 +19,11 @@ public class ProductDetailResponse {
 
     private boolean inCart;
 
+    private boolean inWishlist;
+
     private List<ImageResponse> images;
 
-    public ProductDetailResponse(int id, String name, double originalPrice, int discount, String description, int limit, boolean inCart, List<ImageResponse> images) {
+    public ProductDetailResponse(int id, String name, double originalPrice, int discount, String description, int limit, boolean inCart, boolean inWishlist, List<ImageResponse> images) {
         this.id = id;
         this.name = name;
         this.originalPrice = originalPrice;
@@ -29,6 +31,7 @@ public class ProductDetailResponse {
         this.description = description;
         this.limit = limit;
         this.inCart = inCart;
+        this.inWishlist = inWishlist;
         this.images = images;
     }
 
@@ -80,13 +83,20 @@ public class ProductDetailResponse {
         this.limit = limit;
     }
 
-
     public boolean isInCart() {
         return inCart;
     }
 
     public void setInCart(boolean inCart) {
         this.inCart = inCart;
+    }
+
+    public boolean isInWishlist() {
+        return inWishlist;
+    }
+
+    public void setInWishlist(boolean inWishlist) {
+        this.inWishlist = inWishlist;
     }
 
     public List<ImageResponse> getImages() {

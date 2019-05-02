@@ -12,6 +12,8 @@ public class CategoryEntity {
 
     private String name;
 
+    private String imageURL;
+
     private int parentID;
 
     private int limited;
@@ -36,6 +38,14 @@ public class CategoryEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
     }
 
     public int getParentID() {

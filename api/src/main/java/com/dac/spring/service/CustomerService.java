@@ -37,4 +37,6 @@ public interface CustomerService {
     ServiceResult getOrder(int id);
     ServiceResult addOrder(int id, List<AddOrderRequest> request);
     ServiceResult search(String query);
+    ServiceResult getCat();
+    ServiceResult showCat(int id);
 }
