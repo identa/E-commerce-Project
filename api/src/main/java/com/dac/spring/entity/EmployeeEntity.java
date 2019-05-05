@@ -46,6 +46,9 @@ public class EmployeeEntity {
     @OneToMany(mappedBy = "employee")
     private List<WishlistEntity> wishlistEntityList;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "employee")
+    private EmployeeInfoEntity employeeInfo;
+
     public EmployeeEntity() {
     }
 
@@ -177,5 +180,13 @@ public class EmployeeEntity {
 
     public void setWishlistEntityList(List<WishlistEntity> wishlistEntityList) {
         this.wishlistEntityList = wishlistEntityList;
+    }
+
+    public EmployeeInfoEntity getEmployeeInfo() {
+        return employeeInfo;
+    }
+
+    public void setEmployeeInfo(EmployeeInfoEntity employeeInfo) {
+        this.employeeInfo = employeeInfo;
     }
 }

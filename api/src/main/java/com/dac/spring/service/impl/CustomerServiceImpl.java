@@ -9,6 +9,7 @@ import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
 import com.dac.spring.model.enums.StatusName;
 import com.dac.spring.model.req.AddOrderRequest;
+import com.dac.spring.model.req.AddressRequest;
 import com.dac.spring.model.req.CustomerCreateOrderDetailRequest;
 import com.dac.spring.model.resp.*;
 import com.dac.spring.repository.*;
@@ -72,6 +73,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     WishlistRepository wishlistRepository;
+
+    @Autowired
+    EmployeeInfoRepository employeeInfoRepository;
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -215,6 +219,123 @@ public class CustomerServiceImpl implements CustomerService {
             result.setMessage(CustomerSignInConst.EMAIL_NOT_FOUND);
             result.setStatus(ServiceResult.Status.FAILED);
         }
+        return result;
+    }
+
+
+    @Override
+    public ServiceResult signInCustomer(String email, String password) {
+        ServiceResult result = new ServiceResult();
+        EmployeeEntity customer = employeeRepository.findByEmail(email).orElse(null);
+        if (customer != null) {
+            if (!customer.isDeleted()) {
+                boolean isPasswordChecked = encoder.matches(password, customer.getPassword());
+                if (isPasswordChecked) {
+                    String jwt = authenticationWithJwt(email, password);
+                    boolean isAddAddress = employeeInfoRepository.existsByEmployee(customer);
+                    SignUpResponse response = new SignUpResponse(customer.getId(),
+                            customer.getFirstName(),
+                            customer.getLastName(),
+                            customer.getRole().getName().name(),
+                            customer.getImageURL(),
+                            jwt,
+                            isAddAddress);
+
+                    saveJwt(jwt);
+                    result.setMessage(CustomerSignInConst.SUCCESS);
+                    result.setData(response);
+                } else {
+                    result.setStatus(ServiceResult.Status.FAILED);
+                    result.setMessage(CustomerSignInConst.EMAIL_PASSWORD_WRONG_FORMAT);
+                }
+            } else {
+                result.setStatus(ServiceResult.Status.FAILED);
+                result.setMessage("Cannot sign in with this account");
+            }
+
+
+        } else {
+            result.setMessage(CustomerSignInConst.EMAIL_NOT_FOUND);
+            result.setStatus(ServiceResult.Status.FAILED);
+        }
+        return result;
+    }
+
+    @Override
+    public ServiceResult getAddress(int id) {
+        ServiceResult result = new ServiceResult();
+        EmployeeInfoEntity entity = employeeInfoRepository.findByEmployeeId(id);
+//        GetAddressResp resp = new GetAddressResp();
+//        GetAddressResponse response;
+        if (entity == null){
+//            response = new GetAddressResponse();
+        }else {
+            GetAddressResponse response = new GetAddressResponse(entity.getRecipientName(),
+                    entity.getCity(),
+                    entity.getAddress(),
+                    entity.getState(),
+                    entity.getPostalCode());
+//            resp = new GetAddressResp(response);
+            result.setMessage("Get address successfully");
+            result.setData(response);
+        }
+//        result.setData(resp);
+        return result;
+    }
+
+    @Override
+    public ServiceResult addAddress(int id, AddressRequest request) {
+        ServiceResult result = new ServiceResult();
+        EmployeeEntity entity = employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(id, false, StatusName.ACTIVE, RoleName.ROLE_CUSTOMER);
+
+        if (entity == null){
+//            response = new GetAddressResponse();
+        }else {
+            EmployeeInfoEntity employeeInfoEntity = new EmployeeInfoEntity(request.getRecipientName(),
+                    request.getCity(),
+                    request.getAddress(),
+                    request.getState(),
+                    request.getPostalCode(),
+                    entity);
+            employeeInfoRepository.save(employeeInfoEntity);
+            GetAddressResponse response = new GetAddressResponse(employeeInfoEntity.getRecipientName(),
+                    employeeInfoEntity.getCity(),
+                    employeeInfoEntity.getAddress(),
+                    employeeInfoEntity.getState(),
+                    employeeInfoEntity.getPostalCode());
+//            resp = new GetAddressResp(response);
+            result.setMessage("Add address successfully");
+            result.setData(response);
+        }
+//        result.setData(resp);
+        return result;
+    }
+
+    @Override
+    public ServiceResult editAddress(int id, AddressRequest request) {
+        ServiceResult result = new ServiceResult();
+        EmployeeInfoEntity entity = employeeInfoRepository.findByEmployeeId(id);
+
+        if (entity == null){
+//            response = new GetAddressResponse();
+        }else {
+            entity.setAddress(request.getAddress());
+            entity.setCity(request.getCity());
+            entity.setRecipientName(request.getRecipientName());
+            entity.setState(request.getState());
+            entity.setPostalCode(request.getPostalCode());
+
+            employeeInfoRepository.save(entity);
+            GetAddressResponse response = new GetAddressResponse(entity.getRecipientName(),
+                    entity.getCity(),
+                    entity.getAddress(),
+                    entity.getState(),
+                    entity.getPostalCode());
+//            resp = new GetAddressResp(response);
+            result.setMessage("Edit address successfully");
+            result.setData(response);
+        }
+//        result.setData(resp);
         return result;
     }
 

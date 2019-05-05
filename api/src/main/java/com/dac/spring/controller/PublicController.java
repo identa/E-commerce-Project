@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -123,5 +124,26 @@ public class PublicController {
     @GetMapping("cat/{id}")
     public ResponseEntity<ServiceResult> showCat(@PathVariable int id){
         return new ResponseEntity<>(customerService.showCat(id), HttpStatus.OK);
+    }
+
+    @PostMapping("/signin")
+    public ResponseEntity<ServiceResult> signIn(@Valid @RequestBody CustomerSignInRequest request) {
+        return new ResponseEntity<>(customerService.signInCustomer(request.getEmail(),
+                request.getPassword()), HttpStatus.OK);
+    }
+
+    @GetMapping("address/{id}")
+    public ResponseEntity<ServiceResult> getAddress(@PathVariable int id){
+        return new ResponseEntity<>(customerService.getAddress(id), HttpStatus.OK);
+    }
+
+    @PostMapping("address/{id}")
+    public ResponseEntity<ServiceResult> addAddress(@PathVariable int id, @RequestBody AddressRequest request){
+        return new ResponseEntity<>(customerService.addAddress(id, request), HttpStatus.OK);
+    }
+
+    @PutMapping("address/{id}")
+    public ResponseEntity<ServiceResult> editAddress(@PathVariable int id, @RequestBody AddressRequest request){
+        return new ResponseEntity<>(customerService.editAddress(id, request), HttpStatus.OK);
     }
 }

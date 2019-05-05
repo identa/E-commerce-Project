@@ -2,6 +2,7 @@ package com.dac.spring.service;
 
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.req.AddOrderRequest;
+import com.dac.spring.model.req.AddressRequest;
 import com.dac.spring.model.req.CustomerCreateOrderDetailRequest;
 
 import java.util.List;
@@ -39,4 +40,8 @@ public interface CustomerService {
     ServiceResult search(String query);
     ServiceResult getCat();
     ServiceResult showCat(int id);
+    ServiceResult signInCustomer(String email, String password);
+    ServiceResult getAddress(int id);
+    ServiceResult addAddress(int id, AddressRequest request);
+    ServiceResult editAddress(int id, AddressRequest request);
 }
