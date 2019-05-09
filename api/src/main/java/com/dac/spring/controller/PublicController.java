@@ -146,4 +146,9 @@ public class PublicController {
     public ResponseEntity<ServiceResult> editAddress(@PathVariable int id, @RequestBody AddressRequest request){
         return new ResponseEntity<>(customerService.editAddress(id, request), HttpStatus.OK);
     }
+
+    @GetMapping("order/detail/{id}")
+    public ResponseEntity<ServiceResult> getOrderDetails(@PathVariable int id){
+        return new ResponseEntity<>(customerService.getOrderDetails(id), HttpStatus.OK);
+    }
 }

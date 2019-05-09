@@ -44,4 +44,5 @@ public interface CustomerService {
     ServiceResult getAddress(int id);
     ServiceResult addAddress(int id, AddressRequest request);
     ServiceResult editAddress(int id, AddressRequest request);
+    ServiceResult getOrderDetails(int id);
 }

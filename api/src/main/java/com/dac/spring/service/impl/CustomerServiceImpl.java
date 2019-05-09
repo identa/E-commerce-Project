@@ -340,6 +340,26 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public ServiceResult getOrderDetails(int id) {
+        ServiceResult result = new ServiceResult();
+
+        List<OrderDetailEntity> list = orderDetailRepository.findByOrderId(id);
+
+        List<OrderDetailsResponse> responses = new ArrayList<>();
+        for (OrderDetailEntity entity : list){
+            OrderDetailsResponse response = new OrderDetailsResponse(entity.getId(),
+                    entity.getProduct().getName(),
+                    entity.getProduct().getProductImageURL(),
+                    entity.getPrice(),
+                    entity.getQuantity());
+            responses.add(response);
+        }
+        result.setMessage("Get order detail sccessfully");
+        result.setData(responses);
+        return result;
+    }
+
+    @Override
     public ServiceResult signOut(String token) {
         ServiceResult result = new ServiceResult();
         String authHeader = token.replace("Bearer ", "");
