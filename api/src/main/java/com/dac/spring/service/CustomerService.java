@@ -45,4 +45,6 @@ public interface CustomerService {
     ServiceResult addAddress(int id, AddressRequest request);
     ServiceResult editAddress(int id, AddressRequest request);
     ServiceResult getOrderDetails(int id);
+    ServiceResult sendMail();
+    ServiceResult verify(String email, String code);
 }

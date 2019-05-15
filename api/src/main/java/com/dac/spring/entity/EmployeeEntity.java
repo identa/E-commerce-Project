@@ -23,6 +23,8 @@ public class EmployeeEntity {
 
     private boolean deleted = false;
 
+    private String confirmCode;
+
     @ManyToOne
     @JoinColumn(name = "statusID")
     private StatusEntity status;
@@ -48,6 +50,9 @@ public class EmployeeEntity {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "employee")
     private EmployeeInfoEntity employeeInfo;
+
+    @OneToMany(mappedBy = "user")
+    private List<RatingEntity> ratingEntityList;
 
     public EmployeeEntity() {
     }
@@ -142,6 +147,14 @@ public class EmployeeEntity {
         this.status = status;
     }
 
+    public String getConfirmCode() {
+        return confirmCode;
+    }
+
+    public void setConfirmCode(String confirmCode) {
+        this.confirmCode = confirmCode;
+    }
+
     public List<OrderEntity> getOrderEntityList() {
         return orderEntityList;
     }
@@ -188,5 +201,13 @@ public class EmployeeEntity {
 
     public void setEmployeeInfo(EmployeeInfoEntity employeeInfo) {
         this.employeeInfo = employeeInfo;
+    }
+
+    public List<RatingEntity> getRatingEntityList() {
+        return ratingEntityList;
+    }
+
+    public void setRatingEntityList(List<RatingEntity> ratingEntityList) {
+        this.ratingEntityList = ratingEntityList;
     }
 }

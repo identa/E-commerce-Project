@@ -151,4 +151,14 @@ public class PublicController {
     public ResponseEntity<ServiceResult> getOrderDetails(@PathVariable int id){
         return new ResponseEntity<>(customerService.getOrderDetails(id), HttpStatus.OK);
     }
+
+    @GetMapping("mail")
+    public ResponseEntity<ServiceResult> sendMail(){
+        return new ResponseEntity<>(customerService.sendMail(), HttpStatus.OK);
+    }
+
+    @GetMapping("verify")
+    public ResponseEntity<ServiceResult> verifyAccount(@RequestParam String email, @RequestParam String code){
+        return new ResponseEntity<>(customerService.verify(email, code), HttpStatus.OK);
+    }
 }

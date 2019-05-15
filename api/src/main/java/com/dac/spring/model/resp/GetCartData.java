@@ -11,6 +11,8 @@ public class GetCartData {
 
     private int quantity;
 
+    private int limit;
+
     private String imageURL;
 
     public GetCartData(int id, String name, double price, double cuttedPrice, int quantity, String imageURL) {
@@ -60,6 +62,14 @@ public class GetCartData {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
     }
 
     public String getImageURL() {

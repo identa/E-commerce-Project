@@ -20,6 +20,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,6 +30,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -85,6 +90,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     PasswordEncoder encoder;
+
+    @Autowired
+    JavaMailSender javaMailSender;
 
     @Value("${jwtSecretKey}")
     private String jwtSecret;
@@ -160,11 +168,38 @@ public class CustomerServiceImpl implements CustomerService {
             }
         } else {
             if (firstName != null && lastName != null && email != null && password != null && activeStatus != null) {
+                String input = firstName + lastName + password;
+                String hashtext;
+                try {
+
+                    // Static getInstance method is called with hashing MD5
+                    MessageDigest md = MessageDigest.getInstance("MD5");
+
+                    // digest() method is called to calculate message digest
+                    //  of an input digest() return array of byte
+                    byte[] messageDigest = md.digest(input.getBytes());
+
+                    // Convert byte array into signum representation
+                    BigInteger no = new BigInteger(1, messageDigest);
+
+                    // Convert message digest into hex value
+                    hashtext = no.toString(16);
+                    while (hashtext.length() < 32) {
+                        hashtext = "0" + hashtext;
+                    }
+                }
+
+                // For specifying wrong message digest algorithms
+                catch (NoSuchAlgorithmException e) {
+                    throw new RuntimeException(e);
+                }
+
                 EmployeeEntity employee = new EmployeeEntity(firstName, lastName, email,
                         encoder.encode(password),
                         activeStatus);
                 employee.setRole(roleRepository.findByName(RoleName.ROLE_CUSTOMER));
                 employee.setImageURL(ShopConst.DEFAULT_AVATAR);
+                employee.setConfirmCode(hashtext);
                 employeeRepository.save(employee);
                 String jwt = authenticationWithJwt(email, password);
                 CustomerSignInSignUpResponse response = new CustomerSignInSignUpResponse(employee.getId(),
@@ -175,6 +210,13 @@ public class CustomerServiceImpl implements CustomerService {
                         jwt);
 
                 saveJwt(jwt);
+
+                SimpleMailMessage mailMessage = new SimpleMailMessage();
+                mailMessage.setTo(email);
+                mailMessage.setSubject("Email confirmation");
+                mailMessage.setText("To confirm your account, please click here: " + CustomerSignUpConst.CONFIRM_URL + "?email=" + email + "&code=" + employee.getConfirmCode());
+
+                javaMailSender.send(mailMessage);
 
                 result.setMessage(CustomerSignUpConst.SUCCESS);
                 result.setData(response);
@@ -194,17 +236,22 @@ public class CustomerServiceImpl implements CustomerService {
             if (!customer.isDeleted()) {
                 boolean isPasswordChecked = encoder.matches(password, customer.getPassword());
                 if (isPasswordChecked) {
-                    String jwt = authenticationWithJwt(email, password);
-                    CustomerSignInSignUpResponse response = new CustomerSignInSignUpResponse(customer.getId(),
-                            customer.getFirstName(),
-                            customer.getLastName(),
-                            customer.getRole().getName().name(),
-                            customer.getImageURL(),
-                            jwt);
+                    if (customer.getConfirmCode() == null) {
+                        String jwt = authenticationWithJwt(email, password);
+                        CustomerSignInSignUpResponse response = new CustomerSignInSignUpResponse(customer.getId(),
+                                customer.getFirstName(),
+                                customer.getLastName(),
+                                customer.getRole().getName().name(),
+                                customer.getImageURL(),
+                                jwt);
 
-                    saveJwt(jwt);
-                    result.setMessage(CustomerSignInConst.SUCCESS);
-                    result.setData(response);
+                        saveJwt(jwt);
+                        result.setMessage(CustomerSignInConst.SUCCESS);
+                        result.setData(response);
+                    }else {
+                        result.setStatus(ServiceResult.Status.FAILED);
+                        result.setMessage("This account is not verified yet. Please check your inbox");
+                    }
                 } else {
                     result.setStatus(ServiceResult.Status.FAILED);
                     result.setMessage(CustomerSignInConst.EMAIL_PASSWORD_WRONG_FORMAT);
@@ -356,6 +403,36 @@ public class CustomerServiceImpl implements CustomerService {
         }
         result.setMessage("Get order detail sccessfully");
         result.setData(responses);
+        return result;
+    }
+
+    @Override
+    public ServiceResult sendMail() {
+        ServiceResult result = new ServiceResult();
+
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo("tatrunganh14t1@gmail.com");
+        mailMessage.setSubject("Order receipt");
+        mailMessage.setText("test");
+
+        javaMailSender.send(mailMessage);
+        result.setMessage("Send order receipt successfully");
+        return result;
+    }
+
+    @Override
+    public ServiceResult verify(String email, String code) {
+        ServiceResult result = new ServiceResult();
+
+        EmployeeEntity customer = employeeRepository.findByEmail(email).orElse(null);
+        if (customer != null){
+            if (customer.getConfirmCode().equals(code.trim())){
+                customer.setConfirmCode(null);
+                employeeRepository.save(customer);
+                result.setMessage("Verify account successfully");
+            }
+        }
+
         return result;
     }
 
@@ -803,6 +880,7 @@ public class CustomerServiceImpl implements CustomerService {
                 productEntity.getCategory().getLimited(),
                 isInCart,
                 isInWishlist,
+                productEntity.getQuantity(),
                 responseList);
 
         result.setMessage("Get product detail successfully");
@@ -855,6 +933,12 @@ public class CustomerServiceImpl implements CustomerService {
                     calculatePrice(1, entity.getPrice(), 0),
                     entity.getQuantity(),
                     entity.getProduct().getProductImageURL());
+            if (entity.getQuantity() + entity.getProduct().getQuantity() < entity.getProduct().getCategory().getLimited()){
+                response.setLimit(entity.getQuantity() + entity.getProduct().getQuantity());
+            }else {
+                response.setLimit(entity.getProduct().getCategory().getLimited());
+            }
+
             cartData.add(response);
             totalPrice +=  calculatePrice(entity.getQuantity(), entity.getPrice(), entity.getDiscount());
             totalItem += entity.getQuantity();

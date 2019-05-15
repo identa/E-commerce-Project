@@ -52,6 +52,9 @@ public class ProductEntity {
     @OneToMany(mappedBy = "product")
     private List<WishlistEntity> wishlistEntityList;
 
+    @OneToMany(mappedBy = "product")
+    private List<RatingEntity> ratingEntityList;
+
     public ProductEntity() {
     }
 
@@ -212,5 +215,13 @@ public class ProductEntity {
 
     public void setWishlistEntityList(List<WishlistEntity> wishlistEntityList) {
         this.wishlistEntityList = wishlistEntityList;
+    }
+
+    public List<RatingEntity> getRatingEntityList() {
+        return ratingEntityList;
+    }
+
+    public void setRatingEntityList(List<RatingEntity> ratingEntityList) {
+        this.ratingEntityList = ratingEntityList;
     }
 }
