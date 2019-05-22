@@ -11,7 +11,7 @@ public class ProductDetailResponse {
 
     private double originalPrice;
 
-    private int discount;
+    private double currentPrice;
 
     private String description;
 
@@ -27,11 +27,11 @@ public class ProductDetailResponse {
 
     private List<RatingResponse> ratings;
 
-    public ProductDetailResponse(int id, String name, double originalPrice, int discount, String description, int limit, boolean inCart, boolean inWishlist, int quantity, List<ImageResponse> images) {
+    public ProductDetailResponse(int id, String name, double originalPrice, double currentPrice, String description, int limit, boolean inCart, boolean inWishlist, int quantity, List<ImageResponse> images) {
         this.id = id;
         this.name = name;
         this.originalPrice = originalPrice;
-        this.discount = discount;
+        this.currentPrice = currentPrice;
         this.description = description;
         this.limit = limit;
         this.inCart = inCart;
@@ -64,12 +64,12 @@ public class ProductDetailResponse {
         this.originalPrice = originalPrice;
     }
 
-    public int getDiscount() {
-        return discount;
+    public double getCurrentPrice() {
+        return currentPrice;
     }
 
-    public void setDiscount(int discount) {
-        this.discount = discount;
+    public void setCurrentPrice(double currentPrice) {
+        this.currentPrice = currentPrice;
     }
 
     public String getDescription() {

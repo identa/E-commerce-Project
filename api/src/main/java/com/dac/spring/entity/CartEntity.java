@@ -15,6 +15,8 @@ public class CartEntity {
 
     private int quantity;
 
+    private double currentPrice;
+
     @ManyToOne
     @JoinColumn(name = "productID")
     private ProductEntity product;
@@ -56,6 +58,14 @@ public class CartEntity {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public double getCurrentPrice() {
+        return currentPrice;
+    }
+
+    public void setCurrentPrice(double currentPrice) {
+        this.currentPrice = currentPrice;
     }
 
     public ProductEntity getProduct() {

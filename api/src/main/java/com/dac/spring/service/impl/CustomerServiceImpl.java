@@ -29,6 +29,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.criteria.*;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -93,6 +97,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     JavaMailSender javaMailSender;
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Value("${jwtSecretKey}")
     private String jwtSecret;
@@ -433,6 +440,63 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
 
+        return result;
+    }
+
+    @Override
+    public ServiceResult getSorted(int min, int max, List<String> names, int orderBy) {
+        ServiceResult result = new ServiceResult();
+        List<ProductEntity> entityList = new ArrayList<>();
+        if (names == null){
+            names = new ArrayList<>();
+            for (CategoryEntity categoryEntity : categoryRepository.findAll()){
+                names.add(categoryEntity.getName());
+            }
+        }
+        if (orderBy == 0){
+            entityList = productRepository.getSortedProduct(min, max, names);
+        } else if (orderBy == 1){
+            entityList = productRepository.getSortedProduct2(min, max, names);
+        } else if (orderBy == 2){
+            entityList = productRepository.getSortedProduct3(min, max, names);
+        }else if (orderBy == 3){
+            entityList = productRepository.getSortedProduct4(min, max, names);
+        } else if (orderBy == 4){
+            entityList = productRepository.getSortedProduct5(min, max, names);
+        }
+        
+        List<ProductEntity> test = new ArrayList<>();
+        for (ProductEntity entity : entityList){
+            if (names.contains(entity.getCategory().getName())){
+                test.add(entity);
+            }
+        }
+
+//        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+//        CriteriaQuery<ProductEntity> criteriaQuery = criteriaBuilder.createQuery(ProductEntity.class);
+//        Root<ProductEntity> productEntityRoot = criteriaQuery.from(ProductEntity.class);
+////        Join<ProductEntity, CategoryEntity> join = productEntityRoot.join("catName");
+//        Predicate predicate = criteriaBuilder.greaterThanOrEqualTo()
+//        criteriaQuery.select(productEntityRoot);
+//        criteriaQuery.where(productEntityRoot.get(""))
+//        Query query = entityManager.createQuery(criteriaQuery);
+//
+//        query.getResultList();
+
+        List<CustomerGetMOProductAllResponse> responses = new ArrayList<>();
+        for (ProductEntity entity : test){
+            CustomerGetMOProductAllResponse response = new CustomerGetMOProductAllResponse(entity.getId(),
+                    entity.getProductImageURL(),
+                    entity.getName(),
+                    4.5,
+                    20,
+                    entity.getCurrentPrice(),
+                    entity.getOriginalPrice());
+            responses.add(response);
+        }
+
+        result.setMessage("sort successfully");
+        result.setData(responses);
         return result;
     }
 
@@ -789,7 +853,7 @@ public class CustomerServiceImpl implements CustomerService {
             CustomerGetMostViewedProductResponse response = new CustomerGetMostViewedProductResponse(entity.getId(),
                     entity.getName(),
                     entity.getCategory().getName(),
-                    entity.getOriginalPrice() * entity.getDiscount(),
+                    entity.getCurrentPrice(),
                     entity.getProductImageURL());
             responses.add(response);
         }
@@ -809,7 +873,7 @@ public class CustomerServiceImpl implements CustomerService {
             CustomerGetMostViewedProductResponse response = new CustomerGetMostViewedProductResponse(entity.getId(),
                     entity.getName(),
                     entity.getCategory().getName(),
-                    entity.getOriginalPrice() * entity.getDiscount(),
+                    entity.getCurrentPrice(),
                     entity.getProductImageURL());
             responses.add(response);
         }
@@ -831,7 +895,7 @@ public class CustomerServiceImpl implements CustomerService {
                     entity.getName(),
                     4.5,
                     20,
-                    calculatePrice(1, entity.getOriginalPrice(), entity.getDiscount()),
+                    entity.getCurrentPrice(),
                     entity.getOriginalPrice());
             responses.add(response);
         }
@@ -851,7 +915,7 @@ public class CustomerServiceImpl implements CustomerService {
             CustomerGetMostViewedProductResponse response = new CustomerGetMostViewedProductResponse(entity.getId(),
                     entity.getName(),
                     entity.getCategory().getName(),
-                    entity.getOriginalPrice() * entity.getDiscount(),
+                    entity.getCurrentPrice(),
                     entity.getProductImageURL());
             responses.add(response);
         }
@@ -867,6 +931,10 @@ public class CustomerServiceImpl implements CustomerService {
         ProductEntity productEntity = productRepository.findByIdAndDeletedAndStatusName(pid, false, StatusName.ACTIVE);
         boolean isInCart = cartRepository.existsByEmployeeIdAndProductId(uid, pid);
         boolean isInWishlist = wishlistRepository.existsByProductIdAndEmployeeId(pid, uid);
+
+        productEntity.setView(productEntity.getView() + 1);
+        productRepository.save(productEntity);
+
         List<ImageResponse> responseList = new ArrayList<>();
         for (ImageEntity imageEntity : productEntity.getImageEntityList()){
             responseList.add(new ImageResponse(imageEntity.getImageURL()));
@@ -875,7 +943,7 @@ public class CustomerServiceImpl implements CustomerService {
         ProductDetailResponse response = new ProductDetailResponse(productEntity.getId(),
                 productEntity.getName(),
                 productEntity.getOriginalPrice(),
-                productEntity.getDiscount(),
+                productEntity.getCurrentPrice(),
                 productEntity.getDescription(),
                 productEntity.getCategory().getLimited(),
                 isInCart,
@@ -898,8 +966,10 @@ public class CustomerServiceImpl implements CustomerService {
         cartEntity.setProduct(productEntity);
         cartEntity.setQuantity(1);
         cartEntity.setPrice(productEntity.getOriginalPrice());
-        cartEntity.setDiscount(productEntity.getDiscount());
+        cartEntity.setCurrentPrice(productEntity.getCurrentPrice());
 
+        productEntity.setQuantity(productEntity.getQuantity() - cartEntity.getQuantity());
+        productRepository.save(productEntity);
         cartRepository.save(cartEntity);
 
         AddToCartResponse response = new AddToCartResponse(cartEntity.getId(),
@@ -907,7 +977,7 @@ public class CustomerServiceImpl implements CustomerService {
                 productEntity.getId(),
                 cartEntity.getQuantity(),
                 cartEntity.getPrice(),
-                cartEntity.getDiscount());
+                cartEntity.getCurrentPrice());
 
         result.setMessage("Add to cart successfully");
         result.setData(response);
@@ -929,8 +999,8 @@ public class CustomerServiceImpl implements CustomerService {
         for (CartEntity entity : cartEntityList){
             GetCartData response = new GetCartData(entity.getId(),
                     entity.getProduct().getName(),
-                    calculatePrice(1, entity.getPrice(), entity.getDiscount()),
-                    calculatePrice(1, entity.getPrice(), 0),
+                    entity.getCurrentPrice(),
+                    entity.getPrice(),
                     entity.getQuantity(),
                     entity.getProduct().getProductImageURL());
             if (entity.getQuantity() + entity.getProduct().getQuantity() < entity.getProduct().getCategory().getLimited()){
@@ -940,7 +1010,7 @@ public class CustomerServiceImpl implements CustomerService {
             }
 
             cartData.add(response);
-            totalPrice +=  calculatePrice(entity.getQuantity(), entity.getPrice(), entity.getDiscount());
+            totalPrice +=  entity.getQuantity()*entity.getCurrentPrice();
             totalItem += entity.getQuantity();
         }
 
@@ -955,6 +1025,10 @@ public class CustomerServiceImpl implements CustomerService {
         ServiceResult result = new ServiceResult();
 
         CartEntity entity = cartRepository.findById(id).orElse(null);
+        ProductEntity productEntity = entity.getProduct();
+        productEntity.setQuantity(productEntity.getQuantity() + entity.getQuantity());
+        productRepository.save(productEntity);
+
         cartRepository.delete(entity);
         result.setMessage("Delete item from cart successfully");
         return result;
@@ -964,13 +1038,16 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult editCart(int id, int qty) {
         ServiceResult result = new ServiceResult();
         CartEntity entity = cartRepository.findById(id).orElse(null);
-
+        ProductEntity productEntity = entity.getProduct();
+        productEntity.setQuantity(productEntity.getQuantity() + entity.getQuantity() - qty);
+        productRepository.save(productEntity);
         entity.setQuantity(qty);
+
         cartRepository.save(entity);
 
         EditCartResponse response = new EditCartResponse(id,
-                calculatePrice(1, entity.getPrice(), entity.getDiscount()),
-                calculatePrice(1, entity.getPrice(), 0),
+                entity.getCurrentPrice(),
+                entity.getPrice(),
                 entity.getQuantity());
 
         result.setData(response);
@@ -991,7 +1068,7 @@ public class CustomerServiceImpl implements CustomerService {
                     wishlistEntity.getProduct().getName(),
                     4.5,
                     20,
-                    calculatePrice(1, wishlistEntity.getProduct().getOriginalPrice(), wishlistEntity.getProduct().getDiscount()),
+                    wishlistEntity.getProduct().getCurrentPrice(),
                     wishlistEntity.getProduct().getOriginalPrice());
             response.add(data);
         }
@@ -1041,8 +1118,10 @@ public class CustomerServiceImpl implements CustomerService {
         List<GetOrderResponse> responseList = new ArrayList<>();
 
         for (OrderEntity orderEntity : orderEntityList){
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             GetOrderResponse response = new GetOrderResponse(orderEntity.getId(),
-                    orderEntity.getEmployee().getId());
+                    orderEntity.getEmployee().getId(),
+                    formatter.format(orderEntity.getCreateAt()));
             responseList.add(response);
         }
 
@@ -1060,12 +1139,17 @@ public class CustomerServiceImpl implements CustomerService {
         orderEntity.setTotalPrice(0);
         orderEntity.setDeleted(false);
         orderEntity.setEmployee(employeeEntity);
+        orderEntity.setCreateAt(new Date());
         orderRepository.save(orderEntity);
         List<OrderDetailEntity> orderDetailEntityList = new ArrayList<>();
         for (AddOrderRequest orderRequest : request){
+            ProductEntity productEntity = cartRepository.findById(orderRequest.getId()).orElse(null).getProduct();
+            productEntity.setOrdered(productEntity.getOrdered() + orderRequest.getQuantity());
+            productRepository.save(productEntity);
+
             OrderDetailEntity orderDetailEntity = new OrderDetailEntity(orderRequest.getPrice(),
                     orderRequest.getQuantity(),
-                    productRepository.findById(orderRequest.getId()).orElse(null),
+                    productEntity,
                     orderRepository.findById(orderEntity.getId()).orElse(null));
             orderDetailEntityList.add(orderDetailEntity);
         }
@@ -1090,7 +1174,7 @@ public class CustomerServiceImpl implements CustomerService {
                     entity.getName(),
                     4.5,
                     20,
-                    calculatePrice(1, entity.getOriginalPrice(), entity.getDiscount()),
+                    entity.getCurrentPrice(),
                     entity.getOriginalPrice());
             responses.add(response);
         }
@@ -1129,7 +1213,7 @@ public class CustomerServiceImpl implements CustomerService {
                     entity.getName(),
                     4.5,
                     20,
-                    calculatePrice(1, entity.getOriginalPrice(), entity.getDiscount()),
+                    entity.getCurrentPrice(),
                     entity.getOriginalPrice());
             responses.add(response);
         }

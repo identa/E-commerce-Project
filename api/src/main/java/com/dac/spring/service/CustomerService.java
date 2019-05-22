@@ -47,4 +47,5 @@ public interface CustomerService {
     ServiceResult getOrderDetails(int id);
     ServiceResult sendMail();
     ServiceResult verify(String email, String code);
+    ServiceResult getSorted(int min, int max, List<String> names, int orderBy);
 }

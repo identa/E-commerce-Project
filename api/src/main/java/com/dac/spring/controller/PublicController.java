@@ -161,4 +161,12 @@ public class PublicController {
     public ResponseEntity<ServiceResult> verifyAccount(@RequestParam String email, @RequestParam String code){
         return new ResponseEntity<>(customerService.verify(email, code), HttpStatus.OK);
     }
+
+    @PostMapping("sort")
+    public ResponseEntity<ServiceResult> sort(@RequestBody SortRequest request){
+        return new ResponseEntity<>(customerService.getSorted(request.getMin(),
+                request.getMax(),
+                request.getNames(),
+                request.getOrderBy()), HttpStatus.OK);
+    }
 }

@@ -1,6 +1,7 @@
 package com.dac.spring.entity;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -26,11 +27,16 @@ public class ProductEntity {
 
     private int discount;
 
+    private double currentPrice;
+
     private int view;
 
     private int ordered;
 
     private String productImageURL;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createAt;
 
     @ManyToOne
     @JoinColumn(name = "categoryID")
@@ -145,6 +151,14 @@ public class ProductEntity {
         this.discount = discount;
     }
 
+    public double getCurrentPrice() {
+        return currentPrice;
+    }
+
+    public void setCurrentPrice(double currentPrice) {
+        this.currentPrice = currentPrice;
+    }
+
     public int getView() {
         return view;
     }
@@ -191,6 +205,14 @@ public class ProductEntity {
 
     public void setProductImageURL(String productImageURL) {
         this.productImageURL = productImageURL;
+    }
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
     }
 
     public List<CartEntity> getCartEntityList() {

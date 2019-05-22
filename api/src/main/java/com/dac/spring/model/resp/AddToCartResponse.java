@@ -11,15 +11,15 @@ public class AddToCartResponse {
 
     private double price;
 
-    private int discount;
+    private double currentPrice;
 
-    public AddToCartResponse(int id, int userID, int productID, int quantity, double price, int discount) {
+    public AddToCartResponse(int id, int userID, int productID, int quantity, double price, double currentPrice) {
         this.id = id;
         this.userID = userID;
         this.productID = productID;
         this.quantity = quantity;
         this.price = price;
-        this.discount = discount;
+        this.currentPrice = currentPrice;
     }
 
     public int getId() {
@@ -62,11 +62,11 @@ public class AddToCartResponse {
         this.price = price;
     }
 
-    public int getDiscount() {
-        return discount;
+    public double getCurrentPrice() {
+        return currentPrice;
     }
 
-    public void setDiscount(int discount) {
-        this.discount = discount;
+    public void setCurrentPrice(double currentPrice) {
+        this.currentPrice = currentPrice;
     }
 }

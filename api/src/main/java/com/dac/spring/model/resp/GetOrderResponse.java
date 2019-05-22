@@ -5,9 +5,12 @@ public class GetOrderResponse {
 
     private int userID;
 
-    public GetOrderResponse(int id, int userID) {
+    private String createAt;
+
+    public GetOrderResponse(int id, int userID, String createAt) {
         this.id = id;
         this.userID = userID;
+        this.createAt = createAt;
     }
 
     public int getId() {
@@ -24,5 +27,13 @@ public class GetOrderResponse {
 
     public void setUserID(int userID) {
         this.userID = userID;
+    }
+
+    public String getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(String createAt) {
+        this.createAt = createAt;
     }
 }

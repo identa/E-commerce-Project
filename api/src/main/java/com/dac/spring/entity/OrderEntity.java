@@ -1,6 +1,7 @@
 package com.dac.spring.entity;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -18,6 +19,9 @@ public class OrderEntity {
     private boolean deleted = false;
 
     private double totalPrice;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createAt;
 
     @ManyToOne
     @JoinColumn(name = "employeeID")
@@ -64,6 +68,14 @@ public class OrderEntity {
 
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
     }
 
     public EmployeeEntity getEmployee() {
