@@ -48,4 +48,7 @@ public interface CustomerService {
     ServiceResult sendMail();
     ServiceResult verify(String email, String code);
     ServiceResult getSorted(int min, int max, List<String> names, int orderBy);
+    ServiceResult getRating(int pid, int uid);
+    ServiceResult editInfo(int id, String fn, String ln, String photo);
+    ServiceResult editPassword(int id, String oldPass, String newPass);
 }

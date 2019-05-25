@@ -1,21 +1,16 @@
 package com.dac.spring.model.resp;
 
 public class RatingResponse {
-    private int avgRating;
+    private float rating;
 
-    private int oneStarRating;
+    public RatingResponse() {
+    }
 
-    private int twoStarRating;
+    public float getRating() {
+        return rating;
+    }
 
-    private int threeStarRating;
-
-    private int fourStarRating;
-
-    private int fiveStarRating;
-
-    private int totalRating;
-
-    private int userRating;
-
-    private String userReview;
+    public void setRating(float rating) {
+        this.rating = rating;
+    }
 }

@@ -2,6 +2,7 @@ package com.dac.spring.controller;
 
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.req.*;
+import com.dac.spring.model.req.EditInfoReq;
 import com.dac.spring.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -168,5 +168,25 @@ public class PublicController {
                 request.getMax(),
                 request.getNames(),
                 request.getOrderBy()), HttpStatus.OK);
+    }
+
+    @GetMapping("rating/{pid}/{uid}")
+    public ResponseEntity<ServiceResult> getRating(@PathVariable int pid, @PathVariable int uid){
+        return new ResponseEntity<>(customerService.getRating(pid, uid), HttpStatus.OK);
+    }
+
+    @PostMapping("info/{id}")
+    public ResponseEntity<ServiceResult> editInfo(@PathVariable int id, @RequestBody EditInfoReq request){
+        return new ResponseEntity<>(customerService.editInfo(id,
+                request.getFirstName(),
+                request.getLastName(),
+                request.getPhoto()), HttpStatus.OK);
+    }
+
+    @PostMapping("pass/{id}")
+    public ResponseEntity<ServiceResult> editPassword(@PathVariable int id, @RequestBody EditPassReq request){
+        return new ResponseEntity<>(customerService.editPassword(id,
+                request.getOldPass(),
+                request.getNewPass()), HttpStatus.OK);
     }
 }

@@ -87,6 +87,9 @@ public class CustomerServiceImpl implements CustomerService {
     EmployeeInfoRepository employeeInfoRepository;
 
     @Autowired
+    RatingRepository ratingRepository;
+
+    @Autowired
     AuthenticationManager authenticationManager;
 
     @Autowired
@@ -497,6 +500,84 @@ public class CustomerServiceImpl implements CustomerService {
 
         result.setMessage("sort successfully");
         result.setData(responses);
+        return result;
+    }
+
+    @Override
+    public ServiceResult getRating(int pid, int uid) {
+        ServiceResult result = new ServiceResult();
+        RatingEntity ratingEntity = ratingRepository.findByProductIdAndUserId(pid, uid);
+        int total1 = 0;
+        int total2 = 0;
+        int total3 = 0;
+        int total4 = 0;
+        int total5 = 0;
+        int total = 0;
+        GetRatingResp resp;
+        Float avg = ratingRepository.avg(pid);
+        for (RatingEntity entity : ratingRepository.findAllByProductId(pid)){
+            if (entity.getRate() == 1){
+                total1 += entity.getRate();
+            }
+            if (entity.getRate() == 2){
+                total2 += entity.getRate();
+            }
+            if (entity.getRate() == 3){
+                total3 += entity.getRate();
+            }
+            if (entity.getRate() == 4){
+                total4 += entity.getRate();
+            }
+            if (entity.getRate() == 5){
+                total5 += entity.getRate();
+            }
+            total++;
+        }
+        RatingResponse response = null;
+        if (ratingEntity != null){
+            response = new RatingResponse();
+            response.setRating(ratingEntity.getRate());
+        }
+
+        if (avg == null) {
+            resp = new GetRatingResp(total1, total2, total3, total4, total5, total, 0, response);
+        }else {
+            resp = new GetRatingResp(total1, total2, total3, total4, total5, total, avg, response);
+
+        }
+        result.setMessage("Get rating succesfully");
+        result.setData(resp);
+        return result;
+    }
+
+    @Override
+    public ServiceResult editInfo(int id, String fn, String ln, String photo) {
+        ServiceResult result = new ServiceResult();
+        EmployeeEntity employeeEntity = employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(id, false, StatusName.ACTIVE, RoleName.ROLE_CUSTOMER);
+        employeeEntity.setFirstName(fn);
+        employeeEntity.setLastName(ln);
+        employeeEntity.setImageURL(photo);
+
+        employeeRepository.save(employeeEntity);
+        EditInfoResp resp = new EditInfoResp(employeeEntity.getFirstName(),
+                employeeEntity.getLastName(),
+                employeeEntity.getImageURL());
+
+        result.setData(resp);
+        result.setMessage("Edit info successfully");
+        return result;
+    }
+
+    @Override
+    public ServiceResult editPassword(int id, String oldPass, String newPass) {
+        ServiceResult result = new ServiceResult();
+        EmployeeEntity employeeEntity = employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(id, false, StatusName.ACTIVE, RoleName.ROLE_CUSTOMER);
+        if (encoder.matches(oldPass, employeeEntity.getPassword())){
+            employeeEntity.setPassword(encoder.encode(newPass));
+        }
+        employeeRepository.save(employeeEntity);
+
+        result.setMessage("Edit password successfully");
         return result;
     }
 
@@ -1153,8 +1234,8 @@ public class CustomerServiceImpl implements CustomerService {
                     orderRepository.findById(orderEntity.getId()).orElse(null));
             orderDetailEntityList.add(orderDetailEntity);
         }
-
         orderDetailRepository.saveAll(orderDetailEntityList);
+        cartRepository.deleteAll(cartRepository.findAllByEmployeeId(id));
 
         AddOrderResponse response = new AddOrderResponse(orderEntity.getId());
         result.setMessage("Check out successfully");
