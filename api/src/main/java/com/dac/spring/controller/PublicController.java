@@ -111,6 +111,11 @@ public class PublicController {
         return new ResponseEntity<>(customerService.addOrder(id, request.getOrders()), HttpStatus.OK);
     }
 
+    @PostMapping("buy/{id}")
+    public ResponseEntity<ServiceResult> buyNow(@PathVariable int id, @RequestBody AddOrderReq request){
+        return new ResponseEntity<>(customerService.buyNow(id, request.getOrders()), HttpStatus.OK);
+    }
+
     @GetMapping("product")
     public ResponseEntity<ServiceResult> search(@RequestParam(value = "search") String query){
         return new ResponseEntity<>(customerService.search(query), HttpStatus.OK);

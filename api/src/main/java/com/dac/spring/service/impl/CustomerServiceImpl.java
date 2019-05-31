@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,6 +30,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -533,19 +536,13 @@ public class CustomerServiceImpl implements CustomerService {
             }
             total++;
         }
-        RatingResponse response = null;
-        if (ratingEntity != null){
-            response = new RatingResponse();
-            response.setRating(ratingEntity.getRate());
-        }
 
-        if (avg == null) {
-            resp = new GetRatingResp(total1, total2, total3, total4, total5, total, 0, response);
-        }else {
-            resp = new GetRatingResp(total1, total2, total3, total4, total5, total, avg, response);
+        Integer rating = null;
+        if (ratingEntity != null) rating = ratingEntity.getRate();
 
-        }
-        result.setMessage("Get rating succesfully");
+        resp = new GetRatingResp(total1, total2, total3, total4, total5, total, avg, rating);
+
+        result.setMessage("Get rating successfully");
         result.setData(resp);
         return result;
     }
@@ -1235,7 +1232,88 @@ public class CustomerServiceImpl implements CustomerService {
             orderDetailEntityList.add(orderDetailEntity);
         }
         orderDetailRepository.saveAll(orderDetailEntityList);
+
+        MimeMessage mailMessage = javaMailSender.createMimeMessage();
+        try {
+        MimeMessageHelper helper = new MimeMessageHelper(mailMessage, false, "utf-8");
+            helper.setTo(employeeEntity.getEmail());
+            helper.setSubject("Order receipt");
+            String orderInfo = "";
+            int totalItems = 0;
+            double totalPrice = 0;
+            for (OrderDetailEntity entity : orderDetailEntityList) {
+//                orderInfo += entity.getProduct().getName() + ": \n" + "     Quantity:" + entity.getQuantity() + "\n" + "     Price:" + entity.getPrice() + "\n";
+                orderInfo += "<h3>" + entity.getProduct().getName() + ":</h3> <br>" +
+                        "<h4>Quantity:" + entity.getQuantity() + "</h4> <br>" + "<h4>Price:$" + entity.getPrice() + "</h4> <br>";
+
+                totalItems += entity.getQuantity();
+                totalPrice += entity.getPrice();
+            }
+            orderInfo += "<h2>Total items:" + totalItems + "</h2><br>" + "<h2>Total price:" + totalPrice + "</h2>";
+
+            mailMessage.setContent("<h2>Here is your order:</h2><br>" + orderInfo, "text/html");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        javaMailSender.send(mailMessage);
+
         cartRepository.deleteAll(cartRepository.findAllByEmployeeId(id));
+
+        AddOrderResponse response = new AddOrderResponse(orderEntity.getId());
+        result.setMessage("Check out successfully");
+        result.setData(response);
+        return result;
+    }
+
+    @Override
+    public ServiceResult buyNow(int id, List<AddOrderRequest> request) {
+        ServiceResult result = new ServiceResult();
+        EmployeeEntity employeeEntity = employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(id, false, StatusName.ACTIVE, RoleName.ROLE_CUSTOMER);
+        OrderEntity orderEntity = new OrderEntity();
+        orderEntity.setStatus(statusRepository.findByName(StatusName.ACTIVE));
+        orderEntity.setTotalPrice(0);
+        orderEntity.setDeleted(false);
+        orderEntity.setEmployee(employeeEntity);
+        orderEntity.setCreateAt(new Date());
+        orderRepository.save(orderEntity);
+        List<OrderDetailEntity> orderDetailEntityList = new ArrayList<>();
+        for (AddOrderRequest orderRequest : request){
+            ProductEntity productEntity = productRepository.findByIdAndDeletedAndStatusName(orderRequest.getId(), false, StatusName.ACTIVE);
+            productEntity.setQuantity(productEntity.getQuantity() - orderRequest.getQuantity());
+            productEntity.setOrdered(productEntity.getOrdered() + orderRequest.getQuantity());
+            productRepository.save(productEntity);
+
+            OrderDetailEntity orderDetailEntity = new OrderDetailEntity(orderRequest.getPrice(),
+                    orderRequest.getQuantity(),
+                    productEntity,
+                    orderRepository.findById(orderEntity.getId()).orElse(null));
+            orderDetailEntityList.add(orderDetailEntity);
+        }
+        orderDetailRepository.saveAll(orderDetailEntityList);
+
+        MimeMessage mailMessage = javaMailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(mailMessage, false, "utf-8");
+            helper.setTo(employeeEntity.getEmail());
+            helper.setSubject("Order receipt");
+            String orderInfo = "";
+            int totalItems = 0;
+            double totalPrice = 0;
+            for (OrderDetailEntity entity : orderDetailEntityList) {
+//                orderInfo += entity.getProduct().getName() + ": \n" + "     Quantity:" + entity.getQuantity() + "\n" + "     Price:" + entity.getPrice() + "\n";
+                orderInfo += "<h3>" + entity.getProduct().getName() + ":</h3> <br>" +
+                        "<h4>Quantity:" + entity.getQuantity() + "</h4> <br>" + "<h4>Price:$" + entity.getPrice() + "</h4> <br>";
+
+                totalItems += entity.getQuantity();
+                totalPrice += entity.getPrice();
+            }
+            orderInfo += "<h2>Total items:" + totalItems + "</h2><br>" + "<h2>Total price:" + totalPrice + "</h2>";
+
+            mailMessage.setContent("<h2>Here is your order:</h2><br>" + orderInfo, "text/html");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        javaMailSender.send(mailMessage);
 
         AddOrderResponse response = new AddOrderResponse(orderEntity.getId());
         result.setMessage("Check out successfully");

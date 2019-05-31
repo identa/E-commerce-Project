@@ -8,9 +8,9 @@ public class GetRatingResp {
     private int total5;
     private int total;
     private float avg;
-    private RatingResponse rating;
+    private Integer rating;
 
-    public GetRatingResp(int total1, int total2, int total3, int total4, int total5, int total, float avg, RatingResponse rating) {
+    public GetRatingResp(int total1, int total2, int total3, int total4, int total5, int total, float avg, Integer rating) {
         this.total1 = total1;
         this.total2 = total2;
         this.total3 = total3;
@@ -77,11 +77,11 @@ public class GetRatingResp {
         this.avg = avg;
     }
 
-    public RatingResponse getRating() {
+    public Integer getRating() {
         return rating;
     }
 
-    public void setRating(RatingResponse rating) {
+    public void setRating(Integer rating) {
         this.rating = rating;
     }
 }

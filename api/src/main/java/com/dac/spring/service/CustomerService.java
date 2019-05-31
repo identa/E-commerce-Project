@@ -37,6 +37,7 @@ public interface CustomerService {
     ServiceResult deleteWishlist(int pid, int uid);
     ServiceResult getOrder(int id);
     ServiceResult addOrder(int id, List<AddOrderRequest> request);
+    ServiceResult buyNow(int id, List<AddOrderRequest> request);
     ServiceResult search(String query);
     ServiceResult getCat();
     ServiceResult showCat(int id);

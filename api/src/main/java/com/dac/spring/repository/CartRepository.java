@@ -10,4 +10,6 @@ import java.util.List;
 public interface CartRepository extends JpaRepository<CartEntity, Integer> {
     boolean existsByEmployeeIdAndProductId(int id1, int id2);
     List<CartEntity> findAllByEmployeeId(int id);
+    CartEntity findByProductIdAndEmployeeId(int pid, int uid);
+
 }
