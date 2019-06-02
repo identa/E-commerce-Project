@@ -98,8 +98,7 @@ public class CustomerController {
     }
 
     @GetMapping("/session")
-    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<ServiceResult> session(@RequestHeader(value = "Authorization") String token) {
-        return new ResponseEntity<>(customerService.session(token), HttpStatus.OK);
+        return new ResponseEntity<>(customerService.checkSession(token), HttpStatus.OK);
     }
 }

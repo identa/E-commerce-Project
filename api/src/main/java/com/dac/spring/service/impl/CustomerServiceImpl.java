@@ -615,7 +615,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ServiceResult session(String token) {
+    public ServiceResult checkSession(String token) {
         ServiceResult result = new ServiceResult();
         String authHeader = token.replace("Bearer ", "");
         Date exp = getExpJwt(authHeader);

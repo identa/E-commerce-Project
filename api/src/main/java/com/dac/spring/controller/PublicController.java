@@ -194,4 +194,9 @@ public class PublicController {
                 request.getOldPass(),
                 request.getNewPass()), HttpStatus.OK);
     }
+
+     @GetMapping("/session")
+    public ResponseEntity<ServiceResult> session(@RequestHeader(value = "Authorization") String token) {
+        return new ResponseEntity<>(customerService.checkSession(token), HttpStatus.OK);
+    }
 }
