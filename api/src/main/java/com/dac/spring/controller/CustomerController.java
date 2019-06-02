@@ -96,4 +96,10 @@ public class CustomerController {
     public ResponseEntity<ServiceResult> deleteOrder(@RequestBody CustomerDeleteOrderRequest request){
         return new ResponseEntity<>(customerService.deleteOrder(request.getId()),HttpStatus.OK);
     }
+
+    @GetMapping("/session")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<ServiceResult> session(@RequestHeader(value = "Authorization") String token) {
+        return new ResponseEntity<>(customerService.session(token), HttpStatus.OK);
+    }
 }

@@ -12,6 +12,7 @@ public interface CustomerService {
     ServiceResult signIn(String email, String password);
     ServiceResult signOut(String token);
     ServiceResult getInfo(String token);
+    ServiceResult session(String token);
     ServiceResult updateInfo(int id, String firstName, String lastName, String password, String imageURL);
     ServiceResult getCategoryTree();
     ServiceResult getAllCategory();

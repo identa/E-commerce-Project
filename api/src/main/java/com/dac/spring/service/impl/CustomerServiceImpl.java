@@ -615,6 +615,20 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public ServiceResult session(String token) {
+        ServiceResult result = new ServiceResult();
+        String authHeader = token.replace("Bearer ", "");
+        Date exp = getExpJwt(authHeader);
+        if (exp.compareTo(new Date()) >= 0){
+            result.setMessage("Session is still valid");
+        } else {
+            result.setStatus(ServiceResult.Status.FAILED);
+            result.setMessage("Session is invalid");
+        }
+        return result;
+    }
+
+    @Override
     public ServiceResult updateInfo(int id, String firstName, String lastName, String password, String imageURL) {
         ServiceResult result = new ServiceResult();
         EmployeeEntity customer = employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(id, false,
@@ -1391,6 +1405,13 @@ public class CustomerServiceImpl implements CustomerService {
                 .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)
                 .getBody().getSubject();
+    }
+
+    private Date getExpJwt(String token) {
+        return Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody().getExpiration();
     }
 
     private List<CampaignEntity> getCampaignList(Date startDate, Date endDate) {
