@@ -8,6 +8,7 @@ import com.dac.spring.entity.*;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
 import com.dac.spring.model.enums.StatusName;
+import com.dac.spring.model.req.AddOrderReq;
 import com.dac.spring.model.req.AddOrderRequest;
 import com.dac.spring.model.req.AddressRequest;
 import com.dac.spring.model.req.CustomerCreateOrderDetailRequest;
@@ -15,6 +16,7 @@ import com.dac.spring.model.resp.*;
 import com.dac.spring.repository.*;
 import com.dac.spring.service.CustomerService;
 import com.dac.spring.utils.jwt.JwtProvider;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -334,7 +336,8 @@ public class CustomerServiceImpl implements CustomerService {
                     entity.getCity(),
                     entity.getAddress(),
                     entity.getState(),
-                    entity.getPostalCode());
+                    entity.getPostalCode(),
+                    entity.getPhone());
 //            resp = new GetAddressResp(response);
             result.setMessage("Get address successfully");
             result.setData(response);
@@ -356,13 +359,15 @@ public class CustomerServiceImpl implements CustomerService {
                     request.getAddress(),
                     request.getState(),
                     request.getPostalCode(),
+                    request.getPhone(),
                     entity);
             employeeInfoRepository.save(employeeInfoEntity);
             GetAddressResponse response = new GetAddressResponse(employeeInfoEntity.getRecipientName(),
                     employeeInfoEntity.getCity(),
                     employeeInfoEntity.getAddress(),
                     employeeInfoEntity.getState(),
-                    employeeInfoEntity.getPostalCode());
+                    employeeInfoEntity.getPostalCode(),
+                    employeeInfoEntity.getPhone());
 //            resp = new GetAddressResp(response);
             result.setMessage("Add address successfully");
             result.setData(response);
@@ -384,13 +389,15 @@ public class CustomerServiceImpl implements CustomerService {
             entity.setRecipientName(request.getRecipientName());
             entity.setState(request.getState());
             entity.setPostalCode(request.getPostalCode());
+            entity.setPhone(request.getPhone());
 
             employeeInfoRepository.save(entity);
             GetAddressResponse response = new GetAddressResponse(entity.getRecipientName(),
                     entity.getCity(),
                     entity.getAddress(),
                     entity.getState(),
-                    entity.getPostalCode());
+                    entity.getPostalCode(),
+                    entity.getPhone());
 //            resp = new GetAddressResp(response);
             result.setMessage("Edit address successfully");
             result.setData(response);
@@ -414,8 +421,16 @@ public class CustomerServiceImpl implements CustomerService {
                     entity.getQuantity());
             responses.add(response);
         }
+
+        OrderEntity orderEntity = orderRepository.findByIdAndDeleted(id, false);
+        OrderDetailResp response = new OrderDetailResp(orderEntity.getRecipientName(),
+                orderEntity.getCity(),
+                orderEntity.getAddress(),
+                orderEntity.getState(),
+                orderEntity.getPostalCode(),
+                orderEntity.getPhone(), responses);
         result.setMessage("Get order detail sccessfully");
-        result.setData(responses);
+        result.setData(response);
         return result;
     }
 
@@ -618,7 +633,15 @@ public class CustomerServiceImpl implements CustomerService {
     public ServiceResult checkSession(String token) {
         ServiceResult result = new ServiceResult();
         String authHeader = token.replace("Bearer ", "");
-        Date exp = getExpJwt(authHeader);
+        Date exp;
+        try {
+            exp = Jwts.parser()
+                    .setSigningKey(jwtSecret)
+                    .parseClaimsJws(authHeader)
+                    .getBody().getExpiration();
+        } catch (ExpiredJwtException e){
+            exp = e.getClaims().getExpiration();
+        }
         if (exp.compareTo(new Date()) >= 0){
             result.setMessage("Session is still valid");
         } else {
@@ -1213,6 +1236,7 @@ public class CustomerServiceImpl implements CustomerService {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             GetOrderResponse response = new GetOrderResponse(orderEntity.getId(),
                     orderEntity.getEmployee().getId(),
+                    orderEntity.getMethod(),
                     formatter.format(orderEntity.getCreateAt()));
             responseList.add(response);
         }
@@ -1223,7 +1247,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ServiceResult addOrder(int id, List<AddOrderRequest> request) {
+    public ServiceResult addOrder(int id, AddOrderReq request) {
         ServiceResult result = new ServiceResult();
         EmployeeEntity employeeEntity = employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(id, false, StatusName.ACTIVE, RoleName.ROLE_CUSTOMER);
         OrderEntity orderEntity = new OrderEntity();
@@ -1232,9 +1256,17 @@ public class CustomerServiceImpl implements CustomerService {
         orderEntity.setDeleted(false);
         orderEntity.setEmployee(employeeEntity);
         orderEntity.setCreateAt(new Date());
+        orderEntity.setMethod(request.getMethod());
+        orderEntity.setRecipientName(request.getRecipientName());
+        orderEntity.setCity(request.getCity());
+        orderEntity.setAddress(request.getAddress());
+        orderEntity.setState(request.getState());
+        orderEntity.setPostalCode(request.getPostalCode());
+        orderEntity.setPhone(request.getPhone());
         orderRepository.save(orderEntity);
+
         List<OrderDetailEntity> orderDetailEntityList = new ArrayList<>();
-        for (AddOrderRequest orderRequest : request){
+        for (AddOrderRequest orderRequest : request.getOrders()){
             ProductEntity productEntity = cartRepository.findById(orderRequest.getId()).orElse(null).getProduct();
             productEntity.setOrdered(productEntity.getOrdered() + orderRequest.getQuantity());
             productRepository.save(productEntity);
@@ -1280,7 +1312,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public ServiceResult buyNow(int id, List<AddOrderRequest> request) {
+    public ServiceResult buyNow(int id, AddOrderReq request) {
         ServiceResult result = new ServiceResult();
         EmployeeEntity employeeEntity = employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(id, false, StatusName.ACTIVE, RoleName.ROLE_CUSTOMER);
         OrderEntity orderEntity = new OrderEntity();
@@ -1289,9 +1321,17 @@ public class CustomerServiceImpl implements CustomerService {
         orderEntity.setDeleted(false);
         orderEntity.setEmployee(employeeEntity);
         orderEntity.setCreateAt(new Date());
+        orderEntity.setMethod(request.getMethod());
+        orderEntity.setRecipientName(request.getRecipientName());
+        orderEntity.setCity(request.getCity());
+        orderEntity.setAddress(request.getAddress());
+        orderEntity.setState(request.getState());
+        orderEntity.setPostalCode(request.getPostalCode());
+        orderEntity.setPhone(request.getPhone());
         orderRepository.save(orderEntity);
+
         List<OrderDetailEntity> orderDetailEntityList = new ArrayList<>();
-        for (AddOrderRequest orderRequest : request){
+        for (AddOrderRequest orderRequest : request.getOrders()){
             ProductEntity productEntity = productRepository.findByIdAndDeletedAndStatusName(orderRequest.getId(), false, StatusName.ACTIVE);
             productEntity.setQuantity(productEntity.getQuantity() - orderRequest.getQuantity());
             productEntity.setOrdered(productEntity.getOrdered() + orderRequest.getQuantity());

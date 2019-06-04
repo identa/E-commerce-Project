@@ -1,6 +1,8 @@
-package com.dac.spring.model.req;
+package com.dac.spring.model.resp;
 
-public class AddressRequest {
+import java.util.List;
+
+public class GetOrderResp {
     private String recipientName;
 
     private String city;
@@ -11,7 +13,19 @@ public class AddressRequest {
 
     private int postalCode;
 
-    private String phone;
+    private int phone;
+
+    private List<GetOrderResponse> orders;
+
+    public GetOrderResp(String recipientName, String city, String address, String state, int postalCode, int phone, List<GetOrderResponse> orders) {
+        this.recipientName = recipientName;
+        this.city = city;
+        this.address = address;
+        this.state = state;
+        this.postalCode = postalCode;
+        this.phone = phone;
+        this.orders = orders;
+    }
 
     public String getRecipientName() {
         return recipientName;
@@ -53,11 +67,19 @@ public class AddressRequest {
         this.postalCode = postalCode;
     }
 
-    public String getPhone() {
+    public int getPhone() {
         return phone;
     }
 
-    public void setPhone(String phone) {
+    public void setPhone(int phone) {
         this.phone = phone;
+    }
+
+    public List<GetOrderResponse> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<GetOrderResponse> orders) {
+        this.orders = orders;
     }
 }

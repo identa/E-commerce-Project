@@ -1,6 +1,7 @@
 package com.dac.spring.service;
 
 import com.dac.spring.model.ServiceResult;
+import com.dac.spring.model.req.AddOrderReq;
 import com.dac.spring.model.req.AddOrderRequest;
 import com.dac.spring.model.req.AddressRequest;
 import com.dac.spring.model.req.CustomerCreateOrderDetailRequest;
@@ -37,8 +38,8 @@ public interface CustomerService {
     ServiceResult addToWishlist(int pid, int uid);
     ServiceResult deleteWishlist(int pid, int uid);
     ServiceResult getOrder(int id);
-    ServiceResult addOrder(int id, List<AddOrderRequest> request);
-    ServiceResult buyNow(int id, List<AddOrderRequest> request);
+    ServiceResult addOrder(int id, AddOrderReq request);
+    ServiceResult buyNow(int id, AddOrderReq request);
     ServiceResult search(String query);
     ServiceResult getCat();
     ServiceResult showCat(int id);

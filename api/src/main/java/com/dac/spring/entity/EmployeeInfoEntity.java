@@ -19,6 +19,8 @@ public class EmployeeInfoEntity {
 
     private int postalCode;
 
+    private String phone;
+
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "employeeID", nullable = false)
     private EmployeeEntity employee;
@@ -26,12 +28,13 @@ public class EmployeeInfoEntity {
     public EmployeeInfoEntity() {
     }
 
-    public EmployeeInfoEntity(String recipientName, String city, String address, String state, int postalCode, EmployeeEntity employee) {
+    public EmployeeInfoEntity(String recipientName, String city, String address, String state, int postalCode, String phone, EmployeeEntity employee) {
         this.recipientName = recipientName;
         this.city = city;
         this.address = address;
         this.state = state;
         this.postalCode = postalCode;
+        this.phone = phone;
         this.employee = employee;
     }
 
@@ -81,6 +84,14 @@ public class EmployeeInfoEntity {
 
     public void setPostalCode(int postalCode) {
         this.postalCode = postalCode;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public EmployeeEntity getEmployee() {

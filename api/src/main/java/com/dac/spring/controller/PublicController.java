@@ -108,12 +108,12 @@ public class PublicController {
 
     @PostMapping("order/{id}")
     public ResponseEntity<ServiceResult> addOrder(@PathVariable int id, @RequestBody AddOrderReq request){
-        return new ResponseEntity<>(customerService.addOrder(id, request.getOrders()), HttpStatus.OK);
+        return new ResponseEntity<>(customerService.addOrder(id, request), HttpStatus.OK);
     }
 
     @PostMapping("buy/{id}")
     public ResponseEntity<ServiceResult> buyNow(@PathVariable int id, @RequestBody AddOrderReq request){
-        return new ResponseEntity<>(customerService.buyNow(id, request.getOrders()), HttpStatus.OK);
+        return new ResponseEntity<>(customerService.buyNow(id, request), HttpStatus.OK);
     }
 
     @GetMapping("product")

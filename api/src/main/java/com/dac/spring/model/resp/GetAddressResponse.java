@@ -11,15 +11,18 @@ public class GetAddressResponse {
 
     private int postalCode;
 
+    private String phone;
+
     public GetAddressResponse() {
     }
 
-    public GetAddressResponse(String recipientName, String city, String address, String state, int postalCode) {
+    public GetAddressResponse(String recipientName, String city, String address, String state, int postalCode, String phone) {
         this.recipientName = recipientName;
         this.city = city;
         this.address = address;
         this.state = state;
         this.postalCode = postalCode;
+        this.phone = phone;
     }
 
     public String getRecipientName() {
@@ -60,5 +63,13 @@ public class GetAddressResponse {
 
     public void setPostalCode(int postalCode) {
         this.postalCode = postalCode;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }
