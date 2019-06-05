@@ -416,7 +416,7 @@ public class CustomerServiceImpl implements CustomerService {
         for (OrderDetailEntity entity : list){
             OrderDetailsResponse response = new OrderDetailsResponse(entity.getId(),
                     entity.getProduct().getName(),
-                    entity.getProduct().getProductImageURL(),
+                    entity.getProduct().getImageEntityList().get(0).getImageURL(),
                     entity.getPrice(),
                     entity.getQuantity());
             responses.add(response);
@@ -507,7 +507,7 @@ public class CustomerServiceImpl implements CustomerService {
         List<CustomerGetMOProductAllResponse> responses = new ArrayList<>();
         for (ProductEntity entity : test){
             CustomerGetMOProductAllResponse response = new CustomerGetMOProductAllResponse(entity.getId(),
-                    entity.getProductImageURL(),
+                    entity.getImageEntityList().get(0).getImageURL(),
                     entity.getName(),
                     4.5,
                     20,
@@ -969,7 +969,7 @@ public class CustomerServiceImpl implements CustomerService {
                     entity.getName(),
                     entity.getCategory().getName(),
                     entity.getCurrentPrice(),
-                    entity.getProductImageURL());
+                    entity.getImageEntityList().get(0).getImageURL());
             responses.add(response);
         }
 
@@ -989,7 +989,7 @@ public class CustomerServiceImpl implements CustomerService {
                     entity.getName(),
                     entity.getCategory().getName(),
                     entity.getCurrentPrice(),
-                    entity.getProductImageURL());
+                    entity.getImageEntityList().get(0).getImageURL());
             responses.add(response);
         }
 
@@ -1006,7 +1006,7 @@ public class CustomerServiceImpl implements CustomerService {
         List<CustomerGetMOProductAllResponse> responses = new ArrayList<>();
         for (ProductEntity entity : productEntityList){
             CustomerGetMOProductAllResponse response = new CustomerGetMOProductAllResponse(entity.getId(),
-                    entity.getProductImageURL(),
+                    entity.getImageEntityList().get(0).getImageURL(),
                     entity.getName(),
                     4.5,
                     20,
@@ -1031,7 +1031,7 @@ public class CustomerServiceImpl implements CustomerService {
                     entity.getName(),
                     entity.getCategory().getName(),
                     entity.getCurrentPrice(),
-                    entity.getProductImageURL());
+                    entity.getImageEntityList().get(0).getImageURL());
             responses.add(response);
         }
 
@@ -1117,7 +1117,7 @@ public class CustomerServiceImpl implements CustomerService {
                     entity.getCurrentPrice(),
                     entity.getPrice(),
                     entity.getQuantity(),
-                    entity.getProduct().getProductImageURL());
+                    entity.getProduct().getImageEntityList().get(0).getImageURL());
             if (entity.getQuantity() + entity.getProduct().getQuantity() < entity.getProduct().getCategory().getLimited()){
                 response.setLimit(entity.getQuantity() + entity.getProduct().getQuantity());
             }else {
@@ -1179,7 +1179,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         for (WishlistEntity wishlistEntity : wishlistEntityList){
             WishlistData data = new WishlistData(wishlistEntity.getProduct().getId(),
-                    wishlistEntity.getProduct().getProductImageURL(),
+                    wishlistEntity.getProduct().getImageEntityList().get(0).getImageURL(),
                     wishlistEntity.getProduct().getName(),
                     4.5,
                     20,
@@ -1293,7 +1293,7 @@ public class CustomerServiceImpl implements CustomerService {
                         "<h4>Quantity:" + entity.getQuantity() + "</h4> <br>" + "<h4>Price:$" + entity.getPrice() + "</h4> <br>";
 
                 totalItems += entity.getQuantity();
-                totalPrice += entity.getPrice();
+                totalPrice += entity.getPrice()*entity.getQuantity();
             }
             orderInfo += "<h2>Total items:" + totalItems + "</h2><br>" + "<h2>Total price:" + totalPrice + "</h2>";
 
@@ -1383,7 +1383,7 @@ public class CustomerServiceImpl implements CustomerService {
         List<CustomerGetMOProductAllResponse> responses = new ArrayList<>();
         for (ProductEntity entity : productEntityList){
             CustomerGetMOProductAllResponse response = new CustomerGetMOProductAllResponse(entity.getId(),
-                    entity.getProductImageURL(),
+                    entity.getImageEntityList().get(0).getImageURL(),
                     entity.getName(),
                     4.5,
                     20,
@@ -1422,7 +1422,7 @@ public class CustomerServiceImpl implements CustomerService {
         List<CustomerGetMOProductAllResponse> responses = new ArrayList<>();
         for (ProductEntity entity : productEntityList){
             CustomerGetMOProductAllResponse response = new CustomerGetMOProductAllResponse(entity.getId(),
-                    entity.getProductImageURL(),
+                    entity.getImageEntityList().get(0).getImageURL(),
                     entity.getName(),
                     4.5,
                     20,
