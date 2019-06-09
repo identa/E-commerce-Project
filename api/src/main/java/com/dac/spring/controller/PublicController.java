@@ -195,8 +195,18 @@ public class PublicController {
                 request.getNewPass()), HttpStatus.OK);
     }
 
-     @GetMapping("/session")
+    @GetMapping("/session")
     public ResponseEntity<ServiceResult> session(@RequestHeader(value = "Authorization") String token) {
         return new ResponseEntity<>(customerService.checkSession(token), HttpStatus.OK);
+    }
+
+    @PostMapping("rating/{pid}/{uid}")
+    public ResponseEntity<ServiceResult> addRating(@PathVariable int pid, @PathVariable int uid, @RequestBody AddRatingReq request){
+        return new ResponseEntity<>(customerService.addRating(pid, uid, request), HttpStatus.OK);
+    }
+
+    @PutMapping("rating/{pid}/{uid}")
+    public ResponseEntity<ServiceResult> updateRating(@PathVariable int pid, @PathVariable int uid, @RequestBody AddRatingReq request){
+        return new ResponseEntity<>(customerService.updateRating(pid, uid, request), HttpStatus.OK);
     }
 }

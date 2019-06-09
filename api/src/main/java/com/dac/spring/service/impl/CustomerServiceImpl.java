@@ -8,10 +8,7 @@ import com.dac.spring.entity.*;
 import com.dac.spring.model.ServiceResult;
 import com.dac.spring.model.enums.RoleName;
 import com.dac.spring.model.enums.StatusName;
-import com.dac.spring.model.req.AddOrderReq;
-import com.dac.spring.model.req.AddOrderRequest;
-import com.dac.spring.model.req.AddressRequest;
-import com.dac.spring.model.req.CustomerCreateOrderDetailRequest;
+import com.dac.spring.model.req.*;
 import com.dac.spring.model.resp.*;
 import com.dac.spring.repository.*;
 import com.dac.spring.service.CustomerService;
@@ -524,39 +521,26 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ServiceResult getRating(int pid, int uid) {
         ServiceResult result = new ServiceResult();
-        RatingEntity ratingEntity = ratingRepository.findByProductIdAndUserId(pid, uid);
-        int total1 = 0;
-        int total2 = 0;
-        int total3 = 0;
-        int total4 = 0;
-        int total5 = 0;
-        int total = 0;
-        GetRatingResp resp;
-        Float avg = ratingRepository.avg(pid);
-        for (RatingEntity entity : ratingRepository.findAllByProductId(pid)){
-            if (entity.getRate() == 1){
-                total1 += entity.getRate();
-            }
-            if (entity.getRate() == 2){
-                total2 += entity.getRate();
-            }
-            if (entity.getRate() == 3){
-                total3 += entity.getRate();
-            }
-            if (entity.getRate() == 4){
-                total4 += entity.getRate();
-            }
-            if (entity.getRate() == 5){
-                total5 += entity.getRate();
-            }
-            total++;
+        List<RatingEntity> ratingEntity = ratingRepository.findAllByProductId(pid);
+        List<RatingListResp> ratingListRespList = new ArrayList<>();
+        for (RatingEntity entity : ratingEntity){
+            RatingListResp response = new RatingListResp(entity.getUser().getFirstName() + " " + entity.getUser().getLastName(),
+                    entity.getRate(),
+                    entity.getReview());
+            ratingListRespList.add(response);
         }
 
-        Integer rating = null;
-        if (ratingEntity != null) rating = ratingEntity.getRate();
+//        GetRatingResp resp;
+        Float avg = ratingRepository.avg(pid);
 
-        resp = new GetRatingResp(total1, total2, total3, total4, total5, total, avg, rating);
-
+//        Integer rating = null;
+//        RatingEntity rating = ratingRepository.findByProductIdAndUserId(pid, uid);
+        GetRatingResp resp = null;
+        if (ratingRepository.findByProductIdAndUserId(pid, uid) != null) {
+            resp = new GetRatingResp(ratingRepository.avg(pid), ratingRepository.myRating(pid, uid), ratingRepository.findByProductIdAndUserId(pid, uid).getReview(), ratingListRespList);
+        }else {
+            resp = new GetRatingResp(ratingRepository.avg(pid), ratingRepository.myRating(pid, uid), null, ratingListRespList);
+        }
         result.setMessage("Get rating successfully");
         result.setData(resp);
         return result;
@@ -590,6 +574,32 @@ public class CustomerServiceImpl implements CustomerService {
         employeeRepository.save(employeeEntity);
 
         result.setMessage("Edit password successfully");
+        return result;
+    }
+
+    @Override
+    public ServiceResult addRating(int pid, int uid, AddRatingReq req) {
+        ServiceResult result = new ServiceResult();
+        RatingEntity entity = new RatingEntity();
+        entity.setProduct(productRepository.findById(pid).orElse(null));
+        entity.setUser(employeeRepository.findByIdAndDeletedAndStatusNameAndRoleName(uid, false, StatusName.ACTIVE, RoleName.ROLE_CUSTOMER));
+        entity.setRate(req.getRating());
+        entity.setReview(req.getComment());
+        ratingRepository.save(entity);
+
+        result.setMessage("Add rating successfully");
+        return result;
+    }
+
+    @Override
+    public ServiceResult updateRating(int pid, int uid, AddRatingReq req) {
+        ServiceResult result = new ServiceResult();
+        RatingEntity entity = ratingRepository.findByProductIdAndUserId(pid, uid);
+        entity.setRate(req.getRating());
+        entity.setReview(req.getComment());
+        ratingRepository.save(entity);
+
+        result.setMessage("Update rating successfully");
         return result;
     }
 

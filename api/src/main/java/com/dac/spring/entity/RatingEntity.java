@@ -17,7 +17,7 @@ public class RatingEntity {
     @JoinColumn(name = "productID")
     private ProductEntity product;
 
-    private int rate;
+    private float rate;
 
     private String review;
 
@@ -48,11 +48,11 @@ public class RatingEntity {
         this.product = product;
     }
 
-    public int getRate() {
+    public float getRate() {
         return rate;
     }
 
-    public void setRate(int rate) {
+    public void setRate(float rate) {
         this.rate = rate;
     }
 

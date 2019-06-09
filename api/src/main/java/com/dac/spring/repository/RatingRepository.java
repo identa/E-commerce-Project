@@ -14,4 +14,7 @@ public interface RatingRepository extends JpaRepository<RatingEntity, Integer> {
 
     @Query(value = "select avg(r.rate) from rating r where r.productid = ?1", nativeQuery = true)
     Float avg(int id);
+
+    @Query(value = "select r.rate from rating r where r.productid = ?1 and r.userid = ?2", nativeQuery = true)
+    Float myRating(int pid, int uid);
 }

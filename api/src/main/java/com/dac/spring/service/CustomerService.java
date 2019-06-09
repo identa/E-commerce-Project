@@ -1,10 +1,7 @@
 package com.dac.spring.service;
 
 import com.dac.spring.model.ServiceResult;
-import com.dac.spring.model.req.AddOrderReq;
-import com.dac.spring.model.req.AddOrderRequest;
-import com.dac.spring.model.req.AddressRequest;
-import com.dac.spring.model.req.CustomerCreateOrderDetailRequest;
+import com.dac.spring.model.req.*;
 
 import java.util.List;
 
@@ -54,4 +51,6 @@ public interface CustomerService {
     ServiceResult getRating(int pid, int uid);
     ServiceResult editInfo(int id, String fn, String ln, String photo);
     ServiceResult editPassword(int id, String oldPass, String newPass);
+    ServiceResult addRating(int pid, int uid, AddRatingReq req);
+    ServiceResult updateRating(int pid, int uid, AddRatingReq req);
 }
